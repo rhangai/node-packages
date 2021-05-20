@@ -1,0 +1,11 @@
+{
+  "name": "nest-modules",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@nestjs/common": "^7.6.17",
+    "@nestjs/core": "^7.6.17",
+    "lerna": "^4.0.0",
+    "prettier": "^2.3.0"
+  }
+}

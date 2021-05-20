@@ -1,0 +1,5 @@
+# Log
+*.log
+
+# Vendor
+node_modules
