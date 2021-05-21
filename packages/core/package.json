@@ -28,6 +28,7 @@
     "typeorm": "*"
   },
   "scripts": {
+    "prebuild": "rm -rf lib",
     "build": "tsc",
     "lint": "eslint src",
     "lint:fix": "yarn run -s lint --fix",
