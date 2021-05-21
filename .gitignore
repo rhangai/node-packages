@@ -3,3 +3,6 @@
 
 # Vendor
 node_modules
+
+# Libs
+packages/*/lib
