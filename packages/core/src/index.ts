@@ -1,1 +1,2 @@
-import {} from '@nestjs/config';
+export * from './config';
+export * from './database';

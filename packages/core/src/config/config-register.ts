@@ -1,5 +1,5 @@
 import { configRegisterContext, ConfigRegisterContext } from './config-register-context';
-import { registerAs, ConfigFactory, ConfigFactoryKeyHost, ConfigType } from '@nestjs/config';
+import { registerAs, ConfigFactory, ConfigFactoryKeyHost } from '@nestjs/config';
 import { Inject } from '@nestjs/common';
 
 export function configRegister<T>(

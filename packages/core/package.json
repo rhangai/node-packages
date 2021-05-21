@@ -29,6 +29,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "prepublish": "yarn run -s build",
     "test": "echo \"Error: run tests from root\" && exit 1"
   }
 }
