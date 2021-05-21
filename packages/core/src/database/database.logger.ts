@@ -1,5 +1,5 @@
-import type { Logger } from 'typeorm';
 import { LogLevel, Logger as NestLogger } from '@nestjs/common';
+import type { Logger } from 'typeorm';
 
 /**
  *
