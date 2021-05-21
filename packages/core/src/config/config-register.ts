@@ -4,8 +4,12 @@ import { configRegisterContext, ConfigRegisterContext } from './config-register-
 
 export function configRegister<T>(
 	factory: (context: ConfigRegisterContext) => T
-): [ConfigFactory<T> & ConfigFactoryKeyHost, () => PropertyDecorator] {
-	const configFactory = registerAs('config', () => factory(configRegisterContext));
+): [ConfigFactory<T> & ConfigFactoryKeyHost, () => ParameterDecorator] {
+	const configFactory = registerAs('config', () => configResolve(factory));
 	const InjectConfig = () => Inject(configFactory.KEY);
 	return [configFactory, InjectConfig];
+}
+
+export function configResolve<T>(factory: (context: ConfigRegisterContext) => T): T {
+	return factory(configRegisterContext);
 }
