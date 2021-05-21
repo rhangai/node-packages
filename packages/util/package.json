@@ -1,0 +1,35 @@
+{
+  "name": "@rhangai/nest-util",
+  "version": "0.0.0",
+  "description": "Nest util module",
+  "keywords": [
+    "nest",
+    "util",
+    "utility"
+  ],
+  "author": "rhangai <hangai.renan@gmail.com>",
+  "homepage": "https://github.com/rhangai/node-nest-modules#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "bugs": {
+    "url": "https://github.com/rhangai/node-nest-modules/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhangai/node-nest-modules.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@nestjs/common": "^7.6.17",
+    "@nestjs/core": "^7.6.17",
+    "prettier": "^2.3.0",
+    "typescript": "^4.2.4"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^7",
+    "@nestjs/core": "^7"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
