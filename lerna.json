@@ -1,8 +1,6 @@
 {
   "version": "0.0.4",
   "npmClient": "yarn",
-  "packages": [
-    "packages/core"
-  ],
+  "packages": ["packages/auth", "packages/core"],
   "useWorkspaces": true
 }

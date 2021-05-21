@@ -67,8 +67,12 @@ export function authExecutionContextSetData(
 			value: authdata,
 		});
 	} else {
-		Object.defineProperty(authExecutionContext.graphqlContext, AUTH_EXECUTION_CONTEXT_DATA_KEY, {
-			value: authdata,
-		});
+		Object.defineProperty(
+			authExecutionContext.graphqlContext,
+			AUTH_EXECUTION_CONTEXT_DATA_KEY,
+			{
+				value: authdata,
+			}
+		);
 	}
 }

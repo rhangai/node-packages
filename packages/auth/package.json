@@ -22,7 +22,10 @@
     "@nestjs/core": "^7"
   },
   "scripts": {
+    "prebuild": "rm -rf lib",
     "build": "tsc",
+    "lint": "eslint src",
+    "lint:fix": "yarn run -s lint --fix",
     "test": "echo \"Error: run tests from root\" && exit 1"
   }
 }
