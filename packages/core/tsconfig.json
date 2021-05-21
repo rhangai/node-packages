@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2018",
-    "module": "esnext",
+    "module": "commonjs",
+    "target": "es2020",
+    "importHelpers": true,
     "moduleResolution": "node",
     "lib": ["esnext", "esnext.asynciterable", "dom"],
     "esModuleInterop": true,
