@@ -1,2 +1,2 @@
 export { configRegister } from './config-register';
-export { ConfigModule } from '@nestjs/config';
+export { ConfigModule, ConfigType } from '@nestjs/config';
