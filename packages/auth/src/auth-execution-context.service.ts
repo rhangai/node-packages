@@ -3,13 +3,13 @@ import { authExecutionContextGet, authExecutionContextSetData } from './auth-exe
 import { IAuthenticator, AUTHENTICATOR_KEY } from './authenticator.interface';
 
 @Injectable()
-export class AuthService {
+export class AuthExecutionContextService {
 	constructor(
 		@Inject(AUTHENTICATOR_KEY)
 		private readonly authenticator: IAuthenticator<unknown>
 	) {}
 
-	async applyExecutionContext(executionContext: ExecutionContext) {
+	async apply(executionContext: ExecutionContext) {
 		const authExecutionContext = authExecutionContextGet(executionContext);
 		if (authExecutionContext) {
 			const authdata = await this.authenticator.authenticate(authExecutionContext);
