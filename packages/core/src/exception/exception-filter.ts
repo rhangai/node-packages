@@ -4,12 +4,16 @@ import { ToHttpException } from './http.exception';
 
 @Catch()
 export class ExceptionFilter extends BaseExceptionFilter {
-	catch(exception: unknown, host: ArgumentsHost) {
+	catch(exceptionParam: unknown, host: ArgumentsHost) {
+		let exception = exceptionParam;
 		if (isHttpException(exception)) {
 			const httpBody = exception.toHttp();
-			super.catch(new BadRequestException(httpBody), host);
-		} else {
+			exception = new BadRequestException(httpBody);
+		}
+		if (host.getType() === 'http') {
 			super.catch(exception, host);
+		} else {
+			throw exception;
 		}
 	}
 }
