@@ -28,7 +28,8 @@
     "@nestjs/core": "^7",
     "@nestjs/graphql": "^7",
     "@rhangai/nest-core": "*",
-    "graphql": "^15"
+    "graphql": "^15",
+    "tslib": "^2"
   },
   "scripts": {
     "prebuild": "rm -rf lib",
