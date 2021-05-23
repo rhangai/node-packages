@@ -1,9 +1,6 @@
 {
   "version": "0.0.9",
   "npmClient": "yarn",
-  "packages": [
-    "packages/auth",
-    "packages/core"
-  ],
+  "packages": ["packages/auth", "packages/core", "packages/graphql"],
   "useWorkspaces": true
 }
