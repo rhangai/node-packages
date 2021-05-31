@@ -53,3 +53,18 @@ export const CoreModule = createCoreModule({
 	ormconfig,
 });
 ```
+
+## Controllers
+
+Create your controllers
+
+```ts
+import { createCoreModule } from '@rhangai/nest-core';
+import { configFactory } from './config';
+import ormconfig from './ormconfig';
+
+export const CoreModule = createCoreModule({
+	configFactory,
+	ormconfig,
+});
+```
