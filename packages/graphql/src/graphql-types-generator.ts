@@ -2,7 +2,12 @@ import { writeFile } from 'fs';
 import { resolve } from 'path';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
+import {
+	GqlModuleOptions,
+	GraphQLModule,
+	GraphQLTypesLoader,
+	GqlExceptionFilter,
+} from '@nestjs/graphql';
 
 export type GraphqlTypesGeneratorOptions = {
 	baseDir: string;
