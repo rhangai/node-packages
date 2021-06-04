@@ -1,13 +1,20 @@
-import { Catch, ArgumentsHost, BadRequestException, HttpException, Logger } from '@nestjs/common';
+import {
+	Catch,
+	ArgumentsHost,
+	BadRequestException,
+	HttpException,
+	Logger,
+	Optional,
+} from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { InjectConfig } from 'src/config';
+import { InjectConfig } from '../config';
 import { ToHttpException } from './http.exception';
 
 @Catch()
 export class ExceptionFilter extends BaseExceptionFilter {
 	private logger = new Logger('ExceptionHandler');
 
-	constructor(@InjectConfig() private readonly config: any) {
+	constructor(@Optional() @InjectConfig() private readonly config: any) {
 		super();
 	}
 
@@ -23,7 +30,7 @@ export class ExceptionFilter extends BaseExceptionFilter {
 		}
 
 		this.logException(exception);
-		if (this.config.debug || exception instanceof HttpException) {
+		if (this.config?.debug || exception instanceof HttpException) {
 			throw exception;
 		} else {
 			throw new BadRequestException();
