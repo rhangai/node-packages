@@ -1,14 +1,23 @@
 import { ExecutionContext } from '@nestjs/common';
+import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+
+type GraphqlExecutionContextLike = {
+	getType(): 'graphql';
+	getRoot<T = any>(): T;
+	getArgs<T = any>(): T;
+	getContext<T = any>(): T;
+	getInfo<T = any>(): T;
+};
 
 export type AuthExecutionContextHttp = {
 	type: 'http';
-	executionContext: ExecutionContext;
-	request: any;
+	storage: any;
+	executionContext: HttpArgumentsHost;
 };
 export type AuthExecutionContextGraphql = {
 	type: 'graphql';
-	executionContext: ExecutionContext;
-	graphqlContext: any;
+	storage: any;
+	executionContext: GraphqlExecutionContextLike;
 };
 export type AuthExecutionContext = AuthExecutionContextHttp | AuthExecutionContextGraphql;
 
@@ -27,15 +36,30 @@ export function authExecutionContextGet(
 		const httpContext = executionContext.switchToHttp();
 		return {
 			type: 'http',
-			executionContext,
-			request: httpContext.getRequest(),
+			storage: httpContext.getRequest(),
+			executionContext: httpContext,
 		};
 	} else if ((type as string) === 'graphql') {
-		const graphqlContext: any = executionContext.getArgByIndex(2);
 		return {
 			type: 'graphql',
-			executionContext,
-			graphqlContext,
+			storage: executionContext.getArgByIndex(2),
+			executionContext: {
+				getType() {
+					return 'graphql';
+				},
+				getRoot<T = any>(): T {
+					return executionContext.getArgByIndex(0);
+				},
+				getArgs<T = any>(): T {
+					return executionContext.getArgByIndex(1);
+				},
+				getContext<T = any>(): T {
+					return executionContext.getArgByIndex(2);
+				},
+				getInfo<T = any>(): T {
+					return executionContext.getArgByIndex(3);
+				},
+			},
 		};
 	}
 	return null;
@@ -47,10 +71,7 @@ export function authExecutionContextGet(
  * @param authdata
  */
 export function authExecutionContextGetData(authExecutionContext: AuthExecutionContext) {
-	if (authExecutionContext.type === 'http') {
-		return authExecutionContext.request[AUTH_EXECUTION_CONTEXT_DATA_KEY];
-	}
-	return authExecutionContext.graphqlContext[AUTH_EXECUTION_CONTEXT_DATA_KEY];
+	return authExecutionContext.storage[AUTH_EXECUTION_CONTEXT_DATA_KEY];
 }
 
 /**
@@ -62,17 +83,7 @@ export function authExecutionContextSetData(
 	authExecutionContext: AuthExecutionContext,
 	authdata: unknown
 ) {
-	if (authExecutionContext.type === 'http') {
-		Object.defineProperty(authExecutionContext.request, AUTH_EXECUTION_CONTEXT_DATA_KEY, {
-			value: authdata,
-		});
-	} else {
-		Object.defineProperty(
-			authExecutionContext.graphqlContext,
-			AUTH_EXECUTION_CONTEXT_DATA_KEY,
-			{
-				value: authdata,
-			}
-		);
-	}
+	Object.defineProperty(authExecutionContext.storage, AUTH_EXECUTION_CONTEXT_DATA_KEY, {
+		value: authdata,
+	});
 }
