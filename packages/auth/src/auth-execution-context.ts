@@ -1,8 +1,7 @@
 import { ExecutionContext } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 
-type GraphqlExecutionContextLike = {
-	getType(): 'graphql';
+type GraphqlArgumentsHost = {
 	getRoot<T = any>(): T;
 	getArgs<T = any>(): T;
 	getContext<T = any>(): T;
@@ -12,12 +11,14 @@ type GraphqlExecutionContextLike = {
 export type AuthExecutionContextHttp = {
 	type: 'http';
 	storage: any;
-	executionContext: HttpArgumentsHost;
+	executionContext: ExecutionContext;
+	http: HttpArgumentsHost;
 };
 export type AuthExecutionContextGraphql = {
 	type: 'graphql';
 	storage: any;
-	executionContext: GraphqlExecutionContextLike;
+	executionContext: ExecutionContext;
+	graphql: GraphqlArgumentsHost;
 };
 export type AuthExecutionContext = AuthExecutionContextHttp | AuthExecutionContextGraphql;
 
@@ -33,20 +34,19 @@ export function authExecutionContextGet(
 ): AuthExecutionContext | null {
 	const type = executionContext.getType();
 	if (type === 'http') {
-		const httpContext = executionContext.switchToHttp();
+		const httpArgs = executionContext.switchToHttp();
 		return {
 			type: 'http',
-			storage: httpContext.getRequest(),
-			executionContext: httpContext,
+			storage: httpArgs.getRequest(),
+			executionContext,
+			http: httpArgs,
 		};
 	} else if ((type as string) === 'graphql') {
 		return {
 			type: 'graphql',
 			storage: executionContext.getArgByIndex(2),
-			executionContext: {
-				getType() {
-					return 'graphql';
-				},
+			executionContext,
+			graphql: {
 				getRoot<T = any>(): T {
 					return executionContext.getArgByIndex(0);
 				},
