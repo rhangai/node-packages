@@ -22,9 +22,6 @@
     "prettier": "^2.3.0",
     "typescript": "^4.3.2"
   },
-  "scripts": {
-    "release": "lerna run build && lerna run test && lerna publish"
-  },
   "workspaces": [
     "packages/common",
     "packages/nest-auth",
