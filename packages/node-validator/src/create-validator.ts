@@ -1,5 +1,5 @@
 import { Class } from './util';
-import { ValidatorMetadataClassStorage } from './metadata';
+import { ValidatorMetadataClass } from './metadata';
 import { IValidator, ValidatorChain, ValidatorFunction } from './validator';
 
 type CreateValidatorFunction = (v: unknown) => unknown;
@@ -24,10 +24,10 @@ export type ValidatorParam =
 	| ValidatorDecorator
 	| Array<ValidatorParam>;
 
-export function createValidator(validatorParam: ValidatorParam): IValidator | null {
+export function resolveValidator(validatorParam: ValidatorParam): IValidator | null {
 	if (validatorParam == null) return null;
 	if (Array.isArray(validatorParam)) {
-		const validators = validatorParam.filter(Boolean).map(createValidator).filter(Boolean);
+		const validators = validatorParam.filter(Boolean).map(resolveValidator).filter(Boolean);
 		if (validators.length <= 0) return null;
 		if (validators.length === 1) return validators[0];
 
@@ -49,15 +49,13 @@ export function createValidator(validatorParam: ValidatorParam): IValidator | nu
 	throw new Error(`Invalid validator`);
 }
 
-export function createValidatorDecorator(validatorParam: ValidatorParam): ValidatorDecorator {
-	const validator = createValidator(validatorParam);
+export function createValidator(validatorParam: ValidatorParam): ValidatorDecorator {
+	const validator = resolveValidator(validatorParam);
 	const decorator: any = (target: any, propertyKey?: string | symbol): void => {
 		if (propertyKey == null) {
-			const classStorage = ValidatorMetadataClassStorage.assert(target as Class<any>);
+			const classStorage = ValidatorMetadataClass.assert(target as Class<any>);
 		} else {
-			const classStorage = ValidatorMetadataClassStorage.assert(
-				target.constructor as Class<any>
-			);
+			const classStorage = ValidatorMetadataClass.assert(target.constructor as Class<any>);
 			classStorage.field(propertyKey as string).appendValidator(validator);
 		}
 	};

@@ -5,7 +5,7 @@
 Somewhere in your main file
 
 ```ts
-import '@rhangai/nest-core/setup';
+import '@rhangai/common/setup';
 ```
 
 Create a `config.ts` file

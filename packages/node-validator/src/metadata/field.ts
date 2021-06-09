@@ -1,6 +1,6 @@
 import { IValidator } from '../validator';
 
-export class ValidatorMetadataFieldStorage {
+export class ValidatorMetadataField {
 	private inputFieldName: string | null = null;
 
 	private validator: IValidator | null = null;

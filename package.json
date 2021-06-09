@@ -23,6 +23,7 @@
     "typescript": "^4.3.2"
   },
   "workspaces": [
+    "packages/common",
     "packages/nest-auth",
     "packages/nest-core",
     "packages/nest-graphql",

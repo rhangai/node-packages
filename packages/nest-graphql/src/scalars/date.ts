@@ -1,5 +1,5 @@
 import { GraphQLScalarType, Kind } from 'graphql';
-import { dateParse, DateTypeInput } from '@rhangai/nest-core';
+import { dateParse, DateTypeInput } from '@rhangai/common';
 
 type CreateDateScalarOptions = {
 	name: string;

@@ -1,5 +1,5 @@
 import { GraphQLScalarType, Kind } from 'graphql';
-import { Decimal, DecimalInput, decimalParse } from '@rhangai/nest-core';
+import { Decimal, DecimalInput, decimalParse } from '@rhangai/common';
 
 export const DecimalScalar = new GraphQLScalarType({
 	name: 'Decimal',

@@ -1,7 +1,5 @@
 import { Column, ColumnOptions } from 'typeorm';
-import dayjs from 'dayjs';
-import { DateType } from './date-type';
-import { dateParse } from './date-parse';
+import { dateParse, DateType } from '@rhangai/common';
 
 export function DateColumn(options?: ColumnOptions) {
 	return Column({
@@ -11,7 +9,7 @@ export function DateColumn(options?: ColumnOptions) {
 			from(v: string): DateType | null {
 				if (v == null || !v) return null;
 				if (typeof v !== 'string') return null;
-				return dayjs(v, 'YYYY-MM-DD');
+				return dateParse(v, { inputFormat: 'YYYY-MM-DD' });
 			},
 			to(param: any): string | null {
 				if (param == null || !param) return null;

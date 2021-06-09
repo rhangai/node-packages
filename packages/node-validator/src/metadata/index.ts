@@ -1,2 +1,2 @@
-export * from './class-storage';
-export * from './field-storage';
+export * from './class';
+export * from './field';

@@ -1,8 +1,8 @@
-import { createValidatorDecorator } from '../create-validator';
+import { createValidator } from '../create-validator';
 import { ValidateError } from '../error';
 
 export function Validate() {
-	return createValidatorDecorator(null);
+	return createValidator(null);
 }
 
 export type ValidatorToStringOptions = {
@@ -10,7 +10,7 @@ export type ValidatorToStringOptions = {
 };
 
 export function ToString(options?: ValidatorToStringOptions) {
-	return createValidatorDecorator((v: unknown) => {
+	return createValidator((v: unknown) => {
 		if (v == null) throw new ValidateError(`${v} cannot be assigned to string`);
 		else if (typeof v !== 'string' && typeof v !== 'number')
 			throw new ValidateError(`${v} cannot be assigned to string`);
@@ -23,7 +23,7 @@ export function ToString(options?: ValidatorToStringOptions) {
 }
 
 export function ToInt() {
-	return createValidatorDecorator((v: unknown) => {
+	return createValidator((v: unknown) => {
 		let numberValue: number | null = null;
 		if (typeof v === 'number') numberValue = v;
 		else if (typeof v === 'string') numberValue = parseInt(v, 10);

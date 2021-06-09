@@ -2,6 +2,7 @@
   "version": "0.1.3",
   "npmClient": "yarn",
   "packages": [
+    "packages/common",
     "packages/nest-auth",
     "packages/nest-core",
     "packages/nest-graphql",

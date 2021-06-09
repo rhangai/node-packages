@@ -1,11 +1,11 @@
-import { createValidator, createValidatorDecorator, ValidatorParam } from '../create-validator';
+import { resolveValidator, createValidator, ValidatorParam } from '../create-validator';
 import { ValidateError } from '../error';
 import { Class, isPromiseLike } from '../util';
 import { IsObject } from './object';
 
 export function IsArray(validatorParam: ValidatorParam) {
-	const validator = createValidator(validatorParam);
-	return createValidatorDecorator((value: any) => {
+	const validator = resolveValidator(validatorParam);
+	return createValidator((value: any) => {
 		if (value == null || !Array.isArray(value)) throw new ValidateError(`Not an array.`);
 		if (!validator) return value;
 
