@@ -7,7 +7,7 @@ export function createValidator(validatorParam: ValidatorParam): ValidatorDecora
 	const validator = resolveValidator(validatorParam);
 	const decorator = ((target: any, propertyKey: string | symbol): void => {
 		const classStorage = ValidatorMetadataClass.assert(target.constructor as Class<any>);
-		classStorage.field(propertyKey).appendValidator(validator);
+		classStorage.field(propertyKey).prependValidator(validator);
 	}) as ValidatorDecorator;
 	decorator[VALIDATOR_DECORATOR_KEY] = validator;
 	return decorator;

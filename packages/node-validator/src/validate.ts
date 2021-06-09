@@ -9,6 +9,10 @@ export function validate<T>(target: Class<T>, input: ValidateInput<T>): T | Prom
 	return classStorage.validate(input);
 }
 
+export async function validateAsync<T>(target: Class<T>, input: ValidateInput<T>): Promise<T> {
+	return validate(target, input);
+}
+
 export function validateValue<T>(
 	value: ValidateInput<T>,
 	validatorParam: ValidatorParam

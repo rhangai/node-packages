@@ -56,9 +56,6 @@ export class ValidatorMetadataClass<T> {
 	}
 
 	validateState(input: unknown, stateParam: ValidatorMetadataClassValidateState): void {
-		if (input == null || typeof input !== 'object' || Array.isArray(input)) {
-			throw new ValidateError(`${input} cannot be converted to ${this.classType.name}`);
-		}
 		const state = stateParam;
 		// eslint-disable-next-line guard-for-in
 		for (const fieldName in this.fields) {

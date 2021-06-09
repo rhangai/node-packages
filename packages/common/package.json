@@ -43,6 +43,14 @@
     "testEnvironment": "node",
     "setupFiles": [
       "<rootDir>/setup.js"
+    ],
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.{ts,tsx}"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/setup.js",
+      "<rootDir>/lib",
+      "/node_modules/"
     ]
   }
 }

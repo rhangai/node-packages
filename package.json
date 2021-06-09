@@ -28,5 +28,11 @@
     "packages/nest-core",
     "packages/nest-graphql",
     "packages/node-validator"
-  ]
+  ],
+  "jest": {
+    "projects": [
+      "packages/common",
+      "packages/node-validator"
+    ]
+  }
 }

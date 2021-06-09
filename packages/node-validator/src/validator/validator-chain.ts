@@ -6,9 +6,9 @@ export class ValidatorChain implements IValidator {
 
 	concat(other: IValidator): IValidator {
 		if (other instanceof ValidatorChain) {
-			this.validators.unshift(...other.validators);
+			this.validators.push(...other.validators);
 		} else {
-			this.validators.unshift(other);
+			this.validators.push(other);
 		}
 		return this;
 	}

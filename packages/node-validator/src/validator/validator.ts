@@ -5,8 +5,8 @@ export class ValidatorFunction implements IValidator {
 	constructor(private readonly validateFunction: (value: unknown) => unknown) {}
 
 	concat(other: IValidator): IValidator {
-		const chain = new ValidatorChain();
-		return chain.concat(this).concat(other);
+		const chain = new ValidatorChain([this]);
+		return chain.concat(other);
 	}
 
 	validate<T>(value: unknown): T | Promise<T> {

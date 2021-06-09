@@ -3,7 +3,7 @@ import { ValidatorFunction } from './validator';
 import { ValidatorChain } from './validator-chain';
 import { IValidator } from './validator-interface';
 
-type CreateValidatorFunction = (v: unknown) => unknown;
+type CreateValidatorFunction = (v: any) => any;
 
 type CreateValidatorOptions = {
 	validate: CreateValidatorFunction;

@@ -21,4 +21,13 @@ export class ValidatorMetadataField {
 			this.validator = this.validator.concat(validator);
 		}
 	}
+
+	prependValidator(validator: IValidator | null) {
+		if (!validator) return;
+		if (this.validator == null) {
+			this.validator = validator;
+		} else {
+			this.validator = validator.concat(this.validator);
+		}
+	}
 }

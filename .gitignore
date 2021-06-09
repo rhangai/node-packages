@@ -5,4 +5,6 @@
 node_modules
 
 # Libs
+/coverage
 packages/*/lib
+packages/*/coverage
