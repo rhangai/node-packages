@@ -9,7 +9,7 @@ export type ValidateInput<T> =
 	T extends string | number ? string | number :
 	T extends DateType ? DateTypeInput :
 	T extends Decimal ? DecimalInput :
-	T extends Record<string, unknown> ? ValidateInputObject<T> :
+	T extends Record<string, any> ? ValidateInputObject<T> :
 	T extends Array<infer U> ? ReadonlyArray<ValidateInput<U>> :
 	T extends ReadonlyArray<infer U> ? ReadonlyArray<ValidateInput<U>> :
 	T;
