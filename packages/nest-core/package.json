@@ -23,6 +23,7 @@
   "devDependencies": {
     "@nestjs/typeorm": "^7.1.5",
     "@rhangai/common": "^0.1.1",
+    "jest": "^27.0.4",
     "typeorm": "^0.2.32"
   },
   "peerDependencies": {

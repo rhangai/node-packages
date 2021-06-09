@@ -22,7 +22,8 @@
     "@apollo/gateway": "^0.28.2",
     "@nestjs/graphql": "^7.10.6",
     "@rhangai/common": "^0.1.1",
-    "graphql": "^15.5.0"
+    "graphql": "^15.5.0",
+    "jest": "^27.0.4"
   },
   "peerDependencies": {
     "@nestjs/common": "^7",
