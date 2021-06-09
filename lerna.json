@@ -4,7 +4,8 @@
   "packages": [
     "packages/nest-auth",
     "packages/nest-core",
-    "packages/nest-graphql"
+    "packages/nest-graphql",
+    "packages/node-validator"
   ],
   "useWorkspaces": true
 }
