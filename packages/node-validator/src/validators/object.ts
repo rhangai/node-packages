@@ -1,7 +1,11 @@
 import { createValidatorDecorator } from '../create-validator';
+import { ValidatorMetadataClassStorage } from '../metadata';
 import { Class } from '../util';
-import { validate } from '../validate';
 
 export function IsObject<T>(target: () => Class<T>) {
-	return createValidatorDecorator((value: any) => validate(target(), value));
+	return createValidatorDecorator((value: any) => {
+		const validator = ValidatorMetadataClassStorage.get(target());
+		if (!validator) return {};
+		return validator.validate(value);
+	});
 }
