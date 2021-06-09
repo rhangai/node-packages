@@ -4,15 +4,15 @@
   "description": "Some common functionality for my modules",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
-  "homepage": "https://github.com/rhangai/node-nest-modules#readme",
+  "homepage": "https://github.com/rhangai/node-packages#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "bugs": {
-    "url": "https://github.com/rhangai/node-nest-modules/issues"
+    "url": "https://github.com/rhangai/node-packages/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rhangai/node-nest-modules.git"
+    "url": "git+https://github.com/rhangai/node-packages.git"
   },
   "dependencies": {
     "bignumber.js": "^9.0.1",
