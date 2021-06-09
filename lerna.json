@@ -2,9 +2,9 @@
   "version": "0.1.3",
   "npmClient": "yarn",
   "packages": [
-    "packages/auth",
-    "packages/core",
-    "packages/graphql"
+    "packages/nest-auth",
+    "packages/nest-core",
+    "packages/nest-graphql"
   ],
   "useWorkspaces": true
 }
