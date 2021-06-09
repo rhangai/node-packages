@@ -4,7 +4,7 @@
   "description": "Nest core modules",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
-  "homepage": "https://github.com/rhangai/node-packages#readme",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-core#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "bugs": {

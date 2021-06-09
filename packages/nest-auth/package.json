@@ -7,7 +7,7 @@
     "auth"
   ],
   "author": "rhangai <hangai.renan@gmail.com>",
-  "homepage": "https://github.com/rhangai/node-packages#readme",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-auth#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "bugs": {

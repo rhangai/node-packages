@@ -4,7 +4,7 @@
   "description": "Some common functionality for my modules",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
-  "homepage": "https://github.com/rhangai/node-packages#readme",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/common#readme",
   "license": "MIT",
   "main": "lib/index.js",
   "bugs": {
