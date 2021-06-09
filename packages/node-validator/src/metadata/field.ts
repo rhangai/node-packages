@@ -5,7 +5,7 @@ export class ValidatorMetadataField {
 
 	private validator: IValidator | null = null;
 
-	constructor(private readonly fieldName: string) {}
+	constructor(private readonly fieldName: string | symbol) {}
 
 	validate<T = unknown>(input: any): Promise<T> | T {
 		const value = input[this.inputFieldName ?? this.fieldName];

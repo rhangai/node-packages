@@ -1,12 +1,26 @@
-import { resolveValidator, createValidator, ValidatorParam } from '../create-validator';
+import { createValidator } from '../create-validator';
 import { ValidateError } from '../error';
 import { Class, isPromiseLike } from '../util';
+import { resolveValidator, ValidatorParam } from '../validator/resolve';
 import { IsObject } from './object';
 
-export function IsArray(validatorParam: ValidatorParam) {
+export type ValidatorIsArrayOptions = {
+	minLength?: number | null;
+	maxLength?: number | null;
+};
+
+export function IsArray(validatorParam: ValidatorParam, options?: ValidatorIsArrayOptions) {
 	const validator = resolveValidator(validatorParam);
 	return createValidator((value: any) => {
 		if (value == null || !Array.isArray(value)) throw new ValidateError(`Not an array.`);
+
+		const minLength = options?.minLength;
+		if (minLength != null && value.length < minLength)
+			throw new ValidateError(`Invalid length. Min: ${minLength}. Passed: ${value.length}`);
+		const maxLength = options?.maxLength;
+		if (maxLength != null && value.length > maxLength)
+			throw new ValidateError(`Invalid length. Max: ${maxLength}. Passed: ${value.length}`);
+
 		if (!validator) return value;
 
 		const output: unknown[] = [];
@@ -49,6 +63,6 @@ export function IsArray(validatorParam: ValidatorParam) {
 	});
 }
 
-export function IsArrayOf(target: () => Class<any>) {
-	return IsArray(IsObject(target));
+export function IsArrayOf(target: () => Class<any>, options?: ValidatorIsArrayOptions) {
+	return IsArray(IsObject(target), options);
 }

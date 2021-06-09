@@ -12,15 +12,15 @@ type ValidatorMetadataClassValidateState = {
 };
 
 export class ValidatorMetadataClass<T> {
-	public readonly fields: Record<string, ValidatorMetadataField> = {};
+	public readonly fields: Record<string | symbol, ValidatorMetadataField> = {};
 
 	constructor(public readonly classType: Class<T>) {}
 
-	field(fieldName: string): ValidatorMetadataField {
-		let field = this.fields[fieldName];
+	field(fieldName: string | symbol): ValidatorMetadataField {
+		let field = this.fields[fieldName as any];
 		if (!field) {
 			field = new ValidatorMetadataField(fieldName);
-			this.fields[fieldName] = field;
+			this.fields[fieldName as any] = field;
 		}
 		return field;
 	}

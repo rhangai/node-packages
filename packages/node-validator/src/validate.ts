@@ -1,6 +1,6 @@
 import { Class } from './util';
 import { ValidatorMetadataClass } from './metadata';
-import { resolveValidator, ValidatorParam } from './create-validator';
+import { resolveValidator, ValidatorParam } from './validator/resolve';
 
 export function validate<T>(target: Class<T>, input: unknown): T | Promise<T> {
 	const classStorage = ValidatorMetadataClass.get(target);
