@@ -13,6 +13,6 @@
     "declaration": true,
     "outDir": "lib",
     "paths": {},
-    "types": ["@types/node"]
+    "types": ["@types/node", "@types/jest"]
   }
 }
