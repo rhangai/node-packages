@@ -3,13 +3,19 @@ import { ValidatorMetadataClass } from './metadata';
 import { resolveValidator, ValidatorParam } from './validator/resolve';
 import { ValidateInput } from './validate-input';
 
-export function validate<T>(target: Class<T>, input: ValidateInput<T>): T | Promise<T> {
+export function validate<T, TInput extends ValidateInput<T> = ValidateInput<T>>(
+	target: Class<T>,
+	input: TInput
+): T | Promise<T> {
 	const classStorage = ValidatorMetadataClass.get(target);
 	if (!classStorage) throw new Error(`Invalid validator for ${target.name}`);
 	return classStorage.validate(input);
 }
 
-export async function validateAsync<T>(target: Class<T>, input: ValidateInput<T>): Promise<T> {
+export async function validateAsync<T, TInput extends ValidateInput<T> = ValidateInput<T>>(
+	target: Class<T>,
+	input: TInput
+): Promise<T> {
 	return validate(target, input);
 }
 
