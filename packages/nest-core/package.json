@@ -15,10 +15,7 @@
     "url": "git+https://github.com/rhangai/node-packages.git"
   },
   "dependencies": {
-    "@nestjs/config": "^0.6.3",
-    "@rhangai/class-validator": "^0.3.1",
-    "bignumber.js": "^9.0.1",
-    "dayjs": "^1.10.5"
+    "@nestjs/config": "^0.6.3"
   },
   "devDependencies": {
     "@nestjs/typeorm": "^7.1.5",
