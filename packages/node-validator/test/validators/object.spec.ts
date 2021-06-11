@@ -1,5 +1,5 @@
 import { Decimal } from '@rhangai/common';
-import { validateValue, IsObject, ToString } from '../../src';
+import { validateValue, IsObject, ToString, ToEnum, validateValueAsync } from '../../src';
 
 describe('IsObject', () => {
 	describe('#normal', () => {
@@ -14,7 +14,7 @@ describe('IsObject', () => {
 				[{ name: 'name', extra: '' }, { name: 'name' }],
 			];
 			for (const [input, expected] of values) {
-				const result = await validateValue(input, rules);
+				const result = await validateValue(input as any, rules);
 				expect(result).toEqual(expected);
 			}
 		});
@@ -41,6 +41,53 @@ describe('IsObject', () => {
 			const invalidClassRules = [IsObject(() => InvalidClass)];
 			const result = (async () => validateValue({}, invalidClassRules))();
 			await expect(result).rejects.toThrowError();
+		});
+	});
+});
+
+describe('ToEnum', () => {
+	describe('#normal', () => {
+		const testEnum = async (enumType: any, valid: unknown[], invalid: unknown[]) => {
+			const rules = [ToEnum(enumType)];
+			for (const validValue of valid) {
+				const result = await validateValue(validValue, rules);
+				expect(result).toBeDefined();
+			}
+			for (const invalidValue of invalid) {
+				const result = validateValueAsync(invalidValue, rules);
+				await expect(result).rejects.toThrow();
+			}
+		};
+
+		it('should validate basic numeric enums', async () => {
+			enum BasicEnum {
+				SOMETHING = 0,
+				OTHER = 1,
+			}
+			const validValues = [0, 1];
+			const invalidValues = ['SOMETHING', 'OTHER', 2, -1];
+			await testEnum(BasicEnum, validValues, invalidValues);
+		});
+
+		it('should validate string enums', async () => {
+			enum StringEnum {
+				SOMETHING = 'something-value',
+				OTHER = 'other-value',
+			}
+			const validValues = ['something-value', 'other-value'];
+			const invalidValues = ['SOMETHING', 'OTHER', 2, -1];
+			await testEnum(StringEnum, validValues, invalidValues);
+		});
+
+		it('should validate mixed enums', async () => {
+			enum MixedEnum {
+				SOMETHING = 0,
+				OTHER = 'other-value',
+			}
+
+			const validValues = [0, 'other-value'];
+			const invalidValues = ['SOMETHING', 'OTHER', 2, -1];
+			await testEnum(MixedEnum, validValues, invalidValues);
 		});
 	});
 });

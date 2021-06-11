@@ -11,3 +11,33 @@ export function IsObject<T>(target: () => Class<T>) {
 		return validator.validate(value);
 	});
 }
+
+export function ToEnum<T extends Record<string, string | number>>(enumType: T) {
+	const enumMap: Record<string, any> = {};
+	const values = Object.values(enumType);
+	values.forEach((v: any) => {
+		const enumValue = enumType[v];
+		if (typeof enumValue === 'number') {
+			enumMap[enumValue] = enumValue;
+		} else if (typeof v === 'number') {
+			enumMap[v] = v;
+		} else if (!enumMap[v]) {
+			enumMap[v] = v;
+		}
+	});
+
+	const valuesMap = Object.values(enumMap)
+		.map(JSON.stringify as any)
+		.join(', ');
+
+	return createValidator((value: any) => {
+		if (typeof value !== 'string' && typeof value !== 'number')
+			throw new ValidateError(`Invalid value ${value}. Must be one of [${valuesMap}]`);
+		const enumValue = enumMap[value];
+		if (enumValue == null)
+			throw new ValidateError(
+				`Value must be one of: [${valuesMap}]. Passed ${JSON.stringify(value)}`
+			);
+		return value;
+	});
+}

@@ -6,7 +6,7 @@ type ValidateInputObject<T extends Record<string, unknown>> = {
 
 // prettier-ignore
 export type ValidateInput<T> =
-	T extends string | number ? string | number :
+	T extends string | number ? T | string | number :
 	T extends DateType ? DateTypeInput :
 	T extends Decimal ? DecimalInput :
 	T extends Record<string, any> ? ValidateInputObject<T> :

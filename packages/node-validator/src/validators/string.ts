@@ -3,16 +3,24 @@ import { ValidateError } from '../error';
 
 export type ValidatorToStringOptions = {
 	normalize?: boolean;
+	allowEmpty?: boolean;
 };
 
 export function ToString(options?: ValidatorToStringOptions) {
 	return createValidator((v: unknown) => {
-		if (v == null) throw new ValidateError(`${v} cannot be assigned to string`);
-		else if (typeof v !== 'string' && typeof v !== 'number')
-			throw new ValidateError(`${v} cannot be assigned to string`);
-		let value = `${v}`;
+		let value: string;
+		if (v == null) {
+			value = '';
+		} else if (typeof v !== 'string' && typeof v !== 'number') {
+			throw new ValidateError(`Cannot be assigned to string - ${v}.`);
+		} else {
+			value = `${v}`;
+		}
 		if (options?.normalize !== false) {
 			value = value.trim().replace(/\s+/g, ' ');
+		}
+		if (value === '' && !options?.allowEmpty) {
+			throw new ValidateError(`Cannot be empty`);
 		}
 		return value;
 	});

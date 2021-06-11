@@ -21,3 +21,10 @@ export function validateValue<T>(
 	if (!validator) return value as T;
 	return validator.validate(value);
 }
+
+export async function validateValueAsync<T>(
+	value: ValidateInput<T>,
+	validatorParam: ValidatorParam
+): Promise<T> {
+	return validateValue(value, validatorParam);
+}

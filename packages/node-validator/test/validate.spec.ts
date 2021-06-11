@@ -54,7 +54,14 @@ describe('validate', () => {
 		});
 
 		it('should not validate invalid inputs', async () => {
-			const invalidValues = [null, { name: 'test' }, { age: 100 }, { name: null, age: null }];
+			const invalidValues = [
+				null,
+				{ name: 'test' },
+				{ age: 100 },
+				{ name: null, age: 10, anything: 100 },
+				{ name: 'test', age: null, anything: 100 },
+				{ name: 'test', age: 10, anything: null },
+			];
 			for (const invalidValue of invalidValues) {
 				const result = validateAsync(BaseDto, invalidValue as any);
 				await expect(result).rejects.toThrow();
