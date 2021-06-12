@@ -7,6 +7,7 @@ yarn add --dev @rhangai/eslint-config-typescript \
   eslint \
   prettier \
   eslint-config-airbnb-base \
+  eslint-config-prettier \
   eslint-plugin-import \
   eslint-plugin-prettier \
   @typescript-eslint/eslint-plugin \

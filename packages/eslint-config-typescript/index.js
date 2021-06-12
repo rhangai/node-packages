@@ -1,7 +1,7 @@
 module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: ['@typescript-eslint', 'prettier'],
-	extends: ['eslint-config-airbnb-base'],
+	extends: ['eslint-config-airbnb-base', 'plugin:prettier/recommended'],
 	settings: {
 		'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
 		'import/resolver': {
@@ -15,7 +15,6 @@ module.exports = {
 		'class-methods-use-this': 'off',
 		'function-paren-newline': 'off',
 		'implicit-arrow-linebreak': 'off',
-		indent: ['error', 'tab'],
 		'max-classes-per-file': 'off',
 		'no-continue': 'off',
 		'no-else-return': ['error', { allowElseIf: true }],
@@ -26,22 +25,11 @@ module.exports = {
 		'nonblock-statement-body-position': 'off',
 		'object-curly-newline': 'off',
 		'prefer-destructuring': ['error', { VariableDeclarator: { object: true } }],
-		quotes: ['warn', 'single', { allowTemplateLiterals: true }],
 		'@typescript-eslint/no-floating-promises': 'error',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'@typescript-eslint/no-inferrable-types': 'off',
 		'@typescript-eslint/no-empty-interface': 'off',
 		...createTypescriptRules({
-			'comma-dangle': [
-				'error',
-				{
-					arrays: 'always-multiline',
-					objects: 'always-multiline',
-					imports: 'always-multiline',
-					exports: 'always-multiline',
-					functions: 'never',
-				},
-			],
 			'no-empty-function': ['warn'],
 			'no-redeclare': ['error'],
 			'no-shadow': ['error'],
