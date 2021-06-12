@@ -3,9 +3,11 @@
   "version": "0.2.5",
   "description": "Validator",
   "keywords": [
-    "nest",
-    "util",
-    "utility"
+    "node",
+    "validator",
+    "decorator",
+    "sanitizer",
+    "transformer"
   ],
   "author": "rhangai <hangai.renan@gmail.com>",
   "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/node-validator#readme",

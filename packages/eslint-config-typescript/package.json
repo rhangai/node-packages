@@ -4,6 +4,15 @@
   "description": "Eslint config",
   "main": "index.js",
   "license": "MIT",
+  "author": "rhangai <hangai.renan@gmail.com>",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/eslint-config-typescript#readme",
+  "bugs": {
+    "url": "https://github.com/rhangai/node-packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhangai/node-packages.git"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
