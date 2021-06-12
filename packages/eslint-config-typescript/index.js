@@ -4,7 +4,11 @@ module.exports = {
 	extends: ['eslint-config-airbnb-base', 'plugin:prettier/recommended'],
 	settings: {
 		'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
+		'import/parsers': {
+			'@typescript-eslint/parser': ['.ts', '.tsx'],
+		},
 		'import/resolver': {
+			typescript: {},
 			node: {
 				extensions: ['.js', '.jsx', '.ts', '.tsx'],
 			},
