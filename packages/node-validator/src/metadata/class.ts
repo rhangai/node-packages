@@ -57,9 +57,8 @@ export class ValidatorMetadataClass<T> {
 
 	validateState(input: unknown, stateParam: ValidatorMetadataClassValidateState): void {
 		const state = stateParam;
-		// eslint-disable-next-line guard-for-in
-		for (const fieldName in this.fields) {
-			if (state.fields[fieldName]) continue;
+		Object.keys(this.fields).forEach((fieldName) => {
+			if (state.fields[fieldName]) return;
 			const field = this.fields[fieldName];
 			state.fields[fieldName] = true;
 			let result: unknown;
@@ -67,7 +66,7 @@ export class ValidatorMetadataClass<T> {
 				result = field.validate(input);
 			} catch (err) {
 				state.errorMap[fieldName] = err;
-				continue;
+				return;
 			}
 			if (isPromiseLike(result)) {
 				state.promises.push(
@@ -83,7 +82,7 @@ export class ValidatorMetadataClass<T> {
 			} else {
 				state.result[fieldName] = result;
 			}
-		}
+		});
 	}
 
 	static assert<T>(classType: Class<T>): ValidatorMetadataClass<T> {

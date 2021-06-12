@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js';
 
 export type DecimalInput = string | BigNumber | number;
 export type Decimal = BigNumber;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+// eslint-disable-next-line no-redeclare, @typescript-eslint/no-redeclare
 export const Decimal = BigNumber.clone();
 
 export function decimalIsValue(v: unknown): v is Decimal {

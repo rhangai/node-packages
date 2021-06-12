@@ -101,7 +101,7 @@ describe('validate', () => {
 		it('should validate an async function', async () => {
 			const value = {};
 			const result = validateAsync(AsyncDto, { value, chained: 1, multichained: 10 });
-			await expect(result).resolves.toEqual({ value, chained: 1, multichained: `v10` });
+			await expect(result).resolves.toEqual({ value, chained: 1, multichained: 'v10' });
 		});
 
 		it('should error on an async function', async () => {

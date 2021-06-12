@@ -1,9 +1,11 @@
 module.exports = {
 	root: true,
-	plugins: ['@rhangai'],
-	extends: ['plugin:@rhangai/typescript'],
+	extends: ['@rhangai/typescript'],
 	parserOptions: {
 		project: './tsconfig.json',
 	},
 	ignorePatterns: ['.eslintrc.js'],
+	env: {
+		jest: true,
+	},
 };

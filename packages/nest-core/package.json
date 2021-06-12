@@ -34,7 +34,7 @@
   "scripts": {
     "prebuild": "rm -rf lib",
     "build": "tsc",
-    "lint": "eslint src",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
     "lint:fix": "yarn run -s lint --fix",
     "preversion": "yarn run -s build",
     "test": "echo \"Error: run tests from root\" && exit 1"

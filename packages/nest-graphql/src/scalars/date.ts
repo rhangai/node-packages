@@ -1,5 +1,5 @@
-import { GraphQLScalarType, Kind } from 'graphql';
 import { dateParse, DateTypeInput } from '@rhangai/common';
+import { GraphQLScalarType, Kind } from 'graphql';
 
 type CreateDateScalarOptions = {
 	name: string;

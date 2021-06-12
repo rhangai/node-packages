@@ -1,8 +1,8 @@
 import { DynamicModule, Module, ModuleMetadata, Provider, Type } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AuthExecutionContextService } from './auth-execution-context.service';
-import { IAuthenticator, AUTHENTICATOR_KEY } from './authenticator.interface';
 import { AuthInterceptor } from './auth.interceptor';
+import { IAuthenticator, AUTHENTICATOR_KEY } from './authenticator.interface';
 
 /**
  * Basic auth module

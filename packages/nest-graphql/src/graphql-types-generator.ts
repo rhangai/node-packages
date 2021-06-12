@@ -2,16 +2,11 @@ import { writeFile } from 'fs';
 import { resolve } from 'path';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-	GqlModuleOptions,
-	GraphQLModule,
-	GraphQLTypesLoader,
-	GqlExceptionFilter,
-} from '@nestjs/graphql';
+import { GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 
 export type GraphqlTypesGeneratorOptions = {
 	baseDir: string;
-	scripts: Record<string, GqlModuleOptions>;
+	scripts: { [filename: string]: GqlModuleOptions };
 };
 
 /**
@@ -58,9 +53,11 @@ export class GraphqlTypesGenerator {
 		const generator = new GraphqlTypesGenerator();
 		try {
 			const scriptValues = Object.entries(scripts);
-			for (const [filename, options] of scriptValues) {
-				await generator.write(resolve(baseDir, filename), options);
-			}
+			await Promise.all(
+				scriptValues.map(([filename, options]) =>
+					generator.write(resolve(baseDir, filename), options)
+				)
+			);
 		} finally {
 			await generator.close();
 		}

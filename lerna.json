@@ -1,8 +1,10 @@
 {
   "version": "0.2.4",
   "npmClient": "yarn",
+  "stream": true,
   "packages": [
     "packages/common",
+    "packages/eslint-config-typescript",
     "packages/nest-auth",
     "packages/nest-core",
     "packages/nest-graphql",

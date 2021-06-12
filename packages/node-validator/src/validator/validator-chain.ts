@@ -30,6 +30,7 @@ export class ValidatorChain implements IValidator {
 		}
 		let value = await valueParam;
 		for (let i = index; i < this.validators.length; ++i) {
+			// eslint-disable-next-line no-await-in-loop
 			value = await this.validators[i].validate(value);
 		}
 		return value as T;

@@ -1,7 +1,7 @@
-import { Class } from './util';
 import { ValidatorMetadataClass } from './metadata';
-import { resolveValidator, ValidatorParam } from './validator/resolve';
+import { Class } from './util';
 import { ValidateInput } from './validate-input';
+import { resolveValidator, ValidatorParam } from './validator/resolve';
 
 export function validate<T, TInput extends ValidateInput<T> = ValidateInput<T>>(
 	target: Class<T>,

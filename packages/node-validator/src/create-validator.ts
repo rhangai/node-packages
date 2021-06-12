@@ -1,7 +1,7 @@
-import { Class } from './util';
-import { ValidatorMetadataClass } from './metadata';
-import { resolveValidator, ValidatorParam } from './validator/resolve';
 import { ValidatorDecorator, VALIDATOR_DECORATOR_KEY } from './constants';
+import { ValidatorMetadataClass } from './metadata';
+import { Class } from './util';
+import { resolveValidator, ValidatorParam } from './validator/resolve';
 
 export function createValidator(validatorParam: ValidatorParam): ValidatorDecorator {
 	const validator = resolveValidator(validatorParam);
