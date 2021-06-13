@@ -17,6 +17,7 @@ yarn add --dev @rhangai/eslint-config-typescript \
 
 ```js
 module.exports = {
+	root: true,
 	extends: ['@rhangai/typescript'],
 };
 ```
