@@ -4,39 +4,39 @@ import { GraphQLScalarType, Kind } from 'graphql';
 type CreateDateScalarOptions = {
 	name: string;
 	description?: string;
-	inputFormat: string;
+	format: string;
 };
 
-export function createDateScalar({ name, description, inputFormat }: CreateDateScalarOptions) {
+export function createDateScalar({ name, description, format }: CreateDateScalarOptions) {
 	return new GraphQLScalarType({
 		name,
 		description: description || `${name} type`,
 		serialize(param: DateTypeInput) {
-			const value = dateParse(param, { inputFormat });
-			return value.toString();
+			const value = dateParse(param, { inputFormat: format });
+			return value.format(format);
 		},
 		parseValue(value) {
 			if (typeof value !== 'string') throw new Error(`Invalid value to convert to ${name}.`);
-			return dateParse(value, { inputFormat });
+			return dateParse(value, { inputFormat: format });
 		},
 		parseLiteral(ast) {
 			if (ast.kind !== Kind.STRING) throw new Error(`Invalid literal to convert to ${name}.`);
-			return dateParse(ast.value, { inputFormat });
+			return dateParse(ast.value, { inputFormat: format });
 		},
 	});
 }
 
 export const DateTimeScalar = createDateScalar({
 	name: 'DateTime',
-	inputFormat: 'YYYY-MM-DD HH:mm:ss',
+	format: 'YYYY-MM-DD HH:mm:ss',
 });
 
 export const DateScalar = createDateScalar({
 	name: 'Date',
-	inputFormat: 'YYYY-MM-DD',
+	format: 'YYYY-MM-DD',
 });
 
 export const TimeScalar = createDateScalar({
 	name: 'Time',
-	inputFormat: 'HH:mm:ss',
+	format: 'HH:mm:ss',
 });
