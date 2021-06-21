@@ -44,7 +44,7 @@ export function authExecutionContextGet(
 	} else if ((type as string) === 'graphql') {
 		return {
 			type: 'graphql',
-			storage: executionContext.getArgByIndex(2),
+			storage: executionContext.getArgByIndex(3),
 			executionContext,
 			graphql: {
 				getRoot<T = any>(): T {
