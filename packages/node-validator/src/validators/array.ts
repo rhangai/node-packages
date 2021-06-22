@@ -50,7 +50,6 @@ export function IsArray(validatorParam: ValidatorParam, options?: ValidatorIsArr
 			} else {
 				output.push(result);
 			}
-			output.push(result);
 		}
 		const getOutput = () => {
 			if (Object.keys(errorMap).length > 0) throw new ValidateError('', errorMap);
