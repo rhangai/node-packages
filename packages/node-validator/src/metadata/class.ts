@@ -1,5 +1,6 @@
 import { ValidateError } from '../error';
 import { Class, isPromiseLike } from '../util';
+import { IValidator } from '../validator';
 import { ValidatorMetadataField } from './field';
 
 const VALIDATOR_METADATA_CLASS_STORAGE_KEY = Symbol('@rhangai/validator(class-storage)');
@@ -14,6 +15,8 @@ type ValidatorMetadataClassValidateState = {
 export class ValidatorMetadataClass<T> {
 	public readonly fields: Record<string | symbol, ValidatorMetadataField> = {};
 
+	public classValidator: IValidator | null = null;
+
 	constructor(public readonly classType: Class<T>) {}
 
 	field(fieldName: string | symbol): ValidatorMetadataField {
@@ -23,6 +26,14 @@ export class ValidatorMetadataClass<T> {
 			this.fields[fieldName as any] = field;
 		}
 		return field;
+	}
+
+	addClassValidator(classValidator: IValidator): void {
+		if (this.classValidator) {
+			this.classValidator = this.classValidator.concat(classValidator);
+		} else {
+			this.classValidator = classValidator;
+		}
 	}
 
 	validate(input: unknown): T | Promise<T> {
@@ -47,7 +58,9 @@ export class ValidatorMetadataClass<T> {
 		const getOutput = () => {
 			if (Object.keys(state.errorMap).length > 0)
 				throw new ValidateError(`Error validating ${this.classType.name}`, state.errorMap);
-			return Object.setPrototypeOf(state.result, this.classType.prototype) as T;
+			const result = Object.setPrototypeOf(state.result, this.classType.prototype) as T;
+			if (this.classValidator == null) return result;
+			return this.classValidator.validate(result) as T | Promise<T>;
 		};
 		if (state.promises.length > 0) {
 			return Promise.all(state.promises).then(getOutput);

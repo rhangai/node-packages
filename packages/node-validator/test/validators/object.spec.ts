@@ -1,8 +1,21 @@
+/* eslint-disable no-await-in-loop */
 import { Decimal } from '@rhangai/common';
-import { validateValue, IsObject, ToString, ToEnum, validateValueAsync } from '../../src';
+import {
+	validateValue,
+	IsObject,
+	ToString,
+	ToEnum,
+	validateValueAsync,
+	ClassValidate,
+	ValidateError,
+} from '../../src';
 
 describe('IsObject', () => {
 	describe('#normal', () => {
+		@ClassValidate<BasicDto>((obj) => {
+			if (obj.name === 'InvalidName') throw new ValidateError(`Invalid name`);
+			return obj;
+		})
 		class BasicDto {
 			@ToString()
 			name!: string;
@@ -28,6 +41,7 @@ describe('IsObject', () => {
 				'test',
 				'201x',
 				{ nombre: '' },
+				{ name: 'InvalidName' },
 			];
 			for (const value of invalidValues) {
 				const result = (async () => validateValue(value as any, rules))();

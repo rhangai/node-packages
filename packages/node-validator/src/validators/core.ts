@@ -2,9 +2,17 @@ import { ValidatorDecorator, VALIDATOR_DECORATOR_KEY } from '../constants';
 import { createValidator } from '../create-validator';
 import { ValidatorMetadataClass } from '../metadata';
 import { ValidatorParam } from '../validator/resolve';
+import { ValidatorFunction } from '../validator/validator';
 
 export function Validate(validatorParams?: ValidatorParam) {
 	return createValidator(validatorParams);
+}
+
+export function ClassValidate<T>(callback: (value: T) => T | Promise<T>): ClassDecorator {
+	return (target: any): void => {
+		const classStorage = ValidatorMetadataClass.assert(target);
+		classStorage.addClassValidator(new ValidatorFunction(callback as any));
+	};
 }
 
 export function IsOptional(): ValidatorDecorator {
