@@ -1,3 +1,3 @@
 export { DatabaseModule } from './database.module';
-export { EntityService } from './entity';
+export { EntityService, EntityServiceContext, EntityServiceTransactionContext } from './entity';
 export * from './types';

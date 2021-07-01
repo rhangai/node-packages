@@ -1,13 +1,6 @@
 import { Injectable, Type } from '@nestjs/common';
 import { EntityManager, FindOneOptions } from 'typeorm';
-
-type EntityServiceContext = {
-	entityManager: EntityManager | null;
-};
-
-type EntityServiceTransactionContext<C extends EntityServiceContext> = Omit<C, 'entityManager'> & {
-	entityManager: EntityManager;
-};
+import { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
 
 type EntityServiceEntityOptions<Entity> = FindOneOptions<Entity> & {
 	value: Entity | number;
