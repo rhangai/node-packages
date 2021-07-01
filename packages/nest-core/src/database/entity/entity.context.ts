@@ -5,6 +5,6 @@ export type EntityServiceContext = {
 };
 
 // prettier-ignore
-export type EntityServiceTransactionContext<C extends EntityServiceContext> = Omit<C, 'entityManager'> & {
+export type EntityServiceTransactionContext<C extends EntityServiceContext = EntityServiceContext> = Omit<C, 'entityManager'> & {
 	entityManager: EntityManager;
 };
