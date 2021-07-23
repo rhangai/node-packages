@@ -1,0 +1,54 @@
+{
+  "name": "@rhangai/sheet-util",
+  "version": "0.2.12",
+  "description": "Sheet reader/writer",
+  "keywords": [
+    "node",
+    "sheet",
+    "excel"
+  ],
+  "author": "rhangai <hangai.renan@gmail.com>",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/sheet-util#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "bugs": {
+    "url": "https://github.com/rhangai/node-packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhangai/node-packages.git"
+  },
+  "dependencies": {
+    "exceljs": "^4.2.1",
+    "dayjs": "^1.10.5"
+  },
+  "devDependencies": {
+    "@rhangai/common": "^0.2",
+    "typescript": "^4.3.2"
+  },
+  "peerDependencies": {
+    "@rhangai/common": "^0.2"
+  },
+  "scripts": {
+    "prebuild": "rm -rf lib",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
+    "lint:fix": "yarn run -s lint --fix",
+    "preversion": "yarn run -s build",
+    "test": "jest"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "setupFiles": [
+      "reflect-metadata",
+      "@rhangai/common/setup"
+    ],
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.{ts,tsx}"
+    ]
+  }
+}
