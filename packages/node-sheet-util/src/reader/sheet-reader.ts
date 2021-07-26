@@ -43,7 +43,10 @@ function sheetReaderGetHeaderItem(input: SheetReaderHeaderItemInput): SheetReade
  */
 function sheetReaderCreateRowGetter<HeaderMap extends SheetReaderHeaderMapBase>(
 	headerRow: Row,
-	headerMapParam: HeaderMap
+	headerMapParam: HeaderMap,
+	options: {
+		validateNames?: boolean;
+	}
 ) {
 	const headerCells: Array<{ cell: Cell; text: string; normalizedText: string }> = [];
 	headerRow.eachCell((c) => {
@@ -79,7 +82,7 @@ function sheetReaderCreateRowGetter<HeaderMap extends SheetReaderHeaderMapBase>(
 			errorList.push(`Não foi possível localizar um cabeçalho para ${headerName}`);
 			continue;
 		}
-		if (cellItem.normalizedText !== normalizedName) {
+		if (options.validateNames !== false && cellItem.normalizedText !== normalizedName) {
 			errorList.push(`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem.text}`);
 			continue;
 		}
@@ -122,7 +125,9 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 	if (!worksheet) throw new SheetReaderException(`Planilha inválida`);
 
 	const headerRow = worksheet.getRow(1);
-	const rowGetter = sheetReaderCreateRowGetter(headerRow, options.header);
+	const rowGetter = sheetReaderCreateRowGetter(headerRow, options.header, {
+		validateNames: options.headerValidateNames,
+	});
 
 	const errorList: string[] = [];
 	const maxRow = worksheet.rowCount;

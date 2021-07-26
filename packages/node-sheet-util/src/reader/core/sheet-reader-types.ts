@@ -14,5 +14,6 @@ export type SheetReaderData<HeaderMap extends SheetReaderHeaderMapBase> = {
 export type SheetReaderOptions<HeaderMap extends SheetReaderHeaderMapBase> = {
 	input: FileInputType;
 	header: HeaderMap;
+	headerValidateNames?: boolean;
 	error?: (err: Error) => string | false;
 };
