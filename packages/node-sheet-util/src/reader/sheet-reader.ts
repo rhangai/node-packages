@@ -1,6 +1,6 @@
 import { fileInputDispatch } from '@rhangai/common';
 import dayjs from 'dayjs';
-import { Cell, Row, Workbook } from 'exceljs';
+import XLSX, { CellObject } from 'xlsx';
 import {
 	SheetReaderData,
 	SheetReaderHeaderItem,
@@ -41,70 +41,115 @@ function sheetReaderGetHeaderItem(input: SheetReaderHeaderItemInput): SheetReade
  * });
  * const data = getter(row); // { id: string, nome: string }
  */
-function sheetReaderCreateRowGetter<HeaderMap extends SheetReaderHeaderMapBase>(
-	headerRow: Row,
+function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBase>(
+	worksheet: XLSX.Sheet,
 	headerMapParam: HeaderMap,
 	options: {
 		validateNames?: boolean;
 	}
 ) {
-	const headerCells: Array<{ cell: Cell; text: string; normalizedText: string }> = [];
-	headerRow.eachCell((c) => {
-		const text = c.toString();
-		headerCells.push({
-			cell: c,
-			text,
-			normalizedText: normalizeText(text),
-		});
-	});
-
 	type HeaderMapItem = {
 		key: string;
 		column: number;
 	};
 	const headerMap: HeaderMapItem[] = [];
 	const errorList: string[] = [];
+	const range = XLSX.utils.decode_range(worksheet['!ref']!);
 
-	// eslint-disable-next-line guard-for-in
-	for (const key in headerMapParam) {
-		const header = sheetReaderGetHeaderItem(headerMapParam[key]);
-		const headerName = header.name ?? key;
-		const normalizedName = normalizeText(headerName);
+	let initialRow = 0;
+	if (options.validateNames === false) {
+		// eslint-disable-next-line guard-for-in
+		for (const key in headerMapParam) {
+			const header = sheetReaderGetHeaderItem(headerMapParam[key]);
+			if (!header.column) {
+				errorList.push(`Não há coluna para a chave ${key}.`);
+				continue;
+			}
+			const column =
+				typeof header.column === 'string'
+					? XLSX.utils.decode_col(header.column)
+					: header.column;
+			headerMap.push({
+				key,
+				column,
+			});
+		}
+	} else {
+		initialRow = 1;
+		const headerCells: Array<{
+			cell: XLSX.CellObject;
+			column: number;
+			text: string;
+			normalizedText: string;
+		}> = [];
+		for (let colNum = range.s.c; colNum <= range.e.c; ++colNum) {
+			const cell = worksheet[XLSX.utils.encode_cell({ r: 0, c: colNum })];
+			const text = formatCell(cell);
+			headerCells.push({
+				cell,
+				column: colNum,
+				text,
+				normalizedText: normalizeText(text),
+			});
+		}
 
-		let cellItem;
-		if (header.column == null) {
-			cellItem = headerCells.find((item) => item.normalizedText === normalizedName);
-		} else {
-			const c = headerRow.getCell(header.column);
-			cellItem = headerCells.find((item) => item.cell === c);
-		}
-		if (!cellItem) {
-			errorList.push(`Não foi possível localizar um cabeçalho para ${headerName}`);
-			continue;
-		}
-		if (options.validateNames !== false && cellItem.normalizedText !== normalizedName) {
-			errorList.push(`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem.text}`);
-			continue;
-		}
+		// eslint-disable-next-line guard-for-in
+		for (const key in headerMapParam) {
+			const header = sheetReaderGetHeaderItem(headerMapParam[key]);
+			const headerName = header.name ?? key;
+			const normalizedName = normalizeText(headerName);
+			const column =
+				typeof header.column === 'string'
+					? XLSX.utils.decode_col(header.column)
+					: header.column;
 
-		headerMap.push({
-			key,
-			column: cellItem.cell.fullAddress.col,
-		});
+			let cellItem;
+			if (column == null) {
+				cellItem = headerCells.find((item) => item.normalizedText === normalizedName);
+			} else {
+				cellItem = headerCells.find((item) => item.column === column);
+			}
+			if (!cellItem) {
+				errorList.push(`Não foi possível localizar um cabeçalho para ${headerName}`);
+				continue;
+			}
+			if (cellItem.normalizedText !== normalizedName) {
+				errorList.push(`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem.text}`);
+				continue;
+			}
+
+			headerMap.push({
+				key,
+				column: cellItem.column,
+			});
+		}
 	}
+
 	if (errorList.length > 0) {
 		throw new SheetReaderException(`Cabeçalho inválido`, errorList);
 	}
 
-	return (row: Row) => {
-		if (!row || !row.hasValues) return null;
+	const rowGetter = (rowNum: number) => {
 		const rowValues: Record<string, string> = {};
+		let hasValues = false;
 		headerMap.forEach((item) => {
-			const cell = row.findCell(item.column);
-			rowValues[item.key] = formatCell(cell);
+			const cell = worksheet[XLSX.utils.encode_cell({ r: rowNum, c: item.column })];
+			const value = formatCell(cell);
+			rowValues[item.key] = value;
+			if (value) hasValues = true;
 		});
+		if (!hasValues) return null;
 		return rowValues as SheetReaderData<HeaderMap>;
 	};
+
+	for (let i = initialRow; i <= range.e.r; ++i) {
+		const rowValues = rowGetter(i);
+		if (rowValues == null) continue;
+		yield {
+			row: i,
+			data: rowValues,
+		};
+	}
 }
 
 /**
@@ -114,37 +159,48 @@ function sheetReaderCreateRowGetter<HeaderMap extends SheetReaderHeaderMapBase>(
 export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapBase>(
 	options: SheetReaderForEachOptions<HeaderMap>
 ) {
-	const workbook = new Workbook();
-	await fileInputDispatch(options.input, {
-		buffer: (buffer) => workbook.xlsx.load(buffer),
-		stream: (stream) => workbook.xlsx.read(stream),
-		path: (filePath) => workbook.xlsx.readFile(filePath),
+	const workbook = await fileInputDispatch(options.input, {
+		buffer: (buffer) => XLSX.read(buffer),
+		stream: async (stream) => {
+			const buffer = await new Promise((resolve, reject) => {
+				const buffers: Buffer[] = [];
+				stream.on('data', (chunk) => {
+					buffers.push(chunk);
+				});
+				stream.on('error', (err) => {
+					reject(err);
+				});
+				stream.on('end', () => {
+					resolve(Buffer.concat(buffers));
+				});
+			});
+			return XLSX.read(buffer);
+		},
+		path: (filePath) => XLSX.readFile(filePath),
 	});
 
-	const worksheet = workbook.worksheets[0];
+	const worksheet = (() => {
+		const { sheet } = options;
+		if (!sheet) return workbook.Sheets[workbook.SheetNames[0]];
+		if (typeof sheet === 'string') {
+			return workbook.Sheets[sheet];
+		}
+		return workbook.Sheets[workbook.SheetNames[sheet]];
+	})();
 	if (!worksheet) throw new SheetReaderException(`Planilha inválida`);
-
-	const headerRow = worksheet.getRow(1);
-	const rowGetter = sheetReaderCreateRowGetter(headerRow, options.header, {
+	const rowIterator = sheetReaderCreateRowIterator(worksheet, options.header, {
 		validateNames: options.headerValidateNames,
 	});
 
 	const errorList: string[] = [];
-	const maxRow = worksheet.rowCount;
-	for (let i = 2; i <= maxRow; ++i) {
-		const row = worksheet.getRow(i);
-		const rowValues = rowGetter(row);
-		if (rowValues == null) continue;
+	for (const item of rowIterator) {
 		try {
 			// eslint-disable-next-line no-await-in-loop
-			await options.callback({
-				row: i,
-				data: rowValues,
-			});
+			await options.callback(item);
 		} catch (e) {
 			const errorText = options.error?.(e) ?? '';
 			if (errorText !== false)
-				errorList.push([`Erro na linha ${i}`, errorText].filter(Boolean).join(': '));
+				errorList.push([`Erro na linha ${item.row}`, errorText].filter(Boolean).join(': '));
 		}
 	}
 	if (errorList.length > 0) {
@@ -161,9 +217,8 @@ function normalizeText(key: string): string {
 }
 
 // Format a cell
-function formatCell(cell: Cell | undefined) {
+function formatCell(cell: CellObject | undefined) {
 	if (cell == null) return '';
-	const { value } = cell;
-	if (value instanceof Date) return dayjs(value).format('YYYY-MM-DD');
-	return cell.toString();
+	if (cell.v && cell.v instanceof Date) return dayjs(cell.v).format('YYYY-MM-DD');
+	return cell.w ?? '';
 }
