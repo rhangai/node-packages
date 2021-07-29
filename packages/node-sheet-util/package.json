@@ -20,7 +20,8 @@
   },
   "dependencies": {
     "dayjs": "^1.10.5",
-    "exceljs": "^4.2.1"
+    "exceljs": "^4.2.1",
+    "xlsx": "^0.17.0"
   },
   "devDependencies": {
     "@rhangai/common": "^0.2.15",
