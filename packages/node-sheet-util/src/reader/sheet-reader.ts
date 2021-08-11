@@ -217,8 +217,12 @@ function normalizeText(key: string): string {
 }
 
 // Format a cell
-function formatCell(cell: CellObject | undefined) {
+function formatCell(cell: CellObject | undefined): string {
 	if (cell == null) return '';
-	if (cell.v && cell.v instanceof Date) return dayjs(cell.v).format('YYYY-MM-DD');
-	return cell.w ?? '';
+	if (cell.t === 'b') {
+		return cell.v ? `1` : '';
+	} else if (cell.v instanceof Date) {
+		return dayjs(cell.v).format('YYYY-MM-DD');
+	}
+	return cell.w ?? `${cell.v}`;
 }
