@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/sheet-util",
-  "version": "0.2.18",
+  "version": "0.2.19",
   "description": "Sheet reader/writer",
   "keywords": [
     "node",
