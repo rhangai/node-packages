@@ -1,6 +1,5 @@
 import { LogLevel, Logger as NestLogger } from '@nestjs/common';
 import type { Logger } from 'typeorm';
-
 /**
  *
  */
@@ -43,8 +42,12 @@ export class DatabaseLogger implements Logger {
 	}
 
 	private isLogEnabled(level: LogLevel): boolean {
-		// @ts-ignore
-		return this.internalLogger.isLogLevelEnabled(level);
+		if ('isLevelEnabled' in NestLogger) {
+			return (NestLogger as any).isLevelEnabled(level);
+		} else if ('isLogLevelEnabled' in this.internalLogger) {
+			return (this.internalLogger as any).isLogLevelEnabled(level);
+		}
+		return false;
 	}
 
 	private formatQuery(query: string, parameters?: any) {
