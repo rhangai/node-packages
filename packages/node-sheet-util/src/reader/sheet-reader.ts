@@ -192,19 +192,23 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 		validateNames: options.headerValidateNames,
 	});
 
-	const errorList: string[] = [];
+	const errorList: Error[] = [];
+	const errorMessageList: string[] = [];
 	for (const item of rowIterator) {
 		try {
 			// eslint-disable-next-line no-await-in-loop
 			await options.callback(item);
 		} catch (e) {
+			errorList.push(e);
 			const errorText = options.error?.(e) ?? '';
 			if (errorText !== false)
-				errorList.push([`Erro na linha ${item.row}`, errorText].filter(Boolean).join(': '));
+				errorMessageList.push(
+					[`Erro na linha ${item.row}`, errorText].filter(Boolean).join(': ')
+				);
 		}
 	}
-	if (errorList.length > 0) {
-		throw new SheetReaderException(`Erro ao processar planilha`, errorList);
+	if (errorMessageList.length > 0) {
+		throw new SheetReaderException(`Erro ao processar planilha`, errorMessageList, errorList);
 	}
 }
 
