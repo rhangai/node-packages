@@ -1,3 +1,5 @@
+const importRules = require('eslint-config-airbnb-base/rules/imports').rules;
+
 module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: ['@typescript-eslint', 'prettier'],
@@ -82,6 +84,21 @@ module.exports = {
 			'error',
 			{
 				ignore: ['^@@', '^~'],
+			},
+		],
+		'import/no-extraneous-dependencies': [
+			'error',
+			{
+				...importRules['import/no-extraneous-dependencies'][1],
+				devDependencies: importRules[
+					'import/no-extraneous-dependencies'
+				][1].devDependencies.flatMap((devDep) => {
+					const devDepWithTs = devDep.replace(/\bjs(x?)\b/g, 'ts$1');
+					if (devDepWithTs === devDep) {
+						return devDep;
+					}
+					return [devDep, devDepWithTs];
+				}),
 			},
 		],
 		'import/order': [
