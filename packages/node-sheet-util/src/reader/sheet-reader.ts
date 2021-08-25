@@ -208,7 +208,11 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 		}
 	}
 	if (errorMessageList.length > 0) {
-		throw new SheetReaderException(`Erro ao processar planilha`, errorMessageList, errorList);
+		throw new SheetReaderException(
+			[`Erro ao processar planilha`, options.name].filter(Boolean).join(' - '),
+			errorMessageList,
+			errorList
+		);
 	}
 }
 

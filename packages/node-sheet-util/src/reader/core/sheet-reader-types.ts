@@ -12,6 +12,7 @@ export type SheetReaderData<HeaderMap extends SheetReaderHeaderMapBase> = {
 };
 
 export type SheetReaderOptions<HeaderMap extends SheetReaderHeaderMapBase> = {
+	name?: string;
 	input: FileInputType;
 	sheet?: number | string | null;
 	header: HeaderMap;
