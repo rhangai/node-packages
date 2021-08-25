@@ -200,7 +200,7 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 			await options.callback(item);
 		} catch (e) {
 			errorList.push(e);
-			const errorText = options.error?.(e) ?? '';
+			const errorText = options.error?.(e) ?? errorDefaultText(e);
 			if (errorText !== false)
 				errorMessageList.push(
 					[`Erro na linha ${item.row}`, errorText].filter(Boolean).join(': ')
@@ -210,6 +210,12 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 	if (errorMessageList.length > 0) {
 		throw new SheetReaderException(`Erro ao processar planilha`, errorMessageList, errorList);
 	}
+}
+
+function errorDefaultText(e: any) {
+	if (!e || typeof e !== 'object') return '';
+	if (typeof e.getPublicErrorMessage === 'function') return e.getPublicErrorMessage();
+	return '';
 }
 
 // Normalize a text to load

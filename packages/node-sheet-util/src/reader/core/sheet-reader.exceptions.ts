@@ -1,6 +1,6 @@
 export class SheetReaderException extends Error {
 	constructor(
-		private readonly errorMessage: string,
+		public readonly errorMessage: string,
 		private readonly errorMessageList: string[] = [],
 		errorList: Error[] = []
 	) {
@@ -11,6 +11,17 @@ export class SheetReaderException extends Error {
 				formatErrors('Errors', errorList, (e) => `${e.stack || e.toString()}`),
 			].join('\n')
 		);
+	}
+
+	/**
+	 * Get the public error message
+	 */
+	getPublicErrorMessage() {
+		return [
+			// Public error message
+			this.errorMessage,
+			formatErrors('', this.errorMessageList, (m) => m),
+		].join('\n');
 	}
 
 	/**
