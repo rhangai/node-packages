@@ -11,14 +11,15 @@ import { sheetReaderForEach } from './sheet-reader';
  */
 export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBase>(
 	options: SheetReaderOptions<HeaderMap> & {
-		map(data: SheetReaderData<HeaderMap>): Promise<T> | T;
+		map(data: SheetReaderData<HeaderMap>): Promise<T | null | undefined> | T | null | undefined;
 	}
 ) {
 	const result: T[] = [];
 	await sheetReaderForEach({
 		...options,
 		async callback(item) {
-			result.push(await options.map(item.data));
+			const value = await options.map(item.data);
+			if (value != null) result.push(value);
 		},
 	});
 	if (result.length <= 0) {
