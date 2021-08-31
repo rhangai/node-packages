@@ -16,11 +16,13 @@ export function createDateScalar({ name, description, format }: CreateDateScalar
 			return value.format(format);
 		},
 		parseValue(value) {
+			if (!value) return null;
 			if (typeof value !== 'string') throw new Error(`Invalid value to convert to ${name}.`);
 			return dateParse(value, { inputFormat: format });
 		},
 		parseLiteral(ast) {
 			if (ast.kind !== Kind.STRING) throw new Error(`Invalid literal to convert to ${name}.`);
+			if (!ast.value) return null;
 			return dateParse(ast.value, { inputFormat: format });
 		},
 	});
