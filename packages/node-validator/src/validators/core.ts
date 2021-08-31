@@ -14,12 +14,10 @@ export function ClassValidate<T>(callback: (value: T) => T | Promise<T>): ClassD
 		classStorage.addClassValidator(new ValidatorFunction(callback as any));
 	};
 }
-export type ValidatorIsOptionalOptions = {
-	emptyStringAsNull?: boolean;
-};
 
-
-export function IsOptional(options: ValidatorMetadataFieldOptionalOptions = {}): ValidatorDecorator {
+export function IsOptional(
+	options: ValidatorMetadataFieldOptionalOptions = {}
+): ValidatorDecorator {
 	const decorator = ((target: any, propertyKey: string | symbol): void => {
 		const classStorage = ValidatorMetadataClass.assert(target.constructor);
 		classStorage.field(propertyKey).setOptional(options);

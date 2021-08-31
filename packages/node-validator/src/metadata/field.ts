@@ -19,7 +19,11 @@ export class ValidatorMetadataField {
 		if (value == null) {
 			if (this.optional) return null;
 			throw new ValidateError(`Field is required.`);
-		} else if (this.optional?.emptyStringAsNull && typeof value === 'string' && value.trim() === '') {
+		} else if (
+			this.optional?.emptyStringAsNull &&
+			typeof value === 'string' &&
+			value.trim() === ''
+		) {
 			return null;
 		}
 		if (this.validator == null) return value;

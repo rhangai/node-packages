@@ -8,6 +8,7 @@ import {
 	validateValueAsync,
 	ClassValidate,
 	ValidateError,
+	IsOptional,
 } from '../../src';
 
 describe('IsObject', () => {
@@ -55,6 +56,39 @@ describe('IsObject', () => {
 			const invalidClassRules = [IsObject(() => InvalidClass)];
 			const result = (async () => validateValue({}, invalidClassRules))();
 			await expect(result).rejects.toThrowError();
+		});
+	});
+
+	describe('#optional', () => {
+		class BasicDto {
+			@ToString()
+			name!: string;
+
+			@IsOptional({ emptyStringAsNull: true })
+			@ToString()
+			notes!: string;
+		}
+		const rules = [IsObject(() => BasicDto)];
+		it('should validate valid objects', async () => {
+			const values = [
+				[
+					{ name: 'name', notes: '' },
+					{ name: 'name', notes: null },
+				],
+				[
+					{ name: 'name', notes: null },
+					{ name: 'name', notes: null },
+				],
+				[
+					{ name: 'name', notes: 'value' },
+					{ name: 'name', notes: 'value' },
+				],
+				[{ name: 'name' }, { name: 'name', notes: null }],
+			];
+			for (const [input, expected] of values) {
+				const result = await validateValue(input as any, rules);
+				expect(result).toEqual(expected);
+			}
 		});
 	});
 });
