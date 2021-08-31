@@ -1,12 +1,16 @@
 import { ValidateError } from '../error';
 import { IValidator } from '../validator';
 
+export type ValidatorMetadataFieldOptionalOptions = {
+	emptyStringAsNull?: boolean;
+};
+
 export class ValidatorMetadataField {
 	private inputFieldName: string | null = null;
 
 	private validator: IValidator | null = null;
 
-	private optional: boolean = false;
+	private optional: ValidatorMetadataFieldOptionalOptions | null = null;
 
 	constructor(private readonly fieldName: string | symbol) {}
 
@@ -15,13 +19,15 @@ export class ValidatorMetadataField {
 		if (value == null) {
 			if (this.optional) return null;
 			throw new ValidateError(`Field is required.`);
+		} else if (this.optional?.emptyStringAsNull && typeof value === 'string' && value.trim() === '') {
+			return null;
 		}
 		if (this.validator == null) return value;
 		return this.validator.validate(value);
 	}
 
-	setOptional(optional: boolean) {
-		this.optional = !!optional;
+	setOptional(options: ValidatorMetadataFieldOptionalOptions) {
+		this.optional = options;
 	}
 
 	appendValidator(validator: IValidator | null) {

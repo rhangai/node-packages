@@ -1,6 +1,6 @@
 import { ValidatorDecorator, VALIDATOR_DECORATOR_KEY } from '../constants';
 import { createValidator } from '../create-validator';
-import { ValidatorMetadataClass } from '../metadata';
+import { ValidatorMetadataClass, ValidatorMetadataFieldOptionalOptions } from '../metadata';
 import { ValidatorParam } from '../validator/resolve';
 import { ValidatorFunction } from '../validator/validator';
 
@@ -14,11 +14,15 @@ export function ClassValidate<T>(callback: (value: T) => T | Promise<T>): ClassD
 		classStorage.addClassValidator(new ValidatorFunction(callback as any));
 	};
 }
+export type ValidatorIsOptionalOptions = {
+	emptyStringAsNull?: boolean;
+};
 
-export function IsOptional(): ValidatorDecorator {
+
+export function IsOptional(options: ValidatorMetadataFieldOptionalOptions = {}): ValidatorDecorator {
 	const decorator = ((target: any, propertyKey: string | symbol): void => {
 		const classStorage = ValidatorMetadataClass.assert(target.constructor);
-		classStorage.field(propertyKey).setOptional(true);
+		classStorage.field(propertyKey).setOptional(options);
 	}) as ValidatorDecorator;
 	decorator[VALIDATOR_DECORATOR_KEY] = null;
 	return decorator;
