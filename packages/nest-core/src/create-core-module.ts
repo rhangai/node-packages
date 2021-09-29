@@ -1,10 +1,11 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Module, ModuleMetadata } from '@nestjs/common';
 import { ConfigFactory, ConfigModule } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DatabaseModule } from './database';
 
 export type CreateCoreModuleOptions = {
 	ormconfig: TypeOrmModuleOptions;
+	imports?: ModuleMetadata['imports'];
 	configFactory: ConfigFactory<Record<string, any>>;
 };
 
@@ -21,6 +22,7 @@ export function createCoreModule(options: CreateCoreModuleOptions): DynamicModul
 				isGlobal: true,
 				load: [options.configFactory],
 			}),
+			...(options.imports ?? []),
 		],
 	})
 	class CoreModule {}
