@@ -22,8 +22,8 @@ export function DecimalColumn(
 				if (typeof v !== 'string') return null;
 				return new Decimal(v, 10);
 			},
-			to(v: any): string | null {
-				if (v == null || !v) return null;
+			to(v: any): string | null | undefined {
+				if (v == null || !v) return undefined;
 				const decimal = decimalParse(v);
 				decimalAssertRange(decimal, precision, !!negative);
 				return decimal.toFixed(scale);

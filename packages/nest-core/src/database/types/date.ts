@@ -11,8 +11,8 @@ export function DateColumn(options?: ColumnOptions) {
 				if (typeof v !== 'string') return null;
 				return dateParse(v, { inputFormat: 'YYYY-MM-DD' });
 			},
-			to(param: any): string | null {
-				if (param == null || !param) return null;
+			to(param: any): string | null | undefined {
+				if (param == null || !param) return undefined;
 				const obj = dateParse(param, { inputFormat: 'YYYY-MM-DD' });
 				return obj.format('YYYY-MM-DD');
 			},
