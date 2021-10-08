@@ -5,6 +5,7 @@ export type ValidatorToStringOptions = {
 	trim?: boolean;
 	normalize?: boolean;
 	allowEmpty?: boolean;
+	transform?: (v: string) => string;
 };
 
 export function ToString(options?: ValidatorToStringOptions) {
@@ -16,6 +17,9 @@ export function ToString(options?: ValidatorToStringOptions) {
 			throw new ValidateError(`Cannot be assigned to string - ${v}.`);
 		} else {
 			value = `${v}`;
+		}
+		if (options?.transform) {
+			value = options.transform(value);
 		}
 		if (options?.trim !== false) {
 			value = value.trim();
