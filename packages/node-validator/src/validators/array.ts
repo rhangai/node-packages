@@ -31,7 +31,7 @@ export function IsArray(validatorParam: ValidatorParam, options?: ValidatorIsArr
 			try {
 				result = validator.validate(value[i]);
 			} catch (err) {
-				errorMap[`[${i}]`] = err;
+				errorMap[`[${i}]`] = err as any;
 				continue;
 			}
 			if (isPromiseLike(result)) {
