@@ -4,7 +4,7 @@ import { ExceptionFilter } from './exception-filter';
 
 type CreateExceptionFilterSentryOptions = {
 	user?: (exceptionParam: unknown, host: ArgumentsHost) => any;
-	scope?: (scope: any) => void;
+	scope?: (scope: any, exceptionParam: unknown, host: ArgumentsHost) => void;
 };
 
 /**
@@ -38,7 +38,7 @@ export function createExceptionFilterSentry(
 				Sentry.captureException(exceptionParam, (scope: any) => {
 					scope.setContext('host', host as any);
 					scope.setUser(user);
-					options.scope?.(scope);
+					options.scope?.(scope, exceptionParam, host);
 					return scope;
 				});
 			}
