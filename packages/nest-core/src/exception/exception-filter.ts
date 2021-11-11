@@ -14,7 +14,7 @@ import { ToHttpException } from './http.exception';
 export class ExceptionFilter extends BaseExceptionFilter {
 	private logger = new Logger('ExceptionHandler');
 
-	constructor(@Optional() @InjectConfig() private readonly config: any) {
+	constructor(@Optional() @InjectConfig() protected readonly config: any) {
 		super();
 	}
 
