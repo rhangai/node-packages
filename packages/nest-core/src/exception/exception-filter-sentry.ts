@@ -24,11 +24,11 @@ export function createExceptionFilterSentry(
 
 		constructor(@Optional() @InjectConfig() config: any) {
 			super(config);
-			if (config && config.sentry && config.sentry.dns && config.sentry.enabled !== false) {
+			if (config && config.sentry && config.sentry.dsn && config.sentry.enabled !== false) {
 				this.isSentryEnabled = true;
 				Sentry.init({
 					environment: config.debug ? 'development' : 'production',
-					dsn: config.sentry.dns,
+					dsn: config.sentry.dsn,
 				});
 			}
 		}
