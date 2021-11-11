@@ -1,5 +1,8 @@
 import { ExecutionContext, Inject, Injectable } from '@nestjs/common';
-import { authExecutionContextGet, authExecutionContextSetData } from './auth-execution-context';
+import {
+	authExecutionContextGet,
+	authExecutionContextSetStorageData,
+} from './auth-execution-context';
 import { IAuthenticator, AUTHENTICATOR_KEY } from './authenticator.interface';
 
 @Injectable()
@@ -13,7 +16,7 @@ export class AuthExecutionContextService {
 		const authExecutionContext = authExecutionContextGet(executionContext);
 		if (authExecutionContext) {
 			const authdata = await this.authenticator.authenticate(authExecutionContext);
-			authExecutionContextSetData(authExecutionContext, authdata);
+			authExecutionContextSetStorageData(authExecutionContext, authdata);
 		}
 	}
 }
