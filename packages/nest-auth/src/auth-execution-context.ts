@@ -95,10 +95,12 @@ export function authExecutionContextGetStorage(
  * @param authExecutionContext
  * @param authdata
  */
-export function authExecutionContextGetData<TAuthData = unknown>(host: ArgumentsHost): TAuthData {
+export function authExecutionContextGetData<TAuthData = unknown>(
+	host: ArgumentsHost
+): { data: TAuthData } | null {
 	const storageHost = authExecutionContextGetStorage(host);
-	if (!storageHost) throw new Error(`Invalid decorator. Unknown context.`);
-	return storageHost.storage[AUTH_EXECUTION_CONTEXT_DATA_KEY];
+	if (!storageHost) return null;
+	return { data: storageHost.storage[AUTH_EXECUTION_CONTEXT_DATA_KEY] };
 }
 
 /**

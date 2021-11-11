@@ -6,7 +6,8 @@ export function authCreateParamDecorator<TData, TAuthData>(
 ) {
 	return createParamDecorator((data: TData, executionContext: ExecutionContext) => {
 		const authdata = authExecutionContextGetData<TAuthData>(executionContext);
-		if (!authdata) throw new UnauthorizedException();
-		return getter(data, authdata);
+		if (!authdata) throw new Error(`Invalid decorator. Unknown context.`);
+		if (!authdata.data) throw new UnauthorizedException();
+		return getter(data, authdata.data);
 	});
 }
