@@ -44,15 +44,16 @@ export function createExceptionFilterSentry(
 						const http = host.switchToHttp();
 						scope.setContext('http:request', prettyRequest(http.getRequest()));
 					} else if (type === 'graphql') {
+						const info = host.getArgByIndex(3);
 						scope.setContext('graphql', {
-							root: host.getArgByIndex(0),
-							args: host.getArgByIndex(1),
+							fieldName: info?.fieldName,
+							returnType: info?.returnType,
+							args: inspect(host.getArgByIndex(1)),
 						});
-						scope.setContext('graphql:context', host.getArgByIndex(2));
-						scope.setContext('graphql:info', host.getArgByIndex(3));
 					} else {
-						scope.setContext('host:info', {
-							args: host.getArgs(),
+						const args = host.getArgs();
+						args.forEach((v, i) => {
+							scope.setContext(`host:arg${i + 1}`, v);
 						});
 					}
 					options.scope?.(scope, exceptionParam, host);
