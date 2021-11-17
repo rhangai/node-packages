@@ -3,7 +3,13 @@ import { Catch, ArgumentsHost, Optional, Type } from '@nestjs/common';
 import { InjectConfig } from '../config';
 import { ExceptionFilter } from './exception-filter';
 
+type SentryConfig = {
+	enabled?: boolean;
+	dsn?: string;
+};
+
 type CreateExceptionFilterSentryOptions = {
+	config?: SentryConfig;
 	user?: (exceptionParam: unknown, host: ArgumentsHost) => any;
 	scope?: (scope: any, exceptionParam: unknown, host: ArgumentsHost) => void;
 };
@@ -22,13 +28,19 @@ export function createExceptionFilterSentry(
 	class ExceptionFilterSentryClass extends ExceptionFilter {
 		private readonly isSentryEnabled: boolean = false;
 
+		private readonly sentryConfig: SentryConfig;
+
 		constructor(@Optional() @InjectConfig() config: any) {
 			super(config);
-			if (config && config.sentry && config.sentry.dsn && config.sentry.enabled !== false) {
+			this.sentryConfig = {
+				...(config?.sentry ?? {}),
+				...options.config,
+			};
+			if (this.sentryConfig.dsn && this.sentryConfig.enabled !== false) {
 				this.isSentryEnabled = true;
 				Sentry.init({
-					environment: config.debug ? 'development' : 'production',
-					dsn: config.sentry.dsn,
+					environment: config?.debug ? 'development' : 'production',
+					dsn: this.sentryConfig.dsn,
 				});
 			}
 		}
