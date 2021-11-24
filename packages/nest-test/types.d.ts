@@ -1,11 +1,11 @@
-import type { INestApplicationContext, Type } from '@nestjs/common';
-import type { TestingModuleBuilder } from '@nestjs/testing';
+declare module '@rhangai/nest-test/types' {
+	import type { INestApplicationContext, Type } from '@nestjs/common';
+	import type { TestingModuleBuilder } from '@nestjs/testing';
 
-type TestManagerServices<TServices extends Record<string, Type<any>>> = {
-	readonly [K in keyof TServices]: TServices[K] extends Type<infer U> ? U : any;
-};
+	type TestManagerServices<TServices extends Record<string, Type<any>>> = {
+		readonly [K in keyof TServices]: TServices[K] extends Type<infer U> ? U : any;
+	};
 
-declare module '@rhangai/nest-test' {
 	type TestManagerOptions = {
 		http?: boolean;
 		imports?: any[];
@@ -15,8 +15,10 @@ declare module '@rhangai/nest-test' {
 		config?: () => TestManagerOptions;
 		build?: (builder: TestingModuleBuilder) => void | Promise<void>;
 		setup?: (
-			app: INestApplicationContext
+			t: TestManager<any>
 		) => TestManagerSetupParam<any> | Promise<TestManagerSetupParam<any>>;
+		afterEach?: () => void | Promise<void>;
+		afterAll?: () => void | Promise<void>;
 	};
 
 	interface TestManager<TServices extends Record<string, Type<any>> = never> {

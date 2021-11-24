@@ -1,6 +1,6 @@
 import type { Type } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import type { TestManager, TestManagerPlugin } from '@rhangai/nest-test';
+import type { TestManager, TestManagerPlugin } from '@rhangai/nest-test/types';
 
 type TestManagerBuilder<TServices extends Record<string, Type<any>> = never> = {
 	-readonly [K in keyof TestManager<TServices>]?: TestManager<TServices>[K];
@@ -44,7 +44,7 @@ export function createTestFactory(factoryOptions: CreateTestFactoryOptions): Cre
 		}
 		beforeAll(async () => {
 			try {
-				const globalImports = factoryOptions.plugins ?? [];
+				const globalImports = factoryOptions.imports ?? [];
 				const imports = options.imports || [];
 				let http = false;
 				plugins.forEach((p) => {
@@ -80,7 +80,7 @@ export function createTestFactory(factoryOptions: CreateTestFactoryOptions): Cre
 					testManager.services = services;
 				}
 				for (const plugin of plugins) {
-					const extended = await plugin.setup?.(testManager.app);
+					const extended = await plugin.setup?.(testManager as TestManager<TServices>);
 					if (extended != null) {
 						Object.assign(testManager, extended);
 					}
@@ -91,7 +91,15 @@ export function createTestFactory(factoryOptions: CreateTestFactoryOptions): Cre
 				process.exit(1);
 			}
 		});
+		afterEach(async () => {
+			for (const plugin of plugins.reverse()) {
+				await plugin.afterEach?.();
+			}
+		});
 		afterAll(async () => {
+			for (const plugin of plugins.reverse()) {
+				await plugin.afterAll?.();
+			}
 			await testManager.app!.close();
 		});
 

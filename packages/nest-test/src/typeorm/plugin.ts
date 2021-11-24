@@ -1,28 +1,26 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { TestManager } from '@rhangai/nest-test';
+import type { TestManagerPlugin } from '@rhangai/nest-test/types';
 import { EntityManager, QueryRunner, Connection } from 'typeorm';
 import './types';
 
-export function testCreateTypeormPlugin() {
-	return (t: TestManager<any>) => {
-		let queryRunner: QueryRunner;
-		t.addPlugin({
-			build(testModuleBuilder) {
-				testModuleBuilder.overrideProvider(EntityManager).useFactory({
-					inject: [Connection],
-					async factory(connection: Connection) {
-						queryRunner = connection.createQueryRunner();
-						await queryRunner.startTransaction();
-						return queryRunner.manager;
-					},
-				});
-			},
-			setup(app) {
-				const entityManager = app.get<EntityManager>(EntityManager);
-				return { entityManager };
-			},
-		});
-		afterEach(async () => {
+export function testCreateTypeormPlugin(): TestManagerPlugin {
+	let queryRunner: QueryRunner;
+	return {
+		build(testModuleBuilder) {
+			testModuleBuilder.overrideProvider(EntityManager).useFactory({
+				inject: [Connection],
+				async factory(connection: Connection) {
+					queryRunner = connection.createQueryRunner();
+					await queryRunner.startTransaction();
+					return queryRunner.manager;
+				},
+			});
+		},
+		setup(t) {
+			const entityManager = t.app.get<EntityManager>(EntityManager);
+			return { entityManager };
+		},
+		afterEach: async () => {
 			if (!queryRunner) return;
 			if (+process.env.APP_TEST_COMMIT_TRANSACTION!) {
 				await queryRunner.commitTransaction();
@@ -30,6 +28,6 @@ export function testCreateTypeormPlugin() {
 				await queryRunner.rollbackTransaction();
 			}
 			await queryRunner.startTransaction();
-		});
+		},
 	};
 }
