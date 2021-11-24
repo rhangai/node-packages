@@ -16,15 +16,21 @@ export type TestManagerE2E = {
 	) => Promise<{ data: any; response: request.Response }>;
 };
 
-export function testPluginE2E(): TestManagerPlugin {
+export type TestPluginE2EOptions = {
+	path?: string;
+	headers?: Record<string, string>;
+	imports?: () => any[];
+};
+
+export function testPluginE2E(pluginOptions: TestPluginE2EOptions = {}): TestManagerPlugin {
 	const createE2E = (t: TestManager<any>): TestManagerE2E => ({
 		request() {
 			return request(t.httpServer);
 		},
 		async graphql(options: TestManagerE2EGraphqlOptions) {
 			let req: request.Test = request(t.httpServer)
-				.post('/api/admin/graphql')
-				.set({ 'x-auth-userinfo': 'dev' })
+				.post(pluginOptions.path ?? '/graphql')
+				.set(pluginOptions.headers ?? {})
 				.send({ query: options.query(String.raw), variables: options.variables });
 			if (options.setup) {
 				req = options.setup(req);
@@ -41,11 +47,17 @@ export function testPluginE2E(): TestManagerPlugin {
 		},
 	});
 
+	let e2eInstance: any = null;
 	return {
-		config: () => ({ http: true }),
+		config: () => {
+			if (e2eInstance == null) return {};
+			return {
+				http: true,
+				imports: pluginOptions.imports?.(),
+			};
+		},
 		global(t) {
 			let e2eLoaded = false;
-			let e2eInstance: any = null;
 			const e2e = (cb: any) => {
 				if (!e2eLoaded) {
 					e2eLoaded = true;

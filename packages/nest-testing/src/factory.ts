@@ -62,7 +62,7 @@ export function createTestFactory(factoryOptions: CreateTestFactoryOptions): Cre
 				});
 
 				const testModuleBuilder = Test.createTestingModule({
-					imports: [...globalImports, ...imports].filter(Boolean),
+					imports: await Promise.all([...globalImports, ...imports].filter(Boolean)),
 					providers: [],
 				});
 				for (const plugin of plugins) {
