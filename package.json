@@ -30,7 +30,7 @@
     "packages/nest-auth",
     "packages/nest-core",
     "packages/nest-graphql",
-    "packages/nest-test",
+    "packages/nest-testing",
     "packages/node-sheet-util",
     "packages/node-validator"
   ],
