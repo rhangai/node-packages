@@ -14,6 +14,7 @@ declare module '@rhangai/nest-testing/types' {
 	type TestManagerPlugin = {
 		config?: () => TestManagerOptions;
 		build?: (builder: TestingModuleBuilder) => void | Promise<void>;
+		global?: (t: TestManager<any>) => TestManagerSetupParam<any>;
 		setup?: (
 			t: TestManager<any>
 		) => TestManagerSetupParam<any> | Promise<TestManagerSetupParam<any>>;

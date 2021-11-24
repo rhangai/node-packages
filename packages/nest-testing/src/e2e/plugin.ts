@@ -43,7 +43,7 @@ export function testPluginE2E(): TestManagerPlugin {
 
 	return {
 		config: () => ({ http: true }),
-		setup(t) {
+		global(t) {
 			let e2eLoaded = false;
 			let e2eInstance: any = null;
 			const e2e = (cb: any) => {

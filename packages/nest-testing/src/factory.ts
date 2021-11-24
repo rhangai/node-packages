@@ -43,6 +43,12 @@ export function createTestFactory(factoryOptions: CreateTestFactoryOptions): Cre
 		if (factoryOptions.plugins) {
 			factoryOptions.plugins.forEach((p) => testManager.addPlugin!(p));
 		}
+		for (const plugin of plugins) {
+			const extended = plugin.global?.(testManager as TestManager<TServices>);
+			if (extended != null) {
+				Object.assign(testManager, extended);
+			}
+		}
 		beforeAll(async () => {
 			try {
 				const globalImports = factoryOptions.imports ?? [];
