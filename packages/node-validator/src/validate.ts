@@ -19,6 +19,15 @@ export async function validateAsync<T, TInput extends ValidateInput<T> = Validat
 	return validate(target, input);
 }
 
+export function validateArray<T, TInput extends ValidateInput<T> = ValidateInput<T>>(
+	target: Class<T>,
+	input: TInput[]
+): Promise<T[]> {
+	const classStorage = ValidatorMetadataClass.get(target);
+	if (!classStorage) throw new Error(`Invalid validator for ${target.name}`);
+	return Promise.all(input.map((item) => validate(target, item)));
+}
+
 export function validateValue<T>(
 	value: ValidateInput<T>,
 	validatorParam: ValidatorParam
