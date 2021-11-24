@@ -96,28 +96,6 @@ export function createTestFactory(factoryOptions: CreateTestFactoryOptions): Cre
 		});
 
 		const t = testManager as TestManager<TServices>;
-		// createEntityManagerPlugin(t);
-
-		// let e2eLoaded = false;
-		// let e2e: any = null;
-		// t.e2e = (cb) => {
-		// 	if (!e2eLoaded) {
-		// 		e2eLoaded = true;
-		// 		if (!+process.env.APP_TEST_SKIP_E2E!) {
-		// 			// eslint-disable-next-line global-require
-		// 			const { createTestE2E } = require('./plugins/e2e');
-		// 			e2e = createTestE2E(t);
-		// 		}
-		// 	}
-		// 	if (e2e) {
-		// 		cb(e2e);
-		// 	} else {
-		// 		it.skip('e2e', () => {
-		// 			// Não tem E2E
-		// 		});
-		// 	}
-		// };
-
 		return t;
 	};
 }
