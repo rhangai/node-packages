@@ -1,5 +1,5 @@
 /* eslint-disable import/no-unresolved, import/no-extraneous-dependencies */
-import type { TestManager, TestManagerPlugin } from '@rhangai/nest-test/types';
+import type { TestManager, TestManagerPlugin } from '@rhangai/nest-testing/types';
 import request from 'supertest';
 
 type TestManagerE2EGraphqlOptions = {
@@ -16,7 +16,7 @@ export type TestManagerE2E = {
 	) => Promise<{ data: any; response: request.Response }>;
 };
 
-export function testCreateE2EPlugin(): TestManagerPlugin {
+export function testPluginE2E(): TestManagerPlugin {
 	const createE2E = (t: TestManager<any>): TestManagerE2E => ({
 		request() {
 			return request(t.httpServer);

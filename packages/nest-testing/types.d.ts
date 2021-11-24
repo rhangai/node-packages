@@ -1,4 +1,4 @@
-declare module '@rhangai/nest-test/types' {
+declare module '@rhangai/nest-testing/types' {
 	import type { INestApplicationContext, Type } from '@nestjs/common';
 	import type { TestingModuleBuilder } from '@nestjs/testing';
 

@@ -1,9 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import type { TestManagerPlugin } from '@rhangai/nest-test/types';
+/* eslint-disable import/no-unresolved, import/no-extraneous-dependencies */
+import type { TestManagerPlugin } from '@rhangai/nest-testing/types';
 import { EntityManager, QueryRunner, Connection } from 'typeorm';
 import './types';
 
-export function testCreateTypeormPlugin(): TestManagerPlugin {
+export function testPluginTypeorm(): TestManagerPlugin {
 	let queryRunner: QueryRunner;
 	return {
 		build(testModuleBuilder) {

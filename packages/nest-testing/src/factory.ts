@@ -1,6 +1,6 @@
 import type { Type } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import type { TestManager, TestManagerPlugin } from '@rhangai/nest-test/types';
+import type { TestManager, TestManagerPlugin } from '@rhangai/nest-testing/types';
 
 type TestManagerBuilder<TServices extends Record<string, Type<any>> = never> = {
 	-readonly [K in keyof TestManager<TServices>]?: TestManager<TServices>[K];
