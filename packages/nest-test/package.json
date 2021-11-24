@@ -1,0 +1,40 @@
+{
+  "name": "@rhangai/nest-test",
+  "version": "0.3.0",
+  "description": "Nest test services module",
+  "keywords": [
+    "nest",
+    "test",
+    "testing"
+  ],
+  "author": "rhangai <hangai.renan@gmail.com>",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-test#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "types.d.ts",
+  "bugs": {
+    "url": "https://github.com/rhangai/node-packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhangai/node-packages.git"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^7.6.17",
+    "typeorm": "^0.2.41"
+  },
+  "peerDependencies": {
+    "@nestjs/testing": "^7.6.17"
+  },
+  "scripts": {
+    "prebuild": "rm -rf lib",
+    "build": "tsc",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
+    "lint:fix": "yarn run -s lint --fix",
+    "preversion": "yarn run -s build",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
