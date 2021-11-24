@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-core",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "description": "Nest core modules",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@nestjs/typeorm": "^7.1.5",
-    "@rhangai/common": "^0.3.0",
+    "@rhangai/common": "^0.4.0",
     "typeorm": "^0.2.32",
     "typescript": "^4.3.2"
   },

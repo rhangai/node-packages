@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-graphql",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Nest graphql services module",
   "keywords": [
     "nest",
@@ -21,7 +21,7 @@
   "devDependencies": {
     "@apollo/gateway": "^0.28.2",
     "@nestjs/graphql": "^7.10.6",
-    "@rhangai/common": "^0.3.0",
+    "@rhangai/common": "^0.4.0",
     "graphql": "^15.5.0",
     "typescript": "^4.3.2"
   },
