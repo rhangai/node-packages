@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 import type { Type } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import type { TestManager, TestManagerPlugin } from '@rhangai/nest-testing/types';
