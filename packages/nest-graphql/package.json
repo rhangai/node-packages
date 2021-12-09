@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-graphql",
-  "version": "0.4.0",
+  "version": "0.4.5",
   "description": "Nest graphql services module",
   "keywords": [
     "nest",
