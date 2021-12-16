@@ -238,7 +238,7 @@ function formatCell(cell: CellObject | undefined): string {
 	if (cell == null) return '';
 	if (cell.t === 'b') {
 		return cell.v ? `1` : '';
-	} else if (cell.t === 'n') {
+	} else if (cell.t === 'n' && !cell.z) {
 		return `${cell.v}`;
 	} else if (cell.v instanceof Date) {
 		return dayjs(cell.v).format('YYYY-MM-DD');
