@@ -95,6 +95,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 
 		// eslint-disable-next-line guard-for-in
 		for (const key in headerMapParam) {
+			if (headerMapParam[key] == null) continue;
 			const header = sheetReaderGetHeaderItem(headerMapParam[key]);
 			const headerName = header.name ?? key;
 			const normalizedName = normalizeText(headerName);
