@@ -3,6 +3,7 @@ import { FileInputType } from '@rhangai/common';
 export type SheetReaderHeaderItem = {
 	column?: null | string | number;
 	name?: string;
+	validateName?: boolean;
 };
 export type SheetReaderHeaderItemInput = null | number | string | SheetReaderHeaderItem;
 export type SheetReaderHeaderMapBase = Record<string, SheetReaderHeaderItemInput>;

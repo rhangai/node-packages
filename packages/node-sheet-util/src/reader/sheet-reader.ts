@@ -98,29 +98,32 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 			const header = sheetReaderGetHeaderItem(headerMapParam[key]);
 			const headerName = header.name ?? key;
 			const normalizedName = normalizeText(headerName);
-			const column =
+			const headerColumn =
 				typeof header.column === 'string'
 					? XLSX.utils.decode_col(header.column)
 					: header.column;
 
 			let cellItem;
-			if (column == null) {
+			let cellColumn: number;
+			if (headerColumn == null) {
 				cellItem = headerCells.find((item) => item.normalizedText === normalizedName);
+				if (!cellItem) {
+					errorList.push(`Não foi possível localizar um cabeçalho para ${headerName}`);
+					continue;
+				}
+				cellColumn = cellItem.column;
 			} else {
-				cellItem = headerCells.find((item) => item.column === column);
+				cellItem = headerCells.find((item) => item.column === headerColumn);
+				cellColumn = headerColumn;
 			}
-			if (!cellItem) {
-				errorList.push(`Não foi possível localizar um cabeçalho para ${headerName}`);
-				continue;
-			}
-			if (cellItem.normalizedText !== normalizedName) {
-				errorList.push(`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem.text}`);
+			if (header.validateName !== false && cellItem?.normalizedText !== normalizedName) {
+				errorList.push(`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem?.text}`);
 				continue;
 			}
 
 			headerMap.push({
 				key,
-				column: cellItem.column,
+				column: cellColumn,
 			});
 		}
 	}
@@ -198,7 +201,7 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 		try {
 			// eslint-disable-next-line no-await-in-loop
 			await options.callback(item);
-		} catch (e) {
+		} catch (e: any) {
 			errorList.push(e);
 			const errorText = options.error?.(e) ?? errorDefaultText(e);
 			if (errorText !== false)
@@ -235,6 +238,8 @@ function formatCell(cell: CellObject | undefined): string {
 	if (cell == null) return '';
 	if (cell.t === 'b') {
 		return cell.v ? `1` : '';
+	} else if (cell.t === 'n') {
+		return `${cell.v}`;
 	} else if (cell.v instanceof Date) {
 		return dayjs(cell.v).format('YYYY-MM-DD');
 	}
