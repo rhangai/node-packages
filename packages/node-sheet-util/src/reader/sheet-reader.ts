@@ -163,8 +163,11 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapBase>(
 	options: SheetReaderForEachOptions<HeaderMap>
 ) {
+	const workbookOptions = {
+		cellNF: true,
+	};
 	const workbook = await fileInputDispatch(options.input, {
-		buffer: (buffer) => XLSX.read(buffer),
+		buffer: (buffer) => XLSX.read(buffer, workbookOptions),
 		stream: async (stream) => {
 			const buffer = await new Promise((resolve, reject) => {
 				const buffers: Buffer[] = [];
@@ -178,9 +181,9 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 					resolve(Buffer.concat(buffers));
 				});
 			});
-			return XLSX.read(buffer);
+			return XLSX.read(buffer, workbookOptions);
 		},
-		path: (filePath) => XLSX.readFile(filePath),
+		path: (filePath) => XLSX.readFile(filePath, workbookOptions),
 	});
 
 	const worksheet = (() => {
@@ -239,10 +242,10 @@ function formatCell(cell: CellObject | undefined): string {
 	if (cell == null) return '';
 	if (cell.t === 'b') {
 		return cell.v ? `1` : '';
-	} else if (cell.t === 'n' && !cell.z) {
-		return `${cell.v}`;
 	} else if (cell.v instanceof Date) {
 		return dayjs(cell.v).format('YYYY-MM-DD');
+	} else if (cell.t === 'n' && !cell.z) {
+		return `${cell.v}`;
 	}
 	return cell.w ?? `${cell.v}`;
 }
