@@ -1,5 +1,9 @@
 import { FileInputType } from '@rhangai/common';
 
+export interface ISheetReaderLogger {
+	error(err: any): any;
+}
+
 export type SheetReaderHeaderItem = {
 	column?: null | string | number;
 	name?: string;
@@ -18,5 +22,6 @@ export type SheetReaderOptions<HeaderMap extends SheetReaderHeaderMapBase> = {
 	sheet?: number | string | null;
 	header: HeaderMap;
 	headerValidateNames?: boolean;
+	logger?: ISheetReaderLogger | null | false;
 	error?: (err: Error) => string | false;
 };

@@ -5,6 +5,7 @@ import {
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
 import { sheetReaderForEach } from './sheet-reader';
+import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
 
 /**
  * Create a map function
@@ -14,6 +15,8 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 		map(data: SheetReaderData<HeaderMap>): Promise<T | null | undefined> | T | null | undefined;
 	}
 ) {
+	const logger = options.logger ?? sheetReaderGetDefaultLogger();
+
 	const result: T[] = [];
 	await sheetReaderForEach({
 		...options,
@@ -23,7 +26,11 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 		},
 	});
 	if (result.length <= 0) {
-		throw new SheetReaderException(`Nenhum valor foi importado`);
+		const error = new SheetReaderException(`Nenhum valor foi importado`);
+		if (logger) {
+			logger.error(error);
+		}
+		throw error;
 	}
 	return result;
 }

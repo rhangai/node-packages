@@ -9,6 +9,7 @@ import {
 	SheetReaderOptions,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
+import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
 
 export type SheetReaderItem<HeaderMap extends SheetReaderHeaderMapBase> = {
 	row: number;
@@ -163,6 +164,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapBase>(
 	options: SheetReaderForEachOptions<HeaderMap>
 ) {
+	const logger = options.logger ?? sheetReaderGetDefaultLogger();
 	const workbookOptions = {
 		cellNF: true,
 	};
@@ -194,7 +196,13 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 		}
 		return workbook.Sheets[workbook.SheetNames[sheet]];
 	})();
-	if (!worksheet) throw new SheetReaderException(`Planilha inválida`);
+	if (!worksheet) {
+		const error = new SheetReaderException(`Planilha inválida`);
+		if (logger) {
+			logger.error(error);
+		}
+		throw error;
+	}
 	const rowIterator = sheetReaderCreateRowIterator(worksheet, options.header, {
 		validateNames: options.headerValidateNames,
 	});
@@ -206,6 +214,9 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 			// eslint-disable-next-line no-await-in-loop
 			await options.callback(item);
 		} catch (e: any) {
+			if (logger) {
+				logger.error(e);
+			}
 			errorList.push(e);
 			const errorText = options.error?.(e) ?? errorDefaultText(e);
 			if (errorText !== false)
