@@ -6,6 +6,7 @@ export interface ISheetReaderLogger {
 
 export type SheetReaderHeaderItem = {
 	column?: null | string | number;
+	optional?: boolean;
 	name?: string;
 	validateName?: boolean;
 };

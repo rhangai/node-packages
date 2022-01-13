@@ -51,7 +51,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 ) {
 	type HeaderMapItem = {
 		key: string;
-		column: number;
+		column: number | null;
 	};
 	const headerMap: HeaderMapItem[] = [];
 	const errorList: string[] = [];
@@ -106,21 +106,23 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 					: header.column;
 
 			let cellItem;
-			let cellColumn: number;
+			let cellColumn: number | null = null;
 			if (headerColumn == null) {
 				cellItem = headerCells.find((item) => item.normalizedText === normalizedName);
-				if (!cellItem) {
+				if (!cellItem && !header.optional) {
 					errorList.push(`Não foi possível localizar um cabeçalho para ${headerName}`);
 					continue;
 				}
-				cellColumn = cellItem.column;
+				cellColumn = cellItem?.column ?? null;
 			} else {
 				cellItem = headerCells.find((item) => item.column === headerColumn);
 				cellColumn = headerColumn;
-			}
-			if (header.validateName !== false && cellItem?.normalizedText !== normalizedName) {
-				errorList.push(`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem?.text}`);
-				continue;
+				if (header.validateName !== false && cellItem?.normalizedText !== normalizedName) {
+					errorList.push(
+						`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem?.text}`
+					);
+					continue;
+				}
 			}
 
 			headerMap.push({
@@ -138,6 +140,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 		const rowValues: Record<string, string> = {};
 		let hasValues = false;
 		headerMap.forEach((item) => {
+			if (item.column == null) return;
 			const cell = worksheet[XLSX.utils.encode_cell({ r: rowNum, c: item.column })];
 			const value = formatCell(cell);
 			rowValues[item.key] = value;
