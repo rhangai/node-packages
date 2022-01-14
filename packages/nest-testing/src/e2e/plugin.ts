@@ -6,6 +6,7 @@ type TestManagerE2EGraphqlOptions = {
 	query: (gql: typeof String.raw) => string;
 	variables?: Record<string, unknown>;
 	expect?: unknown;
+	spyOn?: () => jest.SpyInstance | jest.SpyInstance[];
 	setup?: (req: request.Test) => request.Test;
 };
 
@@ -28,6 +29,8 @@ export function testPluginE2E(pluginOptions: TestPluginE2EOptions = {}): TestMan
 			return request(t.httpServer);
 		},
 		async graphql(options: TestManagerE2EGraphqlOptions) {
+			const spies: jest.SpyInstance[] = toArray(options.spyOn?.());
+
 			let req: request.Test = request(t.httpServer)
 				.post(pluginOptions.path ?? '/graphql')
 				.set(pluginOptions.headers ?? {})
@@ -43,6 +46,10 @@ export function testPluginE2E(pluginOptions: TestPluginE2EOptions = {}): TestMan
 				},
 			});
 			expect(response.body).not.toHaveProperty('errors');
+			for (const spy of spies) {
+				expect(spy).toHaveBeenCalled();
+				spy.mockRestore();
+			}
 			return { data: response.body?.data, response };
 		},
 	});
@@ -76,4 +83,10 @@ export function testPluginE2E(pluginOptions: TestPluginE2EOptions = {}): TestMan
 			return { e2e };
 		},
 	};
+}
+
+function toArray<T = unknown>(value: T | T[] | null | undefined): T[] {
+	if (value == null) return [];
+	if (Array.isArray(value)) return value;
+	return [value];
 }
