@@ -90,15 +90,18 @@ module.exports = {
 			'error',
 			{
 				...importRules['import/no-extraneous-dependencies'][1],
-				devDependencies: importRules[
-					'import/no-extraneous-dependencies'
-				][1].devDependencies.flatMap((devDep) => {
-					const devDepWithTs = devDep.replace(/\bjs(x?)\b/g, 'ts$1');
-					if (devDepWithTs === devDep) {
-						return devDep;
-					}
-					return [devDep, devDepWithTs];
-				}),
+				devDependencies: [
+					...importRules['import/no-extraneous-dependencies'][1].devDependencies.flatMap(
+						(devDep) => {
+							const devDepWithTs = devDep.replace(/\bjs(x?)\b/g, 'ts$1');
+							if (devDepWithTs === devDep) {
+								return devDep;
+							}
+							return [devDep, devDepWithTs];
+						}
+					),
+					'**/*.stories.{ts,tsx,js,jsx,mdx}',
+				],
 			},
 		],
 		'import/order': [
