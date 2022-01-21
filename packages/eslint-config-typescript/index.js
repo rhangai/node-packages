@@ -110,8 +110,8 @@ module.exports = {
 				groups: [
 					//
 					'builtin',
-					'external',
 					'internal',
+					'external',
 					'parent',
 					'sibling',
 					'index',
@@ -119,27 +119,18 @@ module.exports = {
 				pathGroups: [
 					{
 						pattern: '@nestjs/common',
-						group: 'external',
-						position: 'before',
+						group: 'builtin',
+						position: 'after',
 					},
 					{
 						pattern: '@nestjs/core',
-						group: 'external',
-						position: 'before',
+						group: 'builtin',
+						position: 'after',
 					},
 					{
 						pattern: '@nestjs/*',
-						group: 'external',
-						position: 'before',
-					},
-					{
-						pattern: '{@@**,@@*/**}',
-						group: 'internal',
-						position: 'before',
-					},
-					{
-						pattern: '{~/**,~/*/**}',
-						group: 'internal',
+						group: 'builtin',
+						position: 'after',
 					},
 				],
 				pathGroupsExcludedImportTypes: ['builtin'],
