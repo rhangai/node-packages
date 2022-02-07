@@ -11,11 +11,14 @@ type ValidateInputTagged<T> = {
 };
 
 // prettier-ignore
+type ValidateInputRecursionHelper<TBase, TInferred> = TBase extends TInferred ? TInferred extends TBase ? TInferred : ValidateInput<TInferred> : ValidateInput<TInferred>
+
+// prettier-ignore
 export type ValidateInput<T> =
 	T extends string | number ? T | string | number :
 	T extends DateType ? DateTypeInput :
 	T extends Decimal ? DecimalInput :
-	T extends ValidateInputTagged<infer U> ? ValidateInput<U> :
+	T extends ValidateInputTagged<infer U> ? ValidateInputRecursionHelper<T, U> :
 	T extends Record<string, any> ? ValidateInputObject<T> :
 	T extends Array<infer U> ? Array<ValidateInput<U>> :
 	T extends ReadonlyArray<infer U> ? Array<ValidateInput<U>> :
