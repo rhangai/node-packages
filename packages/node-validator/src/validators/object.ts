@@ -12,6 +12,15 @@ export function IsObject<T>(target: () => Class<T>) {
 	});
 }
 
+export function IsAnyObject() {
+	return createValidator((value: any) => {
+		if (value == null) throw new ValidateError(`Invalid object. (null/undefined)`);
+		if (Array.isArray(value)) throw new ValidateError(`Invalid object. (Array)`);
+		if (typeof value !== 'object') throw new ValidateError(`Invalid object. (${typeof value})`);
+		return value;
+	});
+}
+
 export function ToEnum<T extends Record<string, string | number>>(enumType: T) {
 	const enumMap: Record<string, any> = {};
 	const values = Object.values(enumType);

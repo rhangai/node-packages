@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import { Decimal } from '@rhangai/common';
 import {
+	validate,
 	validateValue,
 	IsObject,
 	ToString,
@@ -9,6 +10,8 @@ import {
 	ClassValidate,
 	ValidateError,
 	IsOptional,
+	IsAnyObject,
+	validateAsync,
 } from '../../src';
 
 describe('IsObject', () => {
@@ -88,6 +91,38 @@ describe('IsObject', () => {
 			for (const [input, expected] of values) {
 				const result = await validateValue(input as any, rules);
 				expect(result).toEqual(expected);
+			}
+		});
+	});
+});
+describe('IsAnyObject', () => {
+	describe('#normal', () => {
+		class BasicDto {
+			@IsAnyObject()
+			value!: Record<string, unknown>;
+		}
+		it('should validate valid objects', async () => {
+			const values = [
+				//
+				{},
+				{ a: 100, b: 200 },
+			];
+			for (const input of values) {
+				const result = await validate(BasicDto, { value: input });
+				expect(result.value).toStrictEqual(input);
+			}
+		});
+		it('should not validate non objects', async () => {
+			const values = [
+				//
+				null,
+				[],
+				[1, 2, 3],
+				Symbol(''),
+			];
+			for (const input of values) {
+				const result = validateAsync(BasicDto, { value: input });
+				await expect(result).rejects.toThrow();
 			}
 		});
 	});
