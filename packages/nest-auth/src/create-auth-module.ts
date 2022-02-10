@@ -1,7 +1,7 @@
 import { DynamicModule, Module, ModuleMetadata, Provider, Type } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD } from '@nestjs/core';
 import { AuthExecutionContextService } from './auth-execution-context.service';
-import { AuthInterceptor } from './auth.interceptor';
+import { AuthGuard } from './auth.guard';
 import { IAuthenticator, AUTHENTICATOR_KEY } from './authenticator.interface';
 
 /**
@@ -20,7 +20,7 @@ export type CreateAuthModuleOptions = ModuleMetadata & {
 	/**
 	 * Provide a global interceptor
 	 */
-	provideGlobalInterceptor?: boolean;
+	provideGlobalGuard?: boolean;
 	/**
 	 * The authenticator type to use
 	 */
@@ -36,10 +36,10 @@ export function createAuthModule(options: CreateAuthModuleOptions): DynamicModul
 		provide: AUTHENTICATOR_KEY,
 		useClass: options.authenticator,
 	});
-	if (options.provideGlobalInterceptor !== false) {
+	if (options.provideGlobalGuard !== false) {
 		providers.push({
-			provide: APP_INTERCEPTOR,
-			useClass: AuthInterceptor,
+			provide: APP_GUARD,
+			useClass: AuthGuard,
 		});
 	}
 	return {
