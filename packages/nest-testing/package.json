@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-testing",
-  "version": "0.4.14",
+  "version": "0.4.19",
   "description": "Nest test services module",
   "keywords": [
     "nest",
