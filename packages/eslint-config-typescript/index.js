@@ -22,6 +22,7 @@ module.exports = {
 		'function-paren-newline': 'off',
 		'implicit-arrow-linebreak': 'off',
 		'max-classes-per-file': 'off',
+		'no-await-in-loop': 'off',
 		'no-continue': 'off',
 		'no-else-return': ['error', { allowElseIf: true }],
 		'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
@@ -141,6 +142,14 @@ module.exports = {
 			},
 		],
 	},
+	overrides: [
+		{
+			files: ['.eslintrc.js'],
+			parserOptions: {
+				createDefaultProgram: true,
+			},
+		},
+	],
 };
 
 function createTypescriptRules(obj) {
