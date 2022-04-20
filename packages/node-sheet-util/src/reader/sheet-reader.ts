@@ -255,10 +255,13 @@ function normalizeText(key: string): string {
 function formatCell(cell: CellObject | undefined): string {
 	if (cell == null) return '';
 	if (cell.t === 'b') {
+		// Boolean type, 1 or ''
 		return cell.v ? `1` : '';
 	} else if (cell.v instanceof Date) {
+		// Date type, return YYYY-MM-DD formatted date
 		return dayjs(cell.v).format('YYYY-MM-DD');
 	} else if (cell.t === 'n' && !cell.z) {
+		// Number type without formatted type
 		return `${cell.v}`;
 	}
 	return cell.w ?? `${cell.v}`;
