@@ -143,7 +143,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 			if (item.column == null) return;
 			const cell = worksheet[XLSX.utils.encode_cell({ r: rowNum, c: item.column })];
 			const value = formatCell(cell);
-			rowValues[item.key] = value;
+			rowValues[item.key] = value.trim();
 			if (value) hasValues = true;
 		});
 		if (!hasValues) return null;
