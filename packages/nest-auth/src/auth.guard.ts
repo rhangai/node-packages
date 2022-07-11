@@ -1,12 +1,19 @@
-import { Injectable, ExecutionContext, CanActivate } from '@nestjs/common';
-import { AuthExecutionContextService } from './auth-execution-context.service';
+import { ExecutionContext, CanActivate } from '@nestjs/common';
+import {
+	AuthExecutionContext,
+	authExecutionContextGet,
+	authExecutionContextSetStorageData,
+} from './auth-execution-context';
 
-@Injectable()
-export class AuthGuard implements CanActivate {
-	constructor(private readonly authExecutionContextService: AuthExecutionContextService) {}
+export abstract class AuthGuard<T> implements CanActivate {
+	abstract authenticate(authExecutionContext: AuthExecutionContext): Promise<T>;
 
 	async canActivate(executionContext: ExecutionContext): Promise<boolean> {
-		await this.authExecutionContextService.apply(executionContext);
+		const authExecutionContext = authExecutionContextGet(executionContext);
+		if (authExecutionContext) {
+			const authdata = await this.authenticate(authExecutionContext);
+			authExecutionContextSetStorageData(authExecutionContext, authdata);
+		}
 		return true;
 	}
 }
