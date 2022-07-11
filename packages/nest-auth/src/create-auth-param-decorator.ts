@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { authExecutionContextGetData } from './auth-execution-context';
 
-export function authCreateParamDecorator<TData, TAuthData>(
+export function createAuthParamDecorator<TData, TAuthData>(
 	getter: (data: TData, authdata: TAuthData) => unknown
 ) {
 	return createParamDecorator((data: TData, executionContext: ExecutionContext) => {

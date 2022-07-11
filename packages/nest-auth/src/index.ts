@@ -1,3 +1,3 @@
 export * from './auth-execution-context';
-export * from './auth.decorators';
-export * from './auth.guard';
+export * from './auth-guard-base';
+export * from './create-auth-param-decorator';
