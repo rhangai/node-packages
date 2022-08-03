@@ -1,7 +1,7 @@
 {
-  "name": "@rhangai/nest-core",
+  "name": "@rhangai/nest-typeorm-util",
   "version": "0.5.0",
-  "description": "Nest core modules",
+  "description": "Nest utilities for typeorm",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
   "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-core#readme",
@@ -16,14 +16,18 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "@nestjs/typeorm": ">=7",
     "@rhangai/common": "^0.5.0",
+    "typeorm": "^0.2.32",
     "typescript": "^4.3.2"
   },
   "peerDependencies": {
     "@nestjs/common": ">=7",
     "@nestjs/core": ">=7",
+    "@nestjs/typeorm": ">=7",
     "@rhangai/common": "^0.5.0",
-    "tslib": "^2"
+    "tslib": "^2",
+    "typeorm": "*"
   },
   "scripts": {
     "prebuild": "rm -rf lib",

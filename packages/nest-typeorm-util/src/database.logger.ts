@@ -4,7 +4,15 @@ import type { Logger } from 'typeorm';
  *
  */
 export class DatabaseLogger implements Logger {
-	constructor(private readonly internalLogger: NestLogger) {}
+	private readonly internalLogger: NestLogger;
+
+	constructor(logger: NestLogger | string) {
+		if (typeof logger === 'string') {
+			this.internalLogger = new NestLogger(logger);
+		} else {
+			this.internalLogger = logger;
+		}
+	}
 
 	logQuery(query: string, parameters?: any[] | undefined) {
 		if (this.isLogEnabled('debug')) {

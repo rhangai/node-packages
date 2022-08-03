@@ -1,4 +1,4 @@
-# @rhangai/nest-core
+# @rhangai/nest-typeorm-util
 
 ## Usage
 
