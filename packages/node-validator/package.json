@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/validator",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Validator",
   "keywords": [
     "node",
@@ -21,7 +21,7 @@
     "url": "git+https://github.com/rhangai/node-packages.git"
   },
   "devDependencies": {
-    "@rhangai/common": "^0.5.0",
+    "@rhangai/common": "^0.6.0",
     "reflect-metadata": "^0.1.13",
     "typescript": "^4.3.2"
   },
