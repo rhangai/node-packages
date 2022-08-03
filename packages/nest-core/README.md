@@ -2,4 +2,10 @@
 
 ## Usage
 
-A few utility modules
+A few utility classes for nest
+
+## ExceptionFilter
+
+```
+
+```

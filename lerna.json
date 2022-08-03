@@ -2,15 +2,6 @@
   "version": "0.5.0",
   "npmClient": "yarn",
   "stream": true,
-  "packages": [
-    "packages/common",
-    "packages/eslint-config-typescript",
-    "packages/nest-auth",
-    "packages/nest-core",
-    "packages/nest-graphql",
-    "packages/nest-testing",
-    "packages/node-sheet-util",
-    "packages/node-validator"
-  ],
+  "packages": ["packages/*"],
   "useWorkspaces": true
 }

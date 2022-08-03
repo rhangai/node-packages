@@ -5,7 +5,6 @@
   "repository": "git@github.com:rhangai/node-packages.git",
   "author": "rhangai <hangai.renan@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@nestjs/common": "^7.6.17",
     "@nestjs/core": "^7.6.17",
@@ -24,15 +23,11 @@
     "ts-jest": "^27.0.3",
     "typescript": "^4.3.2"
   },
+  "resolutions": {
+    "typescript": "^4.7"
+  },
   "workspaces": [
-    "packages/common",
-    "packages/eslint-config-typescript",
-    "packages/nest-auth",
-    "packages/nest-core",
-    "packages/nest-graphql",
-    "packages/nest-testing",
-    "packages/node-sheet-util",
-    "packages/node-validator"
+    "packages/*"
   ],
   "scripts": {
     "preversion": "jest"
@@ -42,5 +37,6 @@
       "packages/common",
       "packages/node-validator"
     ]
-  }
+  },
+  "packageManager": "yarn@3.2.2"
 }

@@ -78,7 +78,7 @@ export class ValidatorMetadataClass<T> {
 			try {
 				result = field.validate(input);
 			} catch (err) {
-				state.errorMap[fieldName] = err;
+				state.errorMap[fieldName] = err as any;
 				return;
 			}
 			if (isPromiseLike(result)) {

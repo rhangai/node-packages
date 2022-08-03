@@ -33,8 +33,8 @@
     "prebuild": "rm -rf lib",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src --ext js,jsx,ts,tsx",
-    "lint:fix": "yarn run -s lint --fix",
-    "preversion": "yarn run -s build",
+    "lint:fix": "yarn run lint --fix",
+    "preversion": "yarn run build",
     "test": "jest"
   },
   "publishConfig": {

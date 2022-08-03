@@ -23,17 +23,18 @@
     "@nestjs/testing": "^7.6.17",
     "@types/supertest": "^2.0.11",
     "supertest": "^6.1.6",
-    "typeorm": "^0.2.41"
+    "typeorm": "^0.2.41",
+    "typescript": "^4.3.2"
   },
   "peerDependencies": {
     "@nestjs/testing": ">=7"
   },
   "scripts": {
     "prebuild": "rm -rf lib",
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src --ext js,jsx,ts,tsx",
-    "lint:fix": "yarn run -s lint --fix",
-    "preversion": "yarn run -s build",
+    "lint:fix": "yarn run lint --fix",
+    "preversion": "yarn run build",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "publishConfig": {
