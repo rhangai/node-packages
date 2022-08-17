@@ -1,6 +1,6 @@
 module.exports = {
 	root: true,
-	extends: ['@rhangai/typescript'],
+	extends: ['./packages/eslint-config-typescript/index.js'],
 	parserOptions: {
 		project: './tsconfig.json',
 	},
@@ -10,5 +10,5 @@ module.exports = {
 	},
 	rules: {
 		'no-await-in-loop': 'off',
-	}
+	},
 };
