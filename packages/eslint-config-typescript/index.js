@@ -5,14 +5,14 @@ module.exports = {
 	plugins: ['@typescript-eslint', 'prettier'],
 	extends: ['eslint-config-airbnb-base', 'plugin:prettier/recommended'],
 	settings: {
-		'import/extensions': ['.js', '.jsx', '.ts', '.tsx'],
+		'import/extensions': ['.js', '.jsx', '.cjs', '.mjs', '.ts', '.tsx', '.mts', '.cts'],
 		'import/parsers': {
-			'@typescript-eslint/parser': ['.ts', '.tsx'],
+			'@typescript-eslint/parser': ['.ts', '.tsx', '.mts', '.cts'],
 		},
 		'import/resolver': {
 			typescript: {},
 			node: {
-				extensions: ['.js', '.jsx', '.ts', '.tsx'],
+				extensions: ['.js', '.jsx', '.cjs', '.mjs', '.ts', '.tsx', '.mts', '.cts'],
 			},
 		},
 	},
@@ -78,13 +78,14 @@ module.exports = {
 					jsx: 'never',
 					ts: 'never',
 					tsx: 'never',
+					mts: 'never',
 				},
 			},
 		],
 		'import/no-unresolved': [
 			'error',
 			{
-				ignore: ['^@@', '^~'],
+				ignore: ['^@@', '^~', '^virtual:'],
 			},
 		],
 		'import/no-extraneous-dependencies': [
