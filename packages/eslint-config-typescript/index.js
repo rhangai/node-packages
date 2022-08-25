@@ -1,19 +1,19 @@
 const importRules = require('eslint-config-airbnb-base/rules/imports').rules;
 
+const extensions = ['.js', '.jsx', '.cjs', '.mjs', '.ts', '.tsx', '.mts', '.cts'];
+
 module.exports = {
 	parser: '@typescript-eslint/parser',
 	plugins: ['@typescript-eslint', 'prettier'],
 	extends: ['eslint-config-airbnb-base', 'plugin:prettier/recommended'],
 	settings: {
-		'import/extensions': ['.js', '.jsx', '.cjs', '.mjs', '.ts', '.tsx', '.mts', '.cts'],
+		'import/extensions': extensions,
 		'import/parsers': {
 			'@typescript-eslint/parser': ['.ts', '.tsx', '.mts', '.cts'],
 		},
 		'import/resolver': {
 			typescript: {},
-			node: {
-				extensions: ['.js', '.jsx', '.cjs', '.mjs', '.ts', '.tsx', '.mts', '.cts'],
-			},
+			node: { extensions },
 		},
 	},
 	rules: {
@@ -78,6 +78,7 @@ module.exports = {
 					jsx: 'never',
 					ts: 'never',
 					tsx: 'never',
+					cts: 'never',
 					mts: 'never',
 				},
 			},
