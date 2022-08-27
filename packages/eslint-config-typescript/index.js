@@ -1,6 +1,7 @@
 const importRules = require('eslint-config-airbnb-base/rules/imports').rules;
 
-const extensions = ['.js', '.jsx', '.cjs', '.mjs', '.ts', '.tsx', '.mts', '.cts'];
+const extensionsJs = ['.js', '.cjs', '.mjs', '.ts', '.mts', '.cts'];
+const extensions = [...extensionsJs, '.jsx', '.tsx'];
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
@@ -96,14 +97,33 @@ module.exports = {
 				devDependencies: [
 					...importRules['import/no-extraneous-dependencies'][1].devDependencies.flatMap(
 						(devDep) => {
-							const devDepWithTs = devDep.replace(/\bjs(x?)\b/g, 'ts$1');
-							if (devDepWithTs === devDep) {
-								return devDep;
+							// Ends with js
+							if (devDep.endsWith('.js')) {
+								const base = devDep.substr(0, devDep.length - 3);
+								return `${base}.{js,cjs,mjs,ts,cts,mts}`;
 							}
-							return [devDep, devDepWithTs];
+
+							// Ends with glob
+							const match = /\{(.*?)\}$/.exec(devDep);
+							if (match) {
+								const set = new Set(match[1].split(','));
+								if (set.has('jsx')) {
+									extensions.forEach((ext) => set.add(ext.substring(1)));
+								} else if (set.has('.jsx')) {
+									extensions.forEach((ext) => set.add(ext));
+								} else if (set.has('js')) {
+									extensionsJs.forEach((ext) => set.add(ext.substring(1)));
+								} else if (set.has('.js')) {
+									extensionsJs.forEach((ext) => set.add(ext));
+								}
+								const base = devDep.substring(0, match.index);
+								const exts = Array.from(set).join(',');
+								return `${base}{${exts}}`;
+							}
+							return devDep;
 						}
 					),
-					'**/*.stories.{ts,tsx,js,jsx,mdx}',
+					'**/*.stories.{cts,mts,ts,tsx,cjs,mjs,js,jsx,mdx}',
 				],
 			},
 		],
