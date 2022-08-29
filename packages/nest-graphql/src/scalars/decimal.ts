@@ -6,7 +6,7 @@ export const DecimalScalar = new GraphQLScalarType({
 	description: 'Decimal type',
 	serialize(param: DecimalInput) {
 		const value = decimalParse(param);
-		return value.toString();
+		return value.toFixed();
 	},
 	parseValue(value) {
 		if (!value) return null;
