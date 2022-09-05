@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-typeorm-util",
-  "version": "0.6.0",
+  "version": "0.6.5",
   "description": "Nest utilities for typeorm",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
