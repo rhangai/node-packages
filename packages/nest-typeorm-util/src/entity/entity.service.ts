@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
+import { EntityRepositoryBase } from './entity-repository-base';
 import { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
+
+type RepositoryLikeConstructor<T extends EntityRepositoryBase<any>> = {
+	new (entityManager: EntityManager): T;
+};
+
+const REPOSITORY_STORAGE = Symbol('repositories');
 
 @Injectable()
 export class EntityService {
@@ -8,12 +15,41 @@ export class EntityService {
 
 	/**
 	 * Get the entity manager from the given context
-	 * @param options
+	 * @param context
 	 * @returns
 	 */
-	entityManager(options: EntityServiceContext | null | undefined): EntityManager {
-		if (!options?.entityManager) return this.entityManagerInstance;
-		return options.entityManager;
+	entityManager(context: EntityServiceContext | null | undefined): EntityManager {
+		if (!context?.entityManager) return this.entityManagerInstance;
+		return context.entityManager;
+	}
+
+	/**
+	 * Get a repository from a given context
+	 * @param context
+	 * @returns The repository instance
+	 */
+	repository<T extends EntityRepositoryBase<any>>(
+		context: EntityServiceContext | null | undefined,
+		RepositoryClass: RepositoryLikeConstructor<T>
+	): T {
+		const entityManager = this.entityManager(context);
+
+		let storage: Map<any, EntityRepositoryBase<any>>;
+		if (REPOSITORY_STORAGE in entityManager) {
+			storage = (entityManager as any)[REPOSITORY_STORAGE];
+		} else {
+			storage = new Map();
+			Object.defineProperty(entityManager, REPOSITORY_STORAGE, {
+				value: storage,
+			});
+		}
+
+		let repository = storage.get(RepositoryClass) as T | undefined;
+		if (!repository) {
+			repository = new RepositoryClass(entityManager);
+			storage.set(RepositoryClass, repository);
+		}
+		return repository;
 	}
 
 	/**
