@@ -3,7 +3,7 @@ import { EntityManager } from 'typeorm';
 import { EntityRepositoryBase } from './entity-repository-base';
 import { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
 
-type RepositoryLikeConstructor<T extends EntityRepositoryBase<any>> = {
+type RepositoryLikeConstructor<T extends EntityRepositoryBase> = {
 	new (entityManager: EntityManager): T;
 };
 
@@ -28,13 +28,14 @@ export class EntityService {
 	 * @param context
 	 * @returns The repository instance
 	 */
-	repository<T extends EntityRepositoryBase<any>>(
+	repository<T extends EntityRepositoryBase>(
 		context: EntityServiceContext | null | undefined,
 		RepositoryClass: RepositoryLikeConstructor<T>
 	): T {
 		const entityManager = this.entityManager(context);
 
-		let storage: Map<any, EntityRepositoryBase<any>>;
+		// Get the repository storage
+		let storage: Map<any, EntityRepositoryBase>;
 		if (REPOSITORY_STORAGE in entityManager) {
 			storage = (entityManager as any)[REPOSITORY_STORAGE];
 		} else {
@@ -44,6 +45,7 @@ export class EntityService {
 			});
 		}
 
+		// Get the repository
 		let repository = storage.get(RepositoryClass) as T | undefined;
 		if (!repository) {
 			repository = new RepositoryClass(entityManager);
