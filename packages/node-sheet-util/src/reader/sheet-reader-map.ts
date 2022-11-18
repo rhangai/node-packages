@@ -4,7 +4,7 @@ import {
 	SheetReaderOptions,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
-import { sheetReaderForEach } from './sheet-reader';
+import { sheetReaderForEach, SheetReaderItem } from './sheet-reader';
 import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
 
 /**
@@ -12,7 +12,10 @@ import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
  */
 export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBase>(
 	options: SheetReaderOptions<HeaderMap> & {
-		map(data: SheetReaderData<HeaderMap>): Promise<T | null | undefined> | T | null | undefined;
+		map(
+			data: SheetReaderData<HeaderMap>,
+			item: SheetReaderItem<HeaderMap>
+		): Promise<T | null | undefined> | T | null | undefined;
 	}
 ) {
 	const logger = options.logger ?? sheetReaderGetDefaultLogger();
@@ -21,7 +24,7 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 	await sheetReaderForEach({
 		...options,
 		async callback(item) {
-			const value = await options.map(item.data);
+			const value = await options.map(item.data, item);
 			if (value != null) result.push(value);
 		},
 	});

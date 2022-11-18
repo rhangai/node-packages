@@ -7,6 +7,7 @@ import {
 	SheetReaderHeaderItemInput,
 	SheetReaderHeaderMapBase,
 	SheetReaderOptions,
+	SheetReaderValues,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
 import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
@@ -14,13 +15,13 @@ import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
 export type SheetReaderItem<HeaderMap extends SheetReaderHeaderMapBase> = {
 	row: number;
 	data: SheetReaderData<HeaderMap>;
+	values: SheetReaderValues<HeaderMap>;
 };
 
 export type SheetReaderForEachOptions<HeaderMap extends SheetReaderHeaderMapBase> =
 	SheetReaderOptions<HeaderMap> & {
 		callback: (item: SheetReaderItem<HeaderMap>) => void | Promise<void>;
 	};
-
 /**
  * Pega um header como se fosse um objeto para normalizar as opções
  */
@@ -85,7 +86,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 		}> = [];
 		for (let colNum = range.s.c; colNum <= range.e.c; ++colNum) {
 			const cell = worksheet[XLSX.utils.encode_cell({ r: 0, c: colNum })];
-			const text = formatCell(cell);
+			const { text } = parseCell(cell);
 			headerCells.push({
 				cell,
 				column: colNum,
@@ -137,25 +138,31 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 	}
 
 	const rowGetter = (rowNum: number) => {
-		const rowValues: Record<string, string> = {};
+		const rowData: Record<string, string> = {};
+		const rowValues: Record<string, unknown> = {};
 		let hasValues = false;
 		headerMap.forEach((item) => {
 			if (item.column == null) return;
 			const cell = worksheet[XLSX.utils.encode_cell({ r: rowNum, c: item.column })];
-			const value = formatCell(cell);
-			rowValues[item.key] = value.trim();
+			const { text, value } = parseCell(cell);
+			rowData[item.key] = text;
+			rowValues[item.key] = value;
 			if (value) hasValues = true;
 		});
 		if (!hasValues) return null;
-		return rowValues as SheetReaderData<HeaderMap>;
+		return {
+			data: rowData as SheetReaderData<HeaderMap>,
+			values: rowValues as SheetReaderValues<HeaderMap>,
+		};
 	};
 
 	for (let i = initialRow; i <= range.e.r; ++i) {
-		const rowValues = rowGetter(i);
-		if (rowValues == null) continue;
+		const row = rowGetter(i);
+		if (row == null) continue;
 		yield {
 			row: i,
-			data: rowValues,
+			data: row.data,
+			values: row.values,
 		};
 	}
 }
@@ -168,8 +175,9 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 	options: SheetReaderForEachOptions<HeaderMap>
 ) {
 	const logger = options.logger ?? sheetReaderGetDefaultLogger();
-	const workbookOptions = {
+	const workbookOptions: XLSX.ParsingOptions = {
 		cellNF: true,
+		cellDates: true,
 	};
 	const workbook = await fileInputDispatch(options.input, {
 		buffer: (buffer) => XLSX.read(buffer, workbookOptions),
@@ -224,7 +232,7 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 			const errorText = options.error?.(e) ?? errorDefaultText(e);
 			if (errorText !== false)
 				errorMessageList.push(
-					[`Erro na linha ${item.row}`, errorText].filter(Boolean).join(': ')
+					[`Erro na linha ${item.row + 1}`, errorText].filter(Boolean).join(': ')
 				);
 		}
 	}
@@ -251,18 +259,39 @@ function normalizeText(key: string): string {
 		.toLowerCase();
 }
 
-// Format a cell
-function formatCell(cell: CellObject | undefined): string {
-	if (cell == null) return '';
-	if (cell.t === 'b') {
+type ParsedCell = {
+	text: string;
+	value: unknown;
+};
+
+// Faz o parse de uma celula
+function parseCell(cell: CellObject | undefined): ParsedCell {
+	if (cell == null) {
+		return {
+			text: '',
+			value: null,
+		};
+	} else if (cell.t === 'b') {
 		// Boolean type, 1 or ''
-		return cell.v ? `1` : '';
+		return {
+			text: cell.v ? `1` : '',
+			value: !!cell.v,
+		};
 	} else if (cell.v instanceof Date) {
 		// Date type, return YYYY-MM-DD formatted date
-		return dayjs(cell.v).format('YYYY-MM-DD');
+		return {
+			text: dayjs(cell.v).format('YYYY-MM-DD'),
+			value: cell.v,
+		};
 	} else if (cell.t === 'n' && !cell.z) {
 		// Number type without formatted type
-		return `${cell.v}`;
+		return {
+			text: `${cell.v}`,
+			value: cell.v,
+		};
 	}
-	return cell.w ?? `${cell.v}`;
+	return {
+		text: (cell.w ?? `${cell.v}`).trim(),
+		value: cell.v,
+	};
 }

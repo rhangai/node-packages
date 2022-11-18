@@ -17,6 +17,10 @@ export type SheetReaderData<HeaderMap extends SheetReaderHeaderMapBase> = {
 	[K in keyof HeaderMap]: string;
 };
 
+export type SheetReaderValues<HeaderMap extends SheetReaderHeaderMapBase> = {
+	[K in keyof HeaderMap]: string | Date | boolean | number;
+};
+
 export type SheetReaderOptions<HeaderMap extends SheetReaderHeaderMapBase> = {
 	name?: string;
 	input: FileInputType;
