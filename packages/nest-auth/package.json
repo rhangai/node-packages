@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-auth",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Nest auth module",
   "keywords": [
     "nest",
