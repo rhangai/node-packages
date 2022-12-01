@@ -42,6 +42,15 @@ module.exports = {
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
 		'@typescript-eslint/no-inferrable-types': 'off',
 		'@typescript-eslint/no-empty-interface': 'off',
+		'@typescript-eslint/no-confusing-non-null-assertion': 'warn',
+		'@typescript-eslint/no-base-to-string': 'warn',
+		'@typescript-eslint/no-misused-promises': 'error',
+		'@typescript-eslint/no-unnecessary-condition': [
+			'error',
+			{
+				allowConstantLoopConditions: false,
+			},
+		],
 		...createTypescriptRules({
 			'no-empty-function': ['warn'],
 			'no-redeclare': ['error'],
