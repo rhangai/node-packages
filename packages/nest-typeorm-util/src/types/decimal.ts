@@ -1,5 +1,6 @@
 import { decimalParse, Decimal } from '@rhangai/common';
 import { Column, ColumnOptions } from 'typeorm';
+import { isFindOperator } from './util';
 
 export type DecimalColumnOptions = Omit<ColumnOptions, 'precision' | 'scale'> & {
 	negative?: boolean;
@@ -17,13 +18,16 @@ export function DecimalColumn(
 		scale,
 		type: 'decimal',
 		transformer: {
-			from(v: string): Decimal | null {
+			from(v: string | null): Decimal | null {
 				if (v == null || !v) return null;
 				if (typeof v !== 'string') return null;
 				return new Decimal(v, 10);
 			},
 			to(v: any): string | null | undefined {
 				if (v == null || !v) return undefined;
+				if (isFindOperator(v)) {
+					return v;
+				}
 				const decimal = decimalParse(v);
 				decimalAssertRange(decimal, precision, !!negative);
 				return decimal.toFixed(scale);
@@ -32,7 +36,7 @@ export function DecimalColumn(
 	});
 }
 
-const DECIMAL_MAX_RANGE: Record<string, Decimal> = {};
+const DECIMAL_MAX_RANGE: Partial<Record<string, Decimal>> = {};
 function decimalAssertRange(decimal: Decimal, precision: number, negative: boolean) {
 	let decimalMax = DECIMAL_MAX_RANGE[precision];
 	if (!decimalMax) {
