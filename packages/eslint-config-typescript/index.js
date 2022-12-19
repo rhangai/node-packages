@@ -191,7 +191,7 @@ module.exports = {
 			},
 		},
 		{
-			files: [extensionsTs.map((ext) => `*${ext}`)],
+			files: [extensionsTs.map((ext) => `**/*${ext}`)],
 			rules: {
 				'default-case': 'off',
 				'@typescript-eslint/switch-exhaustiveness-check': 'error',
