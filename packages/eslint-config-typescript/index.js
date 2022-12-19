@@ -1,7 +1,41 @@
 const importRules = require('eslint-config-airbnb-base/rules/imports').rules;
 
-const extensionsJs = ['.js', '.cjs', '.mjs', '.ts', '.mts', '.cts'];
-const extensions = [...extensionsJs, '.jsx', '.mjsx', '.cjsx', '.tsx', '.mtsx', '.ctsx'];
+const extensionsJs = ['.js', '.cjs', '.mjs'];
+const extensionsTs = ['.ts', '.mts', '.cts'];
+const extensionsCode = [...extensionsJs, ...extensionsTs];
+const extensionsReact = [...extensionsCode, ...extensionsCode.map((ext) => `${ext}x`)];
+
+const MIXED_RULES = {
+	'no-empty-function': ['warn'],
+	'no-redeclare': ['error'],
+	'no-shadow': ['error'],
+	'no-unused-expressions': [
+		'error',
+		{
+			allowTernary: true,
+		},
+	],
+	'no-useless-constructor': ['error'],
+	'no-use-before-define': [
+		'error',
+		{
+			functions: false,
+			classes: false,
+			variables: true,
+			enums: false,
+			typedefs: false,
+			ignoreTypeReferences: true,
+		},
+	],
+	'no-unused-vars': [
+		'warn',
+		{
+			argsIgnorePattern: '^_',
+			caughtErrors: 'none',
+			ignoreRestSiblings: true,
+		},
+	],
+};
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
@@ -23,6 +57,7 @@ module.exports = {
 		},
 	},
 	rules: {
+		...MIXED_RULES,
 		curly: 'off',
 		'class-methods-use-this': 'off',
 		'function-paren-newline': 'off',
@@ -51,37 +86,6 @@ module.exports = {
 				allowConstantLoopConditions: false,
 			},
 		],
-		...createTypescriptRules({
-			'no-empty-function': ['warn'],
-			'no-redeclare': ['error'],
-			'no-shadow': ['error'],
-			'no-unused-expressions': [
-				'error',
-				{
-					allowTernary: true,
-				},
-			],
-			'no-useless-constructor': ['error'],
-			'no-use-before-define': [
-				'error',
-				{
-					functions: false,
-					classes: false,
-					variables: true,
-					enums: false,
-					typedefs: false,
-					ignoreTypeReferences: true,
-				},
-			],
-			'no-unused-vars': [
-				'warn',
-				{
-					argsIgnorePattern: '^_',
-					caughtErrors: 'none',
-					ignoreRestSiblings: true,
-				},
-			],
-		}),
 		'import/prefer-default-export': 'off',
 		'import/extensions': [
 			'error',
@@ -122,13 +126,13 @@ module.exports = {
 							if (match) {
 								const set = new Set(match[1].split(','));
 								if (set.has('jsx')) {
-									extensions.forEach((ext) => set.add(ext.substring(1)));
+									extensionsReact.forEach((ext) => set.add(ext.substring(1)));
 								} else if (set.has('.jsx')) {
-									extensions.forEach((ext) => set.add(ext));
+									extensionsReact.forEach((ext) => set.add(ext));
 								} else if (set.has('js')) {
-									extensionsJs.forEach((ext) => set.add(ext.substring(1)));
+									extensionsCode.forEach((ext) => set.add(ext.substring(1)));
 								} else if (set.has('.js')) {
-									extensionsJs.forEach((ext) => set.add(ext));
+									extensionsCode.forEach((ext) => set.add(ext));
 								}
 								const base = devDep.substring(0, match.index);
 								const exts = Array.from(set).join(',');
@@ -184,6 +188,14 @@ module.exports = {
 			files: ['.eslintrc.js'],
 			parserOptions: {
 				createDefaultProgram: true,
+			},
+		},
+		{
+			files: [extensionsTs.map((ext) => `*${ext}`)],
+			rules: {
+				'default-case': 'off',
+				'@typescript-eslint/switch-exhaustiveness-check': 'error',
+				...createTypescriptRules(MIXED_RULES),
 			},
 		},
 	],
