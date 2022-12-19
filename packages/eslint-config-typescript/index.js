@@ -3,39 +3,7 @@ const importRules = require('eslint-config-airbnb-base/rules/imports').rules;
 const extensionsJs = ['.js', '.cjs', '.mjs'];
 const extensionsTs = ['.ts', '.mts', '.cts'];
 const extensionsCode = [...extensionsJs, ...extensionsTs];
-const extensionsReact = [...extensionsCode, ...extensionsCode.map((ext) => `${ext}x`)];
-
-const MIXED_RULES = {
-	'no-empty-function': ['warn'],
-	'no-redeclare': ['error'],
-	'no-shadow': ['error'],
-	'no-unused-expressions': [
-		'error',
-		{
-			allowTernary: true,
-		},
-	],
-	'no-useless-constructor': ['error'],
-	'no-use-before-define': [
-		'error',
-		{
-			functions: false,
-			classes: false,
-			variables: true,
-			enums: false,
-			typedefs: false,
-			ignoreTypeReferences: true,
-		},
-	],
-	'no-unused-vars': [
-		'warn',
-		{
-			argsIgnorePattern: '^_',
-			caughtErrors: 'none',
-			ignoreRestSiblings: true,
-		},
-	],
-};
+const extensions = [...extensionsCode, ...extensionsCode.map((ext) => `${ext}x`)];
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
@@ -57,7 +25,6 @@ module.exports = {
 		},
 	},
 	rules: {
-		...MIXED_RULES,
 		curly: 'off',
 		'class-methods-use-this': 'off',
 		'function-paren-newline': 'off',
@@ -73,8 +40,41 @@ module.exports = {
 		'nonblock-statement-body-position': 'off',
 		'object-curly-newline': 'off',
 		'prefer-destructuring': ['error', { VariableDeclarator: { object: true } }],
+		'default-case': 'off',
+		...createTypescriptRules({
+			'no-empty-function': ['warn'],
+			'no-redeclare': ['error'],
+			'no-shadow': ['error'],
+			'no-unused-expressions': [
+				'error',
+				{
+					allowTernary: true,
+				},
+			],
+			'no-useless-constructor': ['error'],
+			'no-use-before-define': [
+				'error',
+				{
+					functions: false,
+					classes: false,
+					variables: true,
+					enums: false,
+					typedefs: false,
+					ignoreTypeReferences: true,
+				},
+			],
+			'no-unused-vars': [
+				'warn',
+				{
+					argsIgnorePattern: '^_',
+					caughtErrors: 'none',
+					ignoreRestSiblings: true,
+				},
+			],
+		}),
 		'@typescript-eslint/no-floating-promises': 'error',
 		'@typescript-eslint/explicit-module-boundary-types': 'off',
+		'@typescript-eslint/switch-exhaustiveness-check': 'error',
 		'@typescript-eslint/no-inferrable-types': 'off',
 		'@typescript-eslint/no-empty-interface': 'off',
 		'@typescript-eslint/no-confusing-non-null-assertion': 'warn',
@@ -126,9 +126,9 @@ module.exports = {
 							if (match) {
 								const set = new Set(match[1].split(','));
 								if (set.has('jsx')) {
-									extensionsReact.forEach((ext) => set.add(ext.substring(1)));
+									extensions.forEach((ext) => set.add(ext.substring(1)));
 								} else if (set.has('.jsx')) {
-									extensionsReact.forEach((ext) => set.add(ext));
+									extensions.forEach((ext) => set.add(ext));
 								} else if (set.has('js')) {
 									extensionsCode.forEach((ext) => set.add(ext.substring(1)));
 								} else if (set.has('.js')) {
@@ -188,14 +188,6 @@ module.exports = {
 			files: ['.eslintrc.js'],
 			parserOptions: {
 				createDefaultProgram: true,
-			},
-		},
-		{
-			files: [extensionsTs.map((ext) => `**/*${ext}`)],
-			rules: {
-				'default-case': 'off',
-				'@typescript-eslint/switch-exhaustiveness-check': 'error',
-				...createTypescriptRules(MIXED_RULES),
 			},
 		},
 	],
