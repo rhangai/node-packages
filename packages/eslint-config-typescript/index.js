@@ -40,7 +40,6 @@ module.exports = {
 		'nonblock-statement-body-position': 'off',
 		'object-curly-newline': 'off',
 		'prefer-destructuring': ['error', { VariableDeclarator: { object: true } }],
-		'default-case': 'off',
 		...createTypescriptRules({
 			'no-empty-function': ['warn'],
 			'no-redeclare': ['error'],
