@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/eslint-config-typescript",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "Eslint config",
   "main": "index.js",
   "license": "MIT",
