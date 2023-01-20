@@ -4,7 +4,7 @@ import {
 	SheetReaderOptions,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
-import { sheetReaderForEach, SheetReaderItem } from './sheet-reader';
+import { sheetReaderForEach, SheetReaderItem, SheetReaderItemParam } from './sheet-reader';
 import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
 
 /**
@@ -14,7 +14,8 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 	options: SheetReaderOptions<HeaderMap> & {
 		map(
 			data: SheetReaderData<HeaderMap>,
-			item: SheetReaderItem<HeaderMap>
+			item: SheetReaderItem<HeaderMap>,
+			param: SheetReaderItemParam
 		): Promise<T | null | undefined> | T | null | undefined;
 	}
 ) {
@@ -23,8 +24,8 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 	const result: T[] = [];
 	await sheetReaderForEach({
 		...options,
-		async callback(item) {
-			const value = await options.map(item.data, item);
+		async callback(item, param) {
+			const value = await options.map(item.data, item, param);
 			if (value != null) result.push(value);
 		},
 	});
