@@ -18,9 +18,16 @@ export type SheetReaderItem<HeaderMap extends SheetReaderHeaderMapBase> = {
 	values: SheetReaderValues<HeaderMap>;
 };
 
+export type SheetReaderItemParam = {
+	bail: (err: Error) => never;
+};
+
 export type SheetReaderForEachOptions<HeaderMap extends SheetReaderHeaderMapBase> =
 	SheetReaderOptions<HeaderMap> & {
-		callback: (item: SheetReaderItem<HeaderMap>) => void | Promise<void>;
+		callback: (
+			item: SheetReaderItem<HeaderMap>,
+			param: SheetReaderItemParam
+		) => void | Promise<void>;
 	};
 /**
  * Pega um header como se fosse um objeto para normalizar as opções
@@ -218,29 +225,45 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 		validateNames: options.headerValidateNames,
 	});
 
-	const errorList: Error[] = [];
-	const errorMessageList: string[] = [];
+	// Errors
+	const state = {
+		running: true,
+		hasErrors: false,
+		errorList: [] as Error[],
+		errorMessageList: [] as string[],
+	};
+
+	const callbackParam = {
+		bail(err: Error): never {
+			state.running = false;
+			throw err;
+		},
+	};
+
 	for (const item of rowIterator) {
+		// If bailed, then stop the execution
+		if (!state.running) break;
 		try {
 			// eslint-disable-next-line no-await-in-loop
-			await options.callback(item);
+			await options.callback(item, callbackParam);
 		} catch (e: any) {
 			if (logger) {
 				logger.error(e);
 			}
-			errorList.push(e);
+			state.hasErrors = true;
+			state.errorList.push(e);
 			const errorText = options.error?.(e) ?? errorDefaultText(e);
 			if (errorText !== false)
-				errorMessageList.push(
+				state.errorMessageList.push(
 					[`Erro na linha ${item.row + 1}`, errorText].filter(Boolean).join(': ')
 				);
 		}
 	}
-	if (errorMessageList.length > 0) {
+	if (state.hasErrors) {
 		throw new SheetReaderException(
 			[`Erro ao processar planilha`, options.name].filter(Boolean).join(' - '),
-			errorMessageList,
-			errorList
+			state.errorMessageList,
+			state.errorList
 		);
 	}
 }
