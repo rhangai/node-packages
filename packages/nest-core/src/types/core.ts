@@ -1,12 +1,5 @@
 import { PipeTransform } from '@nestjs/common';
-import {
-	dateParse,
-	dateTryParse,
-	DateType,
-	Decimal,
-	decimalParse,
-	decimalTryParse,
-} from '@rhangai/common';
+import { dateParse, DateType, Decimal, decimalParse } from '@rhangai/common';
 
 export const DatePipe: PipeTransform<any, DateType> = {
 	transform(value) {
@@ -15,8 +8,9 @@ export const DatePipe: PipeTransform<any, DateType> = {
 };
 
 export const DatePipeOptional: PipeTransform<any, DateType | null> = {
-	transform(value) {
-		return dateTryParse(value, { inputFormat: 'YYYY-MM-DD' });
+	transform(input) {
+		if (input == null || input === '') return null;
+		return dateParse(input, { inputFormat: 'YYYY-MM-DD' });
 	},
 };
 
@@ -27,8 +21,9 @@ export const DecimalPipe: PipeTransform<any, Decimal> = {
 };
 
 export const DecimalPipeOptional: PipeTransform<any, Decimal | null> = {
-	transform(value) {
-		return decimalTryParse(value);
+	transform(input) {
+		if (input == null || input === '') return null;
+		return decimalParse(input);
 	},
 };
 

@@ -1,22 +1,35 @@
-import { Decimal, DecimalInput } from './decimal-type';
+import { Result } from '../result';
+import { Decimal } from './decimal-type';
 
-export function decimalTryParse(param: DecimalInput): Decimal | null {
-	let decimal: Decimal;
+/**
+ * Safely parses a decimal
+ */
+export function decimalSafeParse(param: unknown): Result<Decimal> {
+	let decimal: Decimal | undefined;
 	if (typeof param === 'number') {
 		decimal = new Decimal(param);
 	} else if (typeof param === 'string') {
 		decimal = new Decimal(param, 10);
 	} else if (Decimal.isBigNumber(param)) {
 		decimal = param;
-	} else {
-		throw new Error(`Invalid decimal: ${param}`);
 	}
-	if (!decimal.isFinite()) return null;
-	return decimal;
+	if (!decimal || !decimal.isFinite()) {
+		return {
+			success: false,
+			error: `Invalid decimal: ${param}`,
+		};
+	}
+	return {
+		success: true,
+		value: decimal,
+	};
 }
 
-export function decimalParse(param: DecimalInput): Decimal {
-	const decimal = decimalTryParse(param);
-	if (!decimal) throw new Error(`Invalid decimal: ${param}`);
-	return decimal;
+/**
+ * Parses a decimal. Throwing errors
+ */
+export function decimalParse(param: unknown): Decimal {
+	const { success, value, error } = decimalSafeParse(param);
+	if (!success) throw new Error(error ?? `Invalid decimal: ${param}`);
+	return value;
 }
