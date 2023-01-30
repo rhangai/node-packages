@@ -8,6 +8,8 @@ export type DateParseOptions = {
 
 /**
  * Safely parses a date
+ *
+ * Return a result with the date and the status
  */
 export function dateSafeParse(param: unknown, { inputFormat }: DateParseOptions): Result<DateType> {
 	let date: DateType | undefined;
@@ -36,14 +38,6 @@ export function dateSafeParse(param: unknown, { inputFormat }: DateParseOptions)
 		success: true,
 		value: date,
 	};
-}
-
-/**
- * Try to parse a date
- */
-export function dateTryParse(param: DateTypeInput, options: DateParseOptions): DateType | null {
-	const { success, value } = dateSafeParse(param, options);
-	return success ? value : null;
 }
 
 /**
