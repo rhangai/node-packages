@@ -15,6 +15,14 @@ export function dateSafeParse(param: unknown, { inputFormat }: DateParseOptions)
 	let date: DateType | undefined;
 	if (typeof param === 'string') {
 		date = dayjs(param, inputFormat ?? undefined);
+		if (inputFormat != null) {
+			if (date.format(inputFormat) !== param) {
+				return {
+					success: false,
+					error: `Invalid date format. Expected ${inputFormat}. Given ${param}`,
+				};
+			}
+		}
 	} else if (param instanceof Date) {
 		date = dayjs(param);
 	} else if (isDayjs(param)) {
@@ -25,14 +33,6 @@ export function dateSafeParse(param: unknown, { inputFormat }: DateParseOptions)
 			success: false,
 			error: `Invalid date. Expected ${inputFormat}. Given ${param}`,
 		};
-	}
-	if (inputFormat != null) {
-		if (date.format(inputFormat) !== param) {
-			return {
-				success: false,
-				error: `Invalid date format. Expected ${inputFormat}. Given ${param}`,
-			};
-		}
 	}
 	return {
 		success: true,
