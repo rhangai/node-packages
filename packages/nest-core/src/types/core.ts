@@ -2,8 +2,8 @@ import { PipeTransform } from '@nestjs/common';
 import { dateParse, DateType, Decimal, decimalParse } from '@rhangai/common';
 
 export const DatePipe: PipeTransform<any, DateType> = {
-	transform(value) {
-		return dateParse(value, { inputFormat: 'YYYY-MM-DD' });
+	transform(input) {
+		return dateParse(input, { inputFormat: 'YYYY-MM-DD' });
 	},
 };
 
@@ -15,8 +15,8 @@ export const DatePipeOptional: PipeTransform<any, DateType | null> = {
 };
 
 export const DecimalPipe: PipeTransform<any, Decimal> = {
-	transform(value) {
-		return decimalParse(value);
+	transform(input) {
+		return decimalParse(input);
 	},
 };
 
@@ -28,17 +28,18 @@ export const DecimalPipeOptional: PipeTransform<any, Decimal | null> = {
 };
 
 export const IntPipe: PipeTransform<any, number> = {
-	transform(value) {
-		const number = parseInt(value, 10);
-		if (!Number.isFinite(number)) throw new Error(`${value} is not a number`);
-		return number;
+	transform(input) {
+		const value = parseInt(input, 10);
+		if (!Number.isFinite(value)) throw new Error(`${input} is not a number`);
+		return value;
 	},
 };
 
 export const IntPipeOptional: PipeTransform<any, number | null> = {
-	transform(value) {
-		const number = parseInt(value, 10);
-		if (!Number.isFinite(number)) return null;
-		return number;
+	transform(input) {
+		if (input == null || input === '') return null;
+		const value = parseInt(input, 10);
+		if (!Number.isFinite(value)) return null;
+		return value;
 	},
 };
