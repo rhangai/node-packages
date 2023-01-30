@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nest-typeorm-util",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Nest utilities for typeorm",
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@nestjs/typeorm": ">=7",
-    "@rhangai/common": "^0.8.0",
+    "@rhangai/common": "^0.8.1",
     "typeorm": "^0.2.32",
     "typescript": "^4.3.2"
   },
