@@ -1,5 +1,7 @@
 import { LogLevel, Logger as NestLogger } from '@nestjs/common';
+import { unreachableIgnore } from '@rhangai/common';
 import type { Logger } from 'typeorm';
+
 /**
  *
  */
@@ -40,12 +42,22 @@ export class DatabaseLogger implements Logger {
 	}
 
 	log(level: 'log' | 'info' | 'warn', message: any) {
-		if (level === 'log') {
-			this.internalLogger.log(message);
-		} else if (level === 'info') {
-			this.internalLogger.debug(message);
-		} else if (level === 'warn') {
-			this.internalLogger.warn(message);
+		switch (level) {
+			case 'log': {
+				this.internalLogger.log(message);
+				break;
+			}
+			case 'info': {
+				this.internalLogger.log(message);
+				break;
+			}
+			case 'warn': {
+				this.internalLogger.log(message);
+				break;
+			}
+			default: {
+				unreachableIgnore(level);
+			}
 		}
 	}
 
