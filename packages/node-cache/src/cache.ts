@@ -60,7 +60,7 @@ export class Cache<TKey = string | number, TValue = unknown> {
 	/**
 	 * Construct the cache
 	 */
-	constructor(options: CacheOptions = {}) {
+	constructor(options?: CacheOptions | number | undefined) {
 		this.options = cacheOptionsNormalize(options);
 	}
 

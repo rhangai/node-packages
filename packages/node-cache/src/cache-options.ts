@@ -5,7 +5,7 @@ export type CacheOptions = {
 	duration?: number;
 	/**
 	 * Duration for cache until it becomes cold. Must be less than duration otherwise
-	 * it wont do anything
+	 * it wont do anything. Defaults to (2/3) of the duration
 	 */
 	durationUntilCold?: number;
 };
@@ -21,9 +21,18 @@ const DEFAULT_DURATION = 30000;
 /**
  * Normalize the cache options
  */
-export function cacheOptionsNormalize(options: CacheOptions): CacheOptionsNormalized {
+export function cacheOptionsNormalize(
+	optionsParam: CacheOptions | number | undefined
+): CacheOptionsNormalized {
+	let options: CacheOptions;
+	if (typeof optionsParam === 'number') {
+		options = { duration: optionsParam };
+	} else {
+		options = optionsParam ?? {};
+	}
+	const duration = options.duration ?? DEFAULT_DURATION;
 	return {
-		duration: options.duration ?? DEFAULT_DURATION,
-		durationUntilCold: options.durationUntilCold ?? Infinity,
+		duration,
+		durationUntilCold: options.durationUntilCold ?? Math.round((duration * 2) / 3),
 	};
 }
