@@ -29,7 +29,8 @@
   "jest": {
     "projects": [
       "packages/common",
-      "packages/node-validator"
+      "packages/node-validator",
+      "packages/node-cache"
     ]
   },
   "packageManager": "yarn@3.2.2"

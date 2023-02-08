@@ -1,0 +1,51 @@
+{
+  "name": "@rhangai/cache",
+  "version": "0.8.1",
+  "description": "Cache for node",
+  "keywords": [
+    "node",
+    "cache",
+    "async"
+  ],
+  "author": "rhangai <hangai.renan@gmail.com>",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/node-cache#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "bugs": {
+    "url": "https://github.com/rhangai/node-packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhangai/node-packages.git"
+  },
+  "dependencies": {
+    "heap": "^0.2.7"
+  },
+  "devDependencies": {
+    "@types/heap": "^0.2.31",
+    "ts-essentials": "^9.3.0",
+    "typescript": "^4.3.2"
+  },
+  "scripts": {
+    "prebuild": "rm -rf lib",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint src --ext js,jsx,ts,tsx",
+    "lint:fix": "yarn run lint --fix",
+    "preversion": "yarn run build",
+    "test": "jest"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "setupFiles": [
+      "reflect-metadata",
+      "@rhangai/common/setup"
+    ],
+    "collectCoverageFrom": [
+      "<rootDir>/src/**/*.{ts,tsx}"
+    ]
+  }
+}
