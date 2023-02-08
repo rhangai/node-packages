@@ -25,7 +25,13 @@ describe('Cache', () => {
 		const cache = new Cache({
 			duration: 100,
 		});
-		const getter = () => ({});
+
+		let globalId = 0;
+		const getter = jest.fn(() => {
+			const id = globalId;
+			globalId += 1;
+			return { id };
+		});
 
 		jest.setSystemTime(0);
 		const item1 = await cache.get(0, getter);
@@ -45,6 +51,7 @@ describe('Cache', () => {
 		expect(item1).toBe(same1);
 		expect(item2).toBe(same2);
 		expect(item3).toBe(same3);
+		expect(getter).toBeCalledTimes(3);
 	});
 
 	it('should return the same value when cold, but triggers an update', async () => {
@@ -73,7 +80,7 @@ describe('Cache', () => {
 	it('should keep items in cache', async () => {
 		const cache = new Cache({
 			duration: 10000,
-			durationUntilCold: 3000,
+			durationUntilCold: 8000,
 		});
 
 		const getter = jest.fn(() => ({}));
@@ -90,7 +97,9 @@ describe('Cache', () => {
 		expect(cache.size()).toBe(2);
 
 		// Still, all 3 items must be in cache
-		jest.setSystemTime(5000);
+		jest.setSystemTime(8000);
+		await cache.get(1, getter);
+		await cache.get(1, getter);
 		await cache.get(1, getter);
 		expect(cache.size()).toBe(2);
 		expect(cache.hasEntry(1)).toBe(true);
@@ -99,10 +108,16 @@ describe('Cache', () => {
 
 		// Since accessed the entry 1 on 5000, it must still be cached
 		jest.setSystemTime(11000);
+		await cache.get(1, getter);
+		await cache.get(1, getter);
+		await cache.get(1, getter);
 		cache.refresh();
 		expect(cache.size()).toBe(1);
 		expect(cache.hasEntry(1)).toBe(true);
 		expect(cache.hasEntry(2)).toBe(false);
 		expect(cache.hasEntry(3)).toBe(false);
+
+		// 4 times the getter will be called (3 times initially, 1 time when cold reloading)
+		expect(getter).toBeCalledTimes(4);
 	});
 });

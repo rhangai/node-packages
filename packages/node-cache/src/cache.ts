@@ -9,6 +9,10 @@ type CacheEntry<TKey, TValue> = {
 	 */
 	valuePromise: Promise<TValue>;
 	/**
+	 * The value when the function is being called cold
+	 */
+	valueUpdatePending: Promise<void> | null;
+	/**
 	 * If the entry is still valid
 	 */
 	invalid: boolean;
@@ -67,9 +71,7 @@ export class Cache<TKey = string | number, TValue = unknown> {
 		if (!entry || !this.isEntryValid(entry, now)) {
 			entry = this.refreshEntry(oldEntry, key, lazyFn, now);
 		} else if (this.isEntryCold(entry, now)) {
-			const result = entry.valuePromise;
-			this.refreshEntry(oldEntry, key, lazyFn, now);
-			return result;
+			this.refreshEntryCold(entry, lazyFn);
 		}
 		return entry.valuePromise;
 	}
@@ -147,14 +149,13 @@ export class Cache<TKey = string | number, TValue = unknown> {
 		const entry: MarkOptional<CacheEntry<TKey, TValue>, 'valuePromise'> = {
 			key,
 			invalid: false,
+			valueUpdatePending: null,
 			createdAt: Date.now(),
 		};
-		entry.valuePromise = Promise.resolve()
-			.then(lazyFn)
-			.catch((err) => {
-				entry.invalid = true;
-				throw err;
-			});
+		entry.valuePromise = Promise.resolve(lazyFn()).catch((err) => {
+			entry.invalid = true;
+			throw err;
+		});
 
 		let result: CacheEntry<TKey, TValue>;
 		if (oldEntry) {
@@ -168,6 +169,32 @@ export class Cache<TKey = string | number, TValue = unknown> {
 		}
 		this.refreshEntryHeap(now);
 		return result;
+	}
+
+	/**
+	 * Faz o refresh de uma entrada no cache
+	 */
+	private refreshEntryCold(
+		entryParam: CacheEntry<TKey, TValue>,
+		lazyFn: () => TValue | Promise<TValue>
+	) {
+		const entry = entryParam;
+		if (!entry.valueUpdatePending) {
+			entry.valueUpdatePending = Promise.resolve(lazyFn()).then(
+				(newValue) => {
+					entry.invalid = false;
+					entry.createdAt = Date.now();
+					entry.valuePromise = Promise.resolve(newValue);
+					entry.valueUpdatePending = null;
+					this.cacheEntryHeap.updateItem(entry);
+					this.refresh();
+				},
+				(err) => {
+					entry.valueUpdatePending = null;
+					throw err;
+				}
+			);
+		}
 	}
 
 	/**
