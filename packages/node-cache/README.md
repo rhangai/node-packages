@@ -6,26 +6,24 @@
 yarn add @rhangai/cache
 ```
 
-## Usage
+## Simple Usage
 
 ```ts
-import { ToString, ToInt, validate } from '@rhangai/validator';
+import { Cache } from '@rhangai/cache';
 
-class MyClass {
-	@ToString()
-	name!: string;
-
-	@ToInt()
-	age!: number;
-}
-
-async function test() {
-	const result = await validate(MyClass, {
-		name: 'John Doe',
-		age: 100,
-	});
+const cache = new Cache<number, User>({
+	duration: 30000,
+	durationUntilCold: 25000,
+});
+function loadUser(id: number) {
 	/*
-	  MyClass { name: 'John Doe', age: 100 }
+		The cache will return the same item as long as the duration is less than the time given
+		If the cache is cold (not expired, only old). The old value will be returned but a new value will be requested
 	*/
+	return cache.get(id, async () => {
+		const user = await loadUserFromDb(id);
+		return user;
+	});
 }
+const user = await loadUser(1);
 ```

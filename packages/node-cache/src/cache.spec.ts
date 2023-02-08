@@ -80,7 +80,7 @@ describe('Cache', () => {
 	it('should keep items in cache', async () => {
 		const cache = new Cache({
 			duration: 10000,
-			durationUntilCold: 8000,
+			durationUntilCold: 7000,
 		});
 
 		const getter = jest.fn(() => ({}));
@@ -120,4 +120,84 @@ describe('Cache', () => {
 		// 4 times the getter will be called (3 times initially, 1 time when cold reloading)
 		expect(getter).toBeCalledTimes(4);
 	});
+
+	it('should update cache when cold', async () => {
+		const cache = new Cache({
+			duration: 10000,
+			durationUntilCold: 8000,
+		});
+
+		// Initial cache
+		jest.setSystemTime(0);
+		const deferred1 = createDeferred();
+		const item01 = cache.get(0, () => deferred1.promise);
+		const item02 = cache.get(0, () => deferred1.promise);
+		deferred1.resolve({});
+		expect(await item01).toBe(await item02);
+		expect(cache.size()).toBe(1);
+
+		// Hot item
+		jest.setSystemTime(9000);
+		const deferred2 = createDeferred();
+		// eslint-disable-next-line @typescript-eslint/no-floating-promises
+		cache.get(0, () => deferred2.promise);
+
+		jest.setSystemTime(12000);
+		const item11 = cache.get(0, () => null);
+		const item12 = cache.get(0, () => null);
+		deferred2.resolve({});
+		expect(await item11).toBe(deferred2.value);
+		expect(await item11).toBe(await item12);
+		expect(cache.size()).toBe(1);
+
+		jest.setSystemTime(20000);
+		cache.refresh();
+		expect(cache.size()).toBe(0);
+	});
+
+	it('should expire the cache even when cold', async () => {
+		const cache = new Cache({
+			duration: 10000,
+			durationUntilCold: 8000,
+		});
+
+		// Initial cache
+		jest.setSystemTime(0);
+		const deferred1 = createDeferred();
+		const item01 = cache.get(0, () => deferred1.promise);
+		jest.setSystemTime(9000);
+		const item02 = cache.get(0, () => ({}));
+
+		// Initial cache
+		jest.setSystemTime(20000);
+		const item11 = cache.get(0, () => null);
+		jest.setSystemTime(20100);
+		const item12 = cache.get(0, () => 3);
+		deferred1.resolve({});
+		expect(await item01).toBe(deferred1.value);
+		expect(await item02).toBe(deferred1.value);
+		expect(await item11).toBe(null);
+		expect(await item12).toBe(null);
+	});
 });
+
+type Deferred<T> = {
+	value: T | undefined;
+	resolve: (value: T) => void;
+	reject: (err: Error) => void;
+	promise: Promise<T>;
+};
+
+function createDeferred<T>() {
+	const deferred: Partial<Deferred<T>> = {
+		value: undefined,
+	};
+	deferred.promise = new Promise<T>((resolve, reject) => {
+		deferred.resolve = (value) => {
+			deferred.value = value;
+			resolve(value);
+		};
+		deferred.reject = reject;
+	});
+	return deferred as Deferred<T>;
+}
