@@ -36,7 +36,7 @@ export type AuthDefinition<TAuthData> = {
 /**
  * Options to create the auth definition
  */
-export type CreateAuthOptions = {
+export type CreateAuthDefinitionOptions = {
 	/**
 	 * Get the request form the arguments host on a graphql context
 	 */
@@ -52,7 +52,9 @@ export type CreateAuthOptions = {
  *
  * The AuthDefinition is reponsible for AuthOperations on the auth context
  */
-export function createAuth<TAuthData>(options: CreateAuthOptions): AuthDefinition<TAuthData> {
+export function createAuthDefinition<TAuthData>(
+	options: CreateAuthDefinitionOptions = {}
+): AuthDefinition<TAuthData> {
 	const { getRequestGraphql } = options;
 	const getRequest = (argumentsHost: ArgumentsHost) => {
 		const type = argumentsHost.getType();
