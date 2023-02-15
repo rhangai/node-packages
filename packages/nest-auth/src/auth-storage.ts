@@ -1,15 +1,24 @@
 /// Auth storage internal symbol
 const AUTH_STORAGE = Symbol('auth-storage');
+const AUTH_STORAGE_DEFAULT_KEY = Symbol('auth-storage-default-key');
+
+// Store map
+type StoreMap = Map<unknown, unknown>;
 
 /**
  * Get the authentication data from storage
  * @param authExecutionContext
  * @param authdata
  */
-export function authStorageGet<TAuthData = unknown>(request: unknown): { data: TAuthData } | null {
-	if (request == null) return null;
+export function authStorageGet<TAuthData = unknown>(
+	storage: any,
+	keyParam: unknown
+): { data: TAuthData } | null {
+	const store = getStore(storage);
+	if (!store) return null;
+	const key = keyParam || AUTH_STORAGE_DEFAULT_KEY;
 	return {
-		data: (request as any)[AUTH_STORAGE] as TAuthData,
+		data: store.get(key) as TAuthData,
 	};
 }
 
@@ -18,9 +27,20 @@ export function authStorageGet<TAuthData = unknown>(request: unknown): { data: T
  * @param authExecutionContext
  * @param authdata
  */
-export function authStorageSet(request: unknown, authdata: unknown) {
-	Object.defineProperty(request, AUTH_STORAGE, {
-		value: authdata,
-		enumerable: false,
-	});
+export function authStorageSet(storage: any, key: unknown, data: unknown) {
+	let store = getStore(storage);
+	if (!store) {
+		store = new Map();
+		Object.defineProperty(storage, AUTH_STORAGE, {
+			value: store,
+			enumerable: false,
+		});
+	}
+	store.set(key, data);
+}
+
+// Pega o store
+function getStore(storage: any): StoreMap | undefined | null {
+	if (storage == null) return null;
+	return storage[AUTH_STORAGE];
 }

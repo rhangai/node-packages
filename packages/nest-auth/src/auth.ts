@@ -33,6 +33,11 @@ export type AuthDefinition<TAuthData> = {
 	): Promise<AuthenticateResult<TAuthData>>;
 };
 
+type AuthStorageResult = {
+	request: unknown;
+	key?: unknown;
+};
+
 /**
  * Options to create the auth definition
  */
@@ -40,11 +45,11 @@ export type CreateAuthDefinitionOptions = {
 	/**
 	 * Get the request form the arguments host on a graphql context
 	 */
-	getRequestGraphql?: ((argumentsHost: ArgumentsHost) => unknown) | null;
+	graphql?: ((argumentsHost: ArgumentsHost) => [request: unknown, context: unknown]) | null;
 	/**
 	 * Get the storage from the arguments host, defaults to the
 	 */
-	getStorage?: ((argumentsHost: ArgumentsHost) => unknown) | null;
+	getStorage?: ((argumentsHost: ArgumentsHost) => AuthStorageResult | null) | null;
 };
 
 /**
@@ -55,25 +60,34 @@ export type CreateAuthDefinitionOptions = {
 export function createAuthDefinition<TAuthData>(
 	options: CreateAuthDefinitionOptions = {}
 ): AuthDefinition<TAuthData> {
-	const { getRequestGraphql } = options;
-	const getRequest = (argumentsHost: ArgumentsHost) => {
+	const { graphql } = options;
+	const getStorageDefault = (argumentsHost: ArgumentsHost): AuthStorageResult | null => {
 		const type = argumentsHost.getType();
 		if (type === 'http') {
-			return argumentsHost.getArgByIndex(0);
+			const request = argumentsHost.getArgByIndex(0);
+			return {
+				request,
+			};
 		} else if ((type as string) === 'graphql') {
-			return getRequestGraphql?.(argumentsHost) ?? null;
+			if (!graphql) return null;
+			const [request, context] = graphql(argumentsHost);
+			if (!request || !context) return null;
+			return {
+				request,
+				key: context,
+			};
 		}
 		return null;
 	};
 
 	// The storage is the request
-	const getStorage = options.getStorage ?? getRequest;
+	const getStorage = options.getStorage ?? getStorageDefault;
 
 	// Get the auth data
 	function getData(argumentsHost: ArgumentsHost): { data: TAuthData } | null {
 		const storage = getStorage(argumentsHost);
 		if (!storage) throw new Error(`Invalid storage`);
-		const authData = authStorageGet<TAuthData>(storage);
+		const authData = authStorageGet<TAuthData>(storage.request, storage.key);
 		return authData;
 	}
 
@@ -103,7 +117,7 @@ export function createAuthDefinition<TAuthData>(
 			const storage = getStorage(ctx);
 			if (!storage) return [null];
 			const authData = await dataFn();
-			authStorageSet(storage, authData);
+			authStorageSet(storage.request, storage.key, authData);
 			return [true, authData];
 		},
 	};
