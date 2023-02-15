@@ -8,32 +8,40 @@ Simpler implementation of a guard without using passport
 yarn add @rhangai/nest-auth
 ```
 
-## Guard
+## Quick Usage
 
 Define your authentication data
 
 ```ts
+import { createAuthDefinition } from '@rhangai/nest-auth';
+
 export type AuthData = {
-	user: { id: number; name: string };
+	user: MyUserType;
 };
+
+const AuthDefinition = createAuthDefinition<AuthData>();
 ```
 
 Create the guard
 
 ```ts
 import { Injectable } from '@nestjs/common';
-import { AuthGuardBase } from '@rhangai/nest-auth';
-import { AuthData } from './auth-data';
+import { AuthData, AuthDefinition } from './auth-data';
 
 @Injectable()
-export class AuthGuard extends AuthGuardBase<AuthData> {
-	async authenticate(authExecutionContext: AuthExecutionContext): Promise<AuthData | null> {
+export class AuthGuard implements CanActivate {
+	canActivate(ctx): Promise<boolean> {
+		const [isValid] = await AuthDefinition.authenticate(ctx, () => this.getAuthData(ctx));
+		if (isValid == null) return true;
+		return isValid;
+	}
+
+	private async getAuthData(
+		authExecutionContext: AuthExecutionContext
+	): Promise<AuthData | null> {
 		// Do your logic
 		return {
-			user: {
-				id: 1,
-				name: 'John Doe',
-			},
+			user: {}, // From somewhere
 		};
 	}
 }
@@ -63,10 +71,9 @@ export class AuthModule {}
 Create the decorators
 
 ```ts
-import { AuthData } from './auth-data';
-import { createAuthParamDecorador } from '@rhangai/nest-auth';
+import { AuthDefinition } from './auth-data';
 
-export const AuthUser = createAuthParamDecorador<AuthData>((_, authData) => authData.user);
+export const AuthUser = AuthDefinition.createDecorator((_, authData) => authData.user);
 ```
 
 Use in the controller
@@ -78,7 +85,7 @@ import { AuthUser } from './auth-decorators';
 @Controller()
 export class SomeController {
 	@Get()
-	handler(@AuthUser() user: unknown) {
+	handler(@AuthUser() user: MyUserType) {
 		return user;
 	}
 }
