@@ -27,7 +27,7 @@ export function authStorageGet<TAuthData = unknown>(
  * @param authExecutionContext
  * @param authdata
  */
-export function authStorageSet(storage: any, key: unknown, data: unknown) {
+export function authStorageSet(storage: any, keyParam: unknown, data: unknown) {
 	let store = getStore(storage);
 	if (!store) {
 		store = new Map();
@@ -36,6 +36,7 @@ export function authStorageSet(storage: any, key: unknown, data: unknown) {
 			enumerable: false,
 		});
 	}
+	const key = keyParam || AUTH_STORAGE_DEFAULT_KEY;
 	store.set(key, data);
 }
 
