@@ -24,7 +24,8 @@
     "packages/*"
   ],
   "scripts": {
-    "preversion": "jest"
+    "build": "lerna run build",
+    "preversion": "yarn run build && jest"
   },
   "jest": {
     "projects": [
