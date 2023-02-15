@@ -31,11 +31,11 @@
     "@rhangai/common": "^0.2"
   },
   "scripts": {
-    "prebuild": "rm -rf lib",
+    "clean": "rm -rf lib",
     "build": "tsc -p tsconfig.build.json",
     "lint": "eslint src --ext js,jsx,ts,tsx",
     "lint:fix": "yarn run lint --fix",
-    "preversion": "yarn run build",
+    "preversion": "yarn run clean && yarn run build",
     "test": "jest"
   },
   "publishConfig": {
