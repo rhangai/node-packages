@@ -45,7 +45,8 @@ export class ExceptionFilter extends BaseExceptionFilter {
 	}
 }
 
+/// Check if i
 function isHttpException(x: any): x is ToHttpException {
-	if ('toHttp' in x && typeof x.toHttp === 'function') return true;
+	if (x && typeof x === 'object' && 'toHttp' in x && typeof x.toHttp === 'function') return true;
 	return false;
 }
