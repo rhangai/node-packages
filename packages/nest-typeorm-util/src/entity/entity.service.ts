@@ -15,11 +15,25 @@ export class EntityService {
 
 	/**
 	 * Get the entity manager from the given context
-	 * @param context
-	 * @returns
+	 * @param context The context
+	 * @returns The entity manager
 	 */
 	entityManager(context: EntityServiceContext | null | undefined): EntityManager {
 		if (!context?.entityManager) return this.entityManagerInstance;
+		return context.entityManager;
+	}
+
+	/**
+	 * Get the entity manager from the given context. But asserts a transaction
+	 * @param context The context
+	 * @returns The entity manager
+	 */
+	entityManagerAssertTransaction(
+		context: EntityServiceContext | null | undefined
+	): EntityManager {
+		if (!context?.entityManager?.queryRunner?.isTransactionActive) {
+			throw new Error(`Must be in transaction`);
+		}
 		return context.entityManager;
 	}
 
@@ -64,12 +78,14 @@ export class EntityService {
 		context: C | null,
 		callback: (context: EntityServiceTransactionContext<C>) => R | Promise<R>
 	): Promise<R> {
+		type Ctx = EntityServiceTransactionContext<C>;
+
 		const entityManager = this.entityManager(context);
 		if (entityManager.queryRunner?.isTransactionActive) {
-			return callback({ ...context, entityManager } as any);
+			return callback({ ...context, entityManager } as Ctx);
 		}
 		return entityManager.transaction(async (transactionEntityManager) =>
-			callback({ ...context, entityManager: transactionEntityManager } as any)
+			callback({ ...context, entityManager: transactionEntityManager } as Ctx)
 		);
 	}
 }
