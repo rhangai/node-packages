@@ -1,7 +1,7 @@
 {
   "name": "@rhangai/eslint-config-typescript",
   "packageManager": "yarn@3.2.2",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "Eslint config",
   "main": "index.js",
   "license": "MIT",
