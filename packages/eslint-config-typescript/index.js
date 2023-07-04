@@ -2,7 +2,7 @@ const { extensions, createNoExtraneousDependenciesOptions } = require('./util');
 
 module.exports = {
 	parser: '@typescript-eslint/parser',
-	plugins: ['@typescript-eslint', 'prettier'],
+	plugins: ['@typescript-eslint'],
 	extends: ['eslint-config-airbnb-base', 'eslint-config-prettier', 'plugin:import/typescript'],
 	settings: {
 		'import/extensions': extensions,
