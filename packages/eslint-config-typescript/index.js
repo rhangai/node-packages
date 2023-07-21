@@ -67,6 +67,7 @@ module.exports = {
 		'@typescript-eslint/switch-exhaustiveness-check': 'error',
 		'@typescript-eslint/no-inferrable-types': 'off',
 		'@typescript-eslint/no-empty-interface': 'off',
+		'@typescript-eslint/no-non-null-assertion': 'warn',
 		'@typescript-eslint/no-confusing-non-null-assertion': 'warn',
 		'@typescript-eslint/no-base-to-string': 'warn',
 		'@typescript-eslint/no-misused-promises': 'error',
