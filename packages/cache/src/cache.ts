@@ -1,6 +1,9 @@
 import Heap from 'heap';
-import type { MarkOptional } from 'ts-essentials';
-import { CacheOptions, cacheOptionsNormalize, CacheOptionsNormalized } from './cache-options';
+import {
+	cacheOptionsNormalize,
+	type CacheOptions,
+	type CacheOptionsNormalized,
+} from './cache-options';
 
 type CacheEntryPending<TValue> = {
 	value: Promise<TValue>;
@@ -159,7 +162,7 @@ export class Cache<TKey = string | number, TValue = unknown> {
 		oldEntry: CacheEntry<TKey, TValue> | undefined,
 		key: TKey,
 		lazyFn: CacheFn<TKey, TValue>,
-		now: number
+		now: number,
 	): CacheEntry<TKey, TValue> {
 		if (oldEntry) {
 			const entry = oldEntry;
@@ -193,7 +196,10 @@ export class Cache<TKey = string | number, TValue = unknown> {
 			return entry;
 		}
 
-		const entry: MarkOptional<CacheEntry<TKey, TValue>, 'valuePromise'> = {
+		type Entry = Omit<CacheEntry<TKey, TValue>, 'valuePromise'> & {
+			valuePromise?: Promise<TValue>;
+		};
+		const entry: Entry = {
 			key,
 			invalid: false,
 			pending: null,
@@ -216,7 +222,7 @@ export class Cache<TKey = string | number, TValue = unknown> {
 	private refreshEntryCold(
 		entryParam: CacheEntry<TKey, TValue>,
 		lazyFn: CacheFn<TKey, TValue>,
-		now: number
+		now: number,
 	) {
 		const entry = entryParam;
 		if (!entry.pending) {
@@ -235,7 +241,7 @@ export class Cache<TKey = string | number, TValue = unknown> {
 				(err) => {
 					entry.pending = null;
 					throw err;
-				}
+				},
 			);
 			entry.pending = {
 				value: valuePromise,

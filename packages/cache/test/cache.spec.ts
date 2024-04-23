@@ -1,4 +1,4 @@
-import { Cache } from './cache';
+import { Cache } from '../src/cache';
 
 describe('Cache', () => {
 	jest.useFakeTimers();

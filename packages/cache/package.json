@@ -1,0 +1,45 @@
+{
+  "name": "@rhangai/cache",
+  "version": "0.9.4",
+  "description": "Nest utilities",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "node",
+    "cache",
+    "async"
+  ],
+  "author": "rhangai <hangai.renan@gmail.com>",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/cache#readme",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./lib/index.mjs",
+      "default": "./lib/index.js"
+    }
+  },
+  "bugs": {
+    "url": "https://github.com/rhangai/node-packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhangai/node-packages.git"
+  },
+  "dependencies": {
+    "heap": "^0.2.7"
+  },
+  "devDependencies": {
+    "@types/heap": "^0.2.31",
+    "tsup": "*",
+    "typescript": "*"
+  },
+  "scripts": {
+    "clean": "rm -rf lib",
+    "build": "yarn build:ts && yarn build:types",
+    "build:ts": "tsup-node --sourcemap true --format esm,cjs",
+    "build:types": "tsup-node --dts-only",
+    "typecheck": "tsc --noEmit"
+  }
+}

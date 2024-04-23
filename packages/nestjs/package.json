@@ -7,7 +7,7 @@
   },
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
-  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-util#readme",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nestjs#readme",
   "license": "MIT",
   "exports": {
     ".": {
