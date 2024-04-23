@@ -1,6 +1,12 @@
-import { Catch, ArgumentsHost, BadRequestException, HttpException, Logger } from '@nestjs/common';
+import {
+	Catch,
+	type ArgumentsHost,
+	BadRequestException,
+	HttpException,
+	Logger,
+} from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { ToHttpException } from './http.exception';
+import type { ToHttpException } from './http.exception';
 
 /**
  * Basic extended exception filter
