@@ -1,5 +1,5 @@
 {
-  "name": "@rhangai/nest-util",
+  "name": "@rhangai/nestjs",
   "version": "0.9.4",
   "description": "Nest utilities",
   "publishConfig": {
