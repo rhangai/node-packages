@@ -1,5 +1,6 @@
-import { dateSetup } from './types/date/date-setup';
+import dayjs from 'dayjs';
+import CustomParseFormat from 'dayjs/plugin/customParseFormat';
 
 export function coreSetup() {
-	dateSetup();
+	dayjs.extend(CustomParseFormat);
 }

@@ -1,5 +1,5 @@
-import { dateParse } from './date-parse';
-import { dateIsValue } from './date-type';
+import { dateParse } from '../src/types/date/date-parse';
+import { dateIsValue } from '../src/types/date/date-type';
 
 describe('DateType', () => {
 	it('should parse dates', () => {
