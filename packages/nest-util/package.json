@@ -11,9 +11,19 @@
   "license": "MIT",
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "import": "./lib/index.mjs",
-      "types": "./lib/index.d.ts",
       "default": "./lib/index.js"
+    },
+    "./graphql": {
+      "types": "./src/graphql/index.ts",
+      "import": "./lib/graphql.mjs",
+      "default": "./lib/graphql.js"
+    },
+    "./typeorm": {
+      "types": "./src/typeorm/index.ts",
+      "import": "./lib/typeorm.mjs",
+      "default": "./lib/typeorm.js"
     }
   },
   "bugs": {
@@ -24,18 +34,33 @@
     "url": "git+https://github.com/rhangai/node-packages.git"
   },
   "devDependencies": {
+    "@nestjs/graphql": "*",
     "@rhangai/common": "^0.9.2",
     "tsup": "*",
+    "typeorm": "*",
     "typescript": "*"
   },
   "peerDependencies": {
     "@nestjs/common": "^10",
-    "@rhangai/common": "^0.9.2"
+    "@nestjs/graphql": ">=10",
+    "@rhangai/common": "^0.9.2",
+    "graphql": ">=15",
+    "typeorm": ">=0.2"
+  },
+  "peerDependenciesMeta": {
+    "@nestjs/graphql": {
+      "optional": true
+    },
+    "graphql": {
+      "optional": true
+    },
+    "typeorm": {
+      "optional": true
+    }
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "yarn run build:ts && yarn run build:types",
-    "build:ts": "tsup-node -d lib --sourcemap true --format esm,cjs",
-    "build:types": "tsup-node -d lib --dts-only"
+    "build": "tsup-node -d lib --sourcemap true --format esm,cjs",
+    "typecheck": "tsc --noEmit"
   }
 }

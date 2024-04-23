@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { Result } from '../result';
-import { DateType, DateTypeInput } from './date-type';
+import type { Result } from '../result';
+import { DateType, type DateTypeInput } from './date-type';
 
 export type DateParseOptions = {
 	inputFormat?: string | null;
@@ -43,7 +43,7 @@ export function dateSafeParse(param: unknown, { inputFormat }: DateParseOptions)
 /**
  * Parse a date
  */
-export function dateParse(param: DateTypeInput, options: DateParseOptions): DateType {
+export function dateParse(param: unknown, options: DateParseOptions): DateType {
 	const { success, value, error } = dateSafeParse(param, options);
 	if (!success) throw new Error(error ?? `Invalid date: ${param}`);
 	return value;

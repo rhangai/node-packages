@@ -1,10 +1,10 @@
-import { Decimal, DecimalInput, decimalParse } from '@rhangai/common';
+import { Decimal, decimalParse } from '@rhangai/common';
 import { GraphQLScalarType, Kind } from 'graphql';
 
 export const DecimalScalar = new GraphQLScalarType({
 	name: 'Decimal',
 	description: 'Decimal type',
-	serialize(param: DecimalInput) {
+	serialize(param: unknown) {
 		const value = decimalParse(param);
 		return value.toFixed();
 	},

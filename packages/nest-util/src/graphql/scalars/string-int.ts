@@ -3,7 +3,7 @@ import { GraphQLScalarType, Kind } from 'graphql';
 export const StringIntScalar = new GraphQLScalarType({
 	name: 'StringInt',
 	description: 'StringInt type',
-	serialize(value: string | number) {
+	serialize(value: unknown) {
 		if (value == null) return null;
 		return integerParse(value);
 	},

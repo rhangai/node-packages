@@ -1,4 +1,4 @@
-import { dateParse, DateTypeInput } from '@rhangai/common';
+import { dateParse, type DateTypeInput } from '@rhangai/common';
 import { GraphQLScalarType, Kind } from 'graphql';
 
 type CreateDateScalarOptions = {
@@ -11,7 +11,7 @@ export function createDateScalar({ name, description, format }: CreateDateScalar
 	return new GraphQLScalarType({
 		name,
 		description: description || `${name} type`,
-		serialize(param: DateTypeInput) {
+		serialize(param: unknown) {
 			const value = dateParse(param, { inputFormat: format });
 			return value.format(format);
 		},

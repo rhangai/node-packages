@@ -12,7 +12,7 @@
   "exports": {
     ".": {
       "import": "./lib/index.mjs",
-      "types": "./lib/index.d.ts",
+      "types": "./src/index.ts",
       "default": "./lib/index.js"
     }
   },
@@ -33,8 +33,6 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "yarn run build:ts && yarn run build:types",
-    "build:ts": "tsup-node -d lib --sourcemap true --format esm,cjs src/index.ts",
-    "build:types": "tsup-node -d lib src/index.ts --dts-only"
+    "build": "tsup-node -d lib --sourcemap true --format esm,cjs src/index.ts"
   }
 }

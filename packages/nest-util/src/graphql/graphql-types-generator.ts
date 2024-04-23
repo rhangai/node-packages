@@ -1,8 +1,8 @@
 import { writeFile } from 'fs';
 import { resolve } from 'path';
-import { INestApplicationContext } from '@nestjs/common';
+import type { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
+import { type GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 
 export type GraphqlTypesGeneratorOptions = {
 	baseDir: string;
@@ -55,8 +55,8 @@ export class GraphqlTypesGenerator {
 			const scriptValues = Object.entries(scripts);
 			await Promise.all(
 				scriptValues.map(([filename, options]) =>
-					generator.write(resolve(baseDir, filename), options)
-				)
+					generator.write(resolve(baseDir, filename), options),
+				),
 			);
 		} finally {
 			await generator.close();
