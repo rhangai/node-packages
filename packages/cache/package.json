@@ -15,7 +15,7 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./lib/index.d.ts",
       "import": "./lib/index.mjs",
       "default": "./lib/index.js"
     }
