@@ -11,9 +11,9 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "import": "./lib/index.mjs",
-      "types": "./lib/index.d.ts",
-      "default": "./lib/index.js"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "bugs": {
@@ -32,7 +32,7 @@
     "typescript": "*"
   },
   "scripts": {
-    "clean": "rm -rf lib",
+    "clean": "rm -rf dist",
     "build": "yarn build:ts && yarn build:types",
     "build:ts": "tsup-node --sourcemap true --format esm,cjs",
     "build:types": "tsup-node --dts-only",

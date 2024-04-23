@@ -11,24 +11,24 @@
   "license": "MIT",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
-      "import": "./lib/index.mjs",
-      "default": "./lib/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
     },
     "./auth": {
-      "types": "./src/auth/index.ts",
-      "import": "./lib/auth.mjs",
-      "default": "./lib/auth.js"
+      "types": "./dist/auth.d.ts",
+      "import": "./dist/auth.mjs",
+      "default": "./dist/auth.js"
     },
     "./graphql": {
-      "types": "./src/graphql/index.ts",
-      "import": "./lib/graphql.mjs",
-      "default": "./lib/graphql.js"
+      "types": "./src/graphql.d.ts",
+      "import": "./dist/graphql.mjs",
+      "default": "./dist/graphql.js"
     },
     "./typeorm": {
-      "types": "./src/typeorm/index.ts",
-      "import": "./lib/typeorm.mjs",
-      "default": "./lib/typeorm.js"
+      "types": "./src/typeorm.d.ts",
+      "import": "./dist/typeorm.mjs",
+      "default": "./dist/typeorm.js"
     }
   },
   "bugs": {
@@ -64,8 +64,10 @@
     }
   },
   "scripts": {
-    "clean": "rm -rf lib",
-    "build": "tsup-node -d lib --sourcemap true --format esm,cjs",
+    "clean": "rm -rf dist",
+    "build": "yarn build:ts && yarn build:types",
+    "build:ts": "tsup-node --sourcemap true --format esm,cjs",
+    "build:types": "tsup-node --dts-only",
     "typecheck": "tsc --noEmit"
   }
 }
