@@ -9,7 +9,13 @@
   "author": "rhangai <hangai.renan@gmail.com>",
   "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/common#readme",
   "license": "MIT",
-  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  },
   "bugs": {
     "url": "https://github.com/rhangai/node-packages/issues"
   },

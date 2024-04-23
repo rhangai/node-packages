@@ -1,4 +1,4 @@
-import dayjs, { isDayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { Result } from '../result';
 import { DateType, DateTypeInput } from './date-type';
 
@@ -25,7 +25,7 @@ export function dateSafeParse(param: unknown, { inputFormat }: DateParseOptions)
 		}
 	} else if (param instanceof Date) {
 		date = dayjs(param);
-	} else if (isDayjs(param)) {
+	} else if (dayjs.isDayjs(param)) {
 		date = param;
 	}
 	if (!date || !date.isValid()) {
