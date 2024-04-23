@@ -33,7 +33,8 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "tsup -d lib --sourcemap true --format esm,cjs src/index.ts",
-    "build:types": "tsup -d lib src/index.ts --dts-only"
+    "build": "yarn run build:ts && yarn run build:types",
+    "build:ts": "tsup-node -d lib --sourcemap true --format esm,cjs src/index.ts",
+    "build:types": "tsup-node -d lib src/index.ts --dts-only"
   }
 }

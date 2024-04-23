@@ -15,7 +15,10 @@ export class PublicHttpError extends Error implements ToHttpException {
 	/**
 	 * Error message
 	 */
-	constructor(message?: string, private readonly httpData?: Record<string, unknown>) {
+	constructor(
+		message?: string,
+		private readonly httpData?: Record<string, unknown>,
+	) {
 		super(message);
 	}
 

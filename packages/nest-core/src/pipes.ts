@@ -1,4 +1,4 @@
-import { PipeTransform } from '@nestjs/common';
+import type { PipeTransform } from '@nestjs/common';
 import { dateParse, DateType, Decimal, decimalParse } from '@rhangai/common';
 
 export const DatePipe: PipeTransform<any, DateType> = {
