@@ -20,7 +20,7 @@ export type AuthDefinition<TAuthData> = {
 	 * @param getter
 	 */
 	createDecorator<TData = void>(
-		getter: (data: TData, authdata: TAuthData) => unknown
+		getter: (data: TData, authdata: TAuthData) => unknown,
 	): DecoratorFn<TData>;
 	/**
 	 * Method to authenticate the ExecutionContext
@@ -29,7 +29,7 @@ export type AuthDefinition<TAuthData> = {
 	 */
 	authenticate(
 		executionContext: ExecutionContext,
-		data: () => TAuthData | null | Promise<TAuthData | null>
+		data: () => TAuthData | null | Promise<TAuthData | null>,
 	): Promise<AuthenticateResult<TAuthData>>;
 };
 
@@ -58,7 +58,7 @@ export type CreateAuthDefinitionOptions = {
  * The AuthDefinition is reponsible for AuthOperations on the auth context
  */
 export function createAuthDefinition<TAuthData>(
-	options: CreateAuthDefinitionOptions = {}
+	options: CreateAuthDefinitionOptions = {},
 ): AuthDefinition<TAuthData> {
 	const { graphql } = options;
 	const getStorageDefault = (argumentsHost: ArgumentsHost): AuthStorageResult | null => {
@@ -112,7 +112,7 @@ export function createAuthDefinition<TAuthData>(
 		 */
 		async authenticate(
 			ctx: ExecutionContext,
-			dataFn: () => TAuthData | null | Promise<TAuthData | null>
+			dataFn: () => TAuthData | null | Promise<TAuthData | null>,
 		): Promise<AuthenticateResult<TAuthData>> {
 			const storage = getStorage(ctx);
 			if (!storage) return [null];

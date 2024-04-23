@@ -15,6 +15,11 @@
       "import": "./lib/index.mjs",
       "default": "./lib/index.js"
     },
+    "./auth": {
+      "types": "./src/auth/index.ts",
+      "import": "./lib/auth.mjs",
+      "default": "./lib/auth.js"
+    },
     "./graphql": {
       "types": "./src/graphql/index.ts",
       "import": "./lib/graphql.mjs",
