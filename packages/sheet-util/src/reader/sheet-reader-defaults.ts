@@ -1,4 +1,4 @@
-import { ISheetReaderLogger } from './core/sheet-reader-types';
+import type { ISheetReaderLogger } from './core/sheet-reader-types';
 
 const SHEET_READER_CONSOLE_LOGGER: ISheetReaderLogger = {
 	error(err: any) {

@@ -1,10 +1,14 @@
-import {
+import type {
 	SheetReaderData,
 	SheetReaderHeaderMapBase,
 	SheetReaderOptions,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
-import { sheetReaderForEach, SheetReaderItem, SheetReaderItemParam } from './sheet-reader';
+import {
+	sheetReaderForEach,
+	type SheetReaderItem,
+	type SheetReaderItemParam,
+} from './sheet-reader';
 import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
 
 /**
@@ -15,9 +19,9 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 		map(
 			data: SheetReaderData<HeaderMap>,
 			item: SheetReaderItem<HeaderMap>,
-			param: SheetReaderItemParam
+			param: SheetReaderItemParam,
 		): Promise<T | null | undefined> | T | null | undefined;
-	}
+	},
 ) {
 	const logger = options.logger ?? sheetReaderGetDefaultLogger();
 

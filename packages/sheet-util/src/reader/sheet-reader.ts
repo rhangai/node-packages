@@ -1,7 +1,7 @@
-import { fileInputDispatch } from '@rhangai/core';
+import { fileInputDispatch } from '@rhangai/core/node';
 import dayjs from 'dayjs';
-import XLSX, { CellObject } from 'xlsx';
-import {
+import XLSX, { type CellObject } from 'xlsx';
+import type {
 	SheetReaderData,
 	SheetReaderHeaderItem,
 	SheetReaderHeaderItemInput,
@@ -56,7 +56,11 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 	options: {
 		validateNames?: boolean;
 	},
-) {
+): Iterable<{
+	row: number;
+	data: SheetReaderData<HeaderMap>;
+	values: SheetReaderValues<HeaderMap>;
+}> {
 	type HeaderMapItem = {
 		key: string;
 		column: number | null;
@@ -69,7 +73,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 	if (options.validateNames === false) {
 		// eslint-disable-next-line guard-for-in
 		for (const key in headerMapParam) {
-			const header = sheetReaderGetHeaderItem(headerMapParam[key]);
+			const header = sheetReaderGetHeaderItem(headerMapParam[key]!);
 			if (!header.column) {
 				errorList.push(`Não há coluna para a chave ${key}.`);
 				continue;
@@ -104,8 +108,9 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 
 		// eslint-disable-next-line guard-for-in
 		for (const key in headerMapParam) {
-			if (headerMapParam[key] == null) continue;
-			const header = sheetReaderGetHeaderItem(headerMapParam[key]);
+			const value = headerMapParam[key];
+			if (value == null) continue;
+			const header = sheetReaderGetHeaderItem(value);
 			const headerName = header.name ?? key;
 			const normalizedName = normalizeText(headerName);
 			const headerColumn =
@@ -208,11 +213,11 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 
 	const worksheet = (() => {
 		const { sheet } = options;
-		if (!sheet) return workbook.Sheets[workbook.SheetNames[0]];
+		if (!sheet) return workbook.Sheets[workbook.SheetNames[0]!];
 		if (typeof sheet === 'string') {
 			return workbook.Sheets[sheet];
 		}
-		return workbook.Sheets[workbook.SheetNames[sheet]];
+		return workbook.Sheets[workbook.SheetNames[sheet]!];
 	})();
 	if (!worksheet) {
 		const error = new SheetReaderException(`Planilha inválida`);

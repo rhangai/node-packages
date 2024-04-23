@@ -2,14 +2,14 @@ export class SheetReaderException extends Error {
 	constructor(
 		public readonly errorMessage: string,
 		private readonly errorMessageList: string[] = [],
-		errorList: Error[] = []
+		errorList: Error[] = [],
 	) {
 		super(
 			[
 				errorMessage,
 				formatErrors('Messages', errorMessageList, (m) => m),
 				formatErrors('Errors', errorList, (e) => `${e.stack || e.toString()}`),
-			].join('\n')
+			].join('\n'),
 		);
 	}
 

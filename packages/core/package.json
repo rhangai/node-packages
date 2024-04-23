@@ -14,6 +14,11 @@
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./node": {
+      "import": "./dist/node.mjs",
+      "types": "./dist/node.d.ts",
+      "default": "./dist/node.js"
     }
   },
   "bugs": {
