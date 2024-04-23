@@ -1,4 +1,4 @@
-import { dateParse, DateType } from '@rhangai/common';
+import { dateParse, DateType } from '@rhangai/core';
 import { Column, type ColumnOptions } from 'typeorm';
 import { isFindOperator } from './util.internal';
 

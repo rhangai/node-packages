@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nestjs",
-  "version": "0.9.4",
+  "version": "0.1.0",
   "description": "Nest utilities",
   "publishConfig": {
     "access": "public"
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@nestjs/graphql": "*",
-    "@rhangai/common": "^0.9.2",
+    "@rhangai/core": "workspace:^",
     "tsup": "*",
     "typeorm": "*",
     "typescript": "*"
@@ -48,7 +48,7 @@
   "peerDependencies": {
     "@nestjs/common": "^10",
     "@nestjs/graphql": ">=10",
-    "@rhangai/common": "^0.9.2",
+    "@rhangai/core": "^0.1.0",
     "graphql": ">=15",
     "typeorm": ">=0.2"
   },

@@ -1,4 +1,4 @@
-import { FileInputType } from '@rhangai/common';
+import { FileInputType } from '@rhangai/core';
 
 export interface ISheetReaderLogger {
 	error(err: any): any;

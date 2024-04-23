@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-yarn add @rhangai/common @rhangai/validator reflect-metadata
+yarn add @rhangai/core @rhangai/validator reflect-metadata
 ```
 
 ## Usage

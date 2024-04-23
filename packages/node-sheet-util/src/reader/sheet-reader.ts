@@ -1,4 +1,4 @@
-import { fileInputDispatch } from '@rhangai/common';
+import { fileInputDispatch } from '@rhangai/core';
 import dayjs from 'dayjs';
 import XLSX, { CellObject } from 'xlsx';
 import {
@@ -26,7 +26,7 @@ export type SheetReaderForEachOptions<HeaderMap extends SheetReaderHeaderMapBase
 	SheetReaderOptions<HeaderMap> & {
 		callback: (
 			item: SheetReaderItem<HeaderMap>,
-			param: SheetReaderItemParam
+			param: SheetReaderItemParam,
 		) => void | Promise<void>;
 	};
 /**
@@ -55,7 +55,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 	headerMapParam: HeaderMap,
 	options: {
 		validateNames?: boolean;
-	}
+	},
 ) {
 	type HeaderMapItem = {
 		key: string;
@@ -127,7 +127,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 				cellColumn = headerColumn;
 				if (header.validateName !== false && cellItem?.normalizedText !== normalizedName) {
 					errorList.push(
-						`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem?.text}`
+						`Cabeçalho esperado: ${headerName}. Cabeçalho: ${cellItem?.text}`,
 					);
 					continue;
 				}
@@ -179,7 +179,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
  * @param options
  */
 export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapBase>(
-	options: SheetReaderForEachOptions<HeaderMap>
+	options: SheetReaderForEachOptions<HeaderMap>,
 ) {
 	const logger = options.logger ?? sheetReaderGetDefaultLogger();
 	const workbookOptions: XLSX.ParsingOptions = {
@@ -255,7 +255,7 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 			const errorText = options.error?.(e) ?? errorDefaultText(e);
 			if (errorText !== false)
 				state.errorMessageList.push(
-					[`Erro na linha ${item.row + 1}`, errorText].filter(Boolean).join(': ')
+					[`Erro na linha ${item.row + 1}`, errorText].filter(Boolean).join(': '),
 				);
 		}
 	}
@@ -263,7 +263,7 @@ export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapB
 		throw new SheetReaderException(
 			[`Erro ao processar planilha`, options.name].filter(Boolean).join(' - '),
 			state.errorMessageList,
-			state.errorList
+			state.errorList,
 		);
 	}
 }

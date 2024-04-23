@@ -1,4 +1,4 @@
-import { decimalParse, Decimal } from '@rhangai/common';
+import { decimalParse, Decimal } from '@rhangai/core';
 import { Column, type ColumnOptions } from 'typeorm';
 import { isFindOperator } from './util.internal';
 

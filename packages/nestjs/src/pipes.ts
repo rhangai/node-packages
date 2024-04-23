@@ -1,5 +1,5 @@
 import type { PipeTransform } from '@nestjs/common';
-import { dateParse, DateType, Decimal, decimalParse } from '@rhangai/common';
+import { dateParse, DateType, Decimal, decimalParse } from '@rhangai/core';
 
 export const DatePipe: PipeTransform<any, DateType> = {
 	transform(input) {

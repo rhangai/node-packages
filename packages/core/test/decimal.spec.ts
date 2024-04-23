@@ -1,5 +1,5 @@
-import { decimalParse } from '../src/types/decimal/decimal-parse';
-import { decimalIsValue } from '../src/types/decimal/decimal-type';
+import { decimalParse } from '../src/core/decimal/decimal-parse';
+import { decimalIsValue } from '../src/core/decimal/decimal-type';
 
 describe('Decimal', () => {
 	it('should operate on decimals', () => {

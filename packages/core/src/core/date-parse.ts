@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { Result } from '../result';
+import type { Result } from './result';
 import { DateType, type DateTypeInput } from './date-type';
 
 export type DateParseOptions = {

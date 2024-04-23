@@ -24,11 +24,11 @@
     "xlsx": "^0.17.0"
   },
   "devDependencies": {
-    "@rhangai/common": "^0.9.2",
+    "@rhangai/core": "workspace:^",
     "typescript": "^4.3.2"
   },
   "peerDependencies": {
-    "@rhangai/common": "^0.2"
+    "@rhangai/core": "^0.1.0"
   },
   "scripts": {
     "clean": "rm -rf lib",
@@ -46,7 +46,7 @@
     "testEnvironment": "node",
     "setupFiles": [
       "reflect-metadata",
-      "@rhangai/common/setup"
+      "@rhangai/core/setup"
     ],
     "collectCoverageFrom": [
       "<rootDir>/src/**/*.{ts,tsx}"
