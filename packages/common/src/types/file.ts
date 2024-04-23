@@ -7,10 +7,13 @@ export type FileInputDispatcher<T> = {
 	path(filePath: string): T | Promise<T>;
 };
 
+/**
+ * Dispatch the file according to its type
+ */
 export function fileInputDispatch<T = void>(
 	input: FileInputType,
-	dispatcher: FileInputDispatcher<T>
-) {
+	dispatcher: FileInputDispatcher<T>,
+): T | Promise<T> {
 	if ('buffer' in input && input.buffer) {
 		return dispatcher.buffer(input.buffer);
 	} else if ('stream' in input && input.stream) {

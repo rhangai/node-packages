@@ -27,11 +27,7 @@
   },
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "tsup -d lib --format esm,cjs src/index.ts",
-    "build:types": "tsup -d lib src/index.ts --dts-only",
-    "lint": "eslint src --ext js,jsx,ts,tsx",
-    "lint:fix": "yarn run lint --fix",
-    "preversion": "yarn run clean && yarn run build",
-    "test": "jest"
+    "build": "tsup -d lib --sourcemap true --format esm,cjs src/index.ts",
+    "build:types": "tsup -d lib src/index.ts --dts-only"
   }
 }
