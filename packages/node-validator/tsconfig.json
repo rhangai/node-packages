@@ -1,7 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "lib",
-    "types": ["reflect-metadata", "@types/node", "@types/jest"]
-  }
-}
