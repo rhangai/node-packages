@@ -1,6 +1,6 @@
 import { decimalParse, Decimal } from '@rhangai/common';
-import { Column, ColumnOptions } from 'typeorm';
-import { isFindOperator } from './util';
+import { Column, type ColumnOptions } from 'typeorm';
+import { isFindOperator } from './util.internal';
 
 export type DecimalColumnOptions = Omit<ColumnOptions, 'precision' | 'scale'> & {
 	negative?: boolean;
@@ -9,7 +9,7 @@ export type DecimalColumnOptions = Omit<ColumnOptions, 'precision' | 'scale'> & 
 export function DecimalColumn(
 	precision: number,
 	scale: number,
-	options: DecimalColumnOptions = {}
+	options: DecimalColumnOptions = {},
 ) {
 	const { negative, ...columnOptions } = options;
 	return Column({

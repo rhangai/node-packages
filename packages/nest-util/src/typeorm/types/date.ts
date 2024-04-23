@@ -1,6 +1,6 @@
 import { dateParse, DateType } from '@rhangai/common';
-import { Column, ColumnOptions } from 'typeorm';
-import { isFindOperator } from './util';
+import { Column, type ColumnOptions } from 'typeorm';
+import { isFindOperator } from './util.internal';
 
 export function DateColumn(options?: ColumnOptions) {
 	return Column({

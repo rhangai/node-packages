@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { EntityRepositoryBase } from './entity-repository-base';
-import { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
+import type { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
 
 type RepositoryLikeConstructor<T extends EntityRepositoryBase> = {
 	new (entityManager: EntityManager): T;
@@ -29,7 +29,7 @@ export class EntityService {
 	 * @returns The entity manager
 	 */
 	entityManagerAssertTransaction(
-		context: EntityServiceContext | null | undefined
+		context: EntityServiceContext | null | undefined,
 	): EntityManager {
 		if (!context?.entityManager?.queryRunner?.isTransactionActive) {
 			throw new Error(`Must be in transaction`);
@@ -44,7 +44,7 @@ export class EntityService {
 	 */
 	repository<T extends EntityRepositoryBase>(
 		context: EntityServiceContext | null | undefined,
-		RepositoryClass: RepositoryLikeConstructor<T>
+		RepositoryClass: RepositoryLikeConstructor<T>,
 	): T {
 		const entityManager = this.entityManager(context);
 
@@ -76,7 +76,7 @@ export class EntityService {
 	 */
 	async transaction<R, C extends EntityServiceContext = EntityServiceContext>(
 		context: C | null,
-		callback: (context: EntityServiceTransactionContext<C>) => R | Promise<R>
+		callback: (context: EntityServiceTransactionContext<C>) => R | Promise<R>,
 	): Promise<R> {
 		type Ctx = EntityServiceTransactionContext<C>;
 
@@ -85,7 +85,7 @@ export class EntityService {
 			return callback({ ...context, entityManager } as Ctx);
 		}
 		return entityManager.transaction(async (transactionEntityManager) =>
-			callback({ ...context, entityManager: transactionEntityManager } as Ctx)
+			callback({ ...context, entityManager: transactionEntityManager } as Ctx),
 		);
 	}
 }

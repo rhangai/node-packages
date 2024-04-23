@@ -1,13 +1,13 @@
 {
-  "name": "@rhangai/nest-core",
+  "name": "@rhangai/nest-util",
   "version": "0.9.4",
-  "description": "Nest core modules",
+  "description": "Nest utilities",
   "publishConfig": {
     "access": "public"
   },
   "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
-  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-core#readme",
+  "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/nest-util#readme",
   "license": "MIT",
   "exports": {
     ".": {
@@ -35,7 +35,7 @@
   "scripts": {
     "clean": "rm -rf lib",
     "build": "yarn run build:ts && yarn run build:types",
-    "build:ts": "tsup-node -d lib --sourcemap true --format esm,cjs src/index.ts",
-    "build:types": "tsup-node -d lib src/index.ts --dts-only"
+    "build:ts": "tsup-node -d lib --sourcemap true --format esm,cjs",
+    "build:types": "tsup-node -d lib --dts-only"
   }
 }
