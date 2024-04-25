@@ -48,7 +48,7 @@
   "peerDependencies": {
     "@nestjs/common": "^10",
     "@nestjs/graphql": ">=10",
-    "@rhangai/core": "^0.1.0",
+    "@rhangai/core": "^0.0.1",
     "graphql": ">=15",
     "typeorm": ">=0.2"
   },
