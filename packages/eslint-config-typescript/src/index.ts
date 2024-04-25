@@ -19,9 +19,10 @@ const RULES = {
 		'arrow-body-style': 'warn',
 		camelcase: 'warn',
 		curly: ['warn', 'all'],
-		'dot-notation': 'warn',
 		'default-case': 'warn',
 		'default-case-last': 'error',
+		'default-param-last': 'error',
+		'dot-notation': 'warn',
 		eqeqeq: [
 			'warn',
 			'always',
@@ -29,19 +30,22 @@ const RULES = {
 				null: 'ignore',
 			},
 		],
-		'default-param-last': 'error',
 		'guard-for-in': 'warn',
+		'no-bitwise': 'warn',
 		'no-console': 'warn',
 		'no-constructor-return': 'error',
 		'no-else-return': 'warn',
 		'no-iterator': 'error',
+		'no-lone-blocks': 'warn',
 		'no-lonely-if': 'error',
 		'no-loop-func': 'error',
-		'no-promise-executor-return': 'error',
+		'no-param-reassign': ['warn', { props: true }],
 		'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+		'no-promise-executor-return': 'error',
 		'no-proto': 'error',
 		'no-return-assign': 'error',
 		'no-sequences': 'error',
+		'no-undef': 'warn',
 		'no-unmodified-loop-condition': 'error',
 		'no-useless-assignment': 'error',
 		'object-shorthand': 'warn',
@@ -59,42 +63,6 @@ const RULES = {
 					'**/spec/**/*',
 					'**/test/**/*',
 				],
-			},
-		],
-		'import/order': [
-			'error',
-			{
-				groups: [
-					//
-					'builtin',
-					'external',
-					'internal',
-					'parent',
-					'sibling',
-					'index',
-				],
-				pathGroups: [
-					{
-						pattern: '@nestjs/common',
-						group: 'external',
-						position: 'before',
-					},
-					{
-						pattern: '@nestjs/core',
-						group: 'external',
-						position: 'before',
-					},
-					{
-						pattern: '@nestjs/*',
-						group: 'external',
-						position: 'before',
-					},
-				],
-				pathGroupsExcludedImportTypes: ['builtin'],
-				alphabetize: {
-					order: 'asc',
-					caseInsensitive: true,
-				},
 			},
 		],
 		// eslint-plugin-n
@@ -152,13 +120,17 @@ const RULES = {
 	},
 } satisfies Record<string, EslintConfig['rules']>;
 
+type ConfigOptions = {
+	priorityPackages?: string[];
+};
+
 type Config = {
-	ts: EslintConfig[];
+	ts: (options?: ConfigOptions) => EslintConfig[];
 };
 
 const eslintConfigRecommended: EslintConfig = eslint.configs.recommended;
 const config: Config = {
-	ts: [
+	ts: (options) => [
 		eslintConfigRecommended,
 		...tseslint.configs.strictTypeChecked,
 		...tseslint.configs.stylisticTypeChecked,
@@ -171,6 +143,7 @@ const config: Config = {
 			rules: {
 				...RULES.base,
 				...RULES.ts,
+				'import/order': ['error', importOrderOptions(options?.priorityPackages ?? [])],
 			},
 			settings: {
 				'import/extensions': EXTENSIONS,
@@ -198,3 +171,31 @@ const config: Config = {
 };
 
 export default config;
+
+/**
+ *
+ */
+function importOrderOptions(packages: string[]) {
+	const pathGroups = packages.map((packageName) => ({
+		pattern: packageName,
+		group: 'external',
+		position: 'before',
+	}));
+	return {
+		groups: [
+			//
+			'builtin',
+			'external',
+			'internal',
+			'parent',
+			'sibling',
+			'index',
+		],
+		pathGroups,
+		pathGroupsExcludedImportTypes: ['builtin'],
+		alphabetize: {
+			order: 'asc',
+			caseInsensitive: true,
+		},
+	};
+}
