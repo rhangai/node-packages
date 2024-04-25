@@ -2,8 +2,7 @@
 
 ## Packages
 
--   [@rhangai/core](./packages/common)
--   [@rhangai/nest-auth](./packages/nest-auth)
--   [@rhangai/nest-core](./packages/nest-core)
--   [@rhangai/nest-graphql](./packages/nest-graphql)
--   [@rhangai/validator](./packages/node-validator)
+-   [@rhangai/core](./packages/core)
+-   [@rhangai/eslint-config-typescript](./packages/eslint-config-typescript)
+-   [@rhangai/nestjs](./packages/nestjs)
+-   [@rhangai/sheet-util](./packages/sheet-util)
