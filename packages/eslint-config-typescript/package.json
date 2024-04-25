@@ -1,12 +1,21 @@
 {
   "name": "@rhangai/eslint-config-typescript",
-  "packageManager": "yarn@3.2.2",
   "version": "0.12.0",
   "description": "Eslint config",
-  "main": "index.js",
-  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
   "author": "rhangai <hangai.renan@gmail.com>",
   "homepage": "https://github.com/rhangai/node-packages/tree/main/packages/eslint-config-typescript#readme",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "default": "./dist/index.js"
+    }
+  },
   "bugs": {
     "url": "https://github.com/rhangai/node-packages/issues"
   },
@@ -15,25 +24,25 @@
     "url": "git+https://github.com/rhangai/node-packages.git"
   },
   "dependencies": {
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^9",
-    "eslint-import-resolver-typescript": "^3.6.1"
+    "@eslint/js": "^9.1.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-n": "^17.3.1",
+    "typescript-eslint": "^7.7.1"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^6.7.2",
-    "@typescript-eslint/parser": "^6.7.2",
-    "eslint": "^8",
-    "eslint-plugin-import": "^2.28",
-    "prettier": "^2 || ^3"
+    "eslint": "*",
+    "tsup": "*",
+    "typeorm": "*",
+    "typescript": "*"
   },
   "peerDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.59 || ^6.7.2",
-    "@typescript-eslint/parser": "^5.61.0 || ^6.7.2",
-    "eslint": "^8",
-    "eslint-plugin-import": "^2.28",
-    "prettier": "^2 || ^3"
+    "eslint": ">=9"
   },
-  "publishConfig": {
-    "access": "public"
+  "scripts": {
+    "clean": "rm -rf dist",
+    "build": "yarn build:ts && yarn build:types",
+    "build:ts": "tsup-node --format esm,cjs",
+    "build:types": "tsup-node --dts-only",
+    "typecheck": "tsc --noEmit"
   }
 }
