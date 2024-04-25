@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/eslint-config-typescript",
-  "version": "0.13.0",
+  "version": "0.13.1",
   "description": "Eslint config",
   "publishConfig": {
     "access": "public"
