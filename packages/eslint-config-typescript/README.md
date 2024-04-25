@@ -10,7 +10,7 @@ yarn add --dev eslint @rhangai/eslint-config-typescript
 import config from '@rhangai/eslint-config-typescript';
 
 export default [
-	...config.ts,
+	...config.ts(),
 	{
 		ignores: ['**/dist/**/*'],
 		languageOptions: {
