@@ -16,5 +16,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "scripts": {
+    "build:all": "yarn workspaces foreach -Ap run clean && yarn workspaces foreach -At run build"
+  }
 }
