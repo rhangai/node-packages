@@ -15,9 +15,39 @@ const EXTENSIONS = [...TS_EXTENSIONS, ...JS_EXTENSIONS];
 // Common rules
 const RULES = {
 	base: {
-		'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+		// ESLINT default rules
+		'arrow-body-style': 'warn',
+		camelcase: 'warn',
+		curly: ['warn', 'all'],
+		'dot-notation': 'warn',
+		'default-case': 'warn',
+		'default-case-last': 'error',
+		eqeqeq: [
+			'warn',
+			'always',
+			{
+				null: 'ignore',
+			},
+		],
+		'default-param-last': 'error',
+		'guard-for-in': 'warn',
 		'no-console': 'warn',
+		'no-constructor-return': 'error',
+		'no-else-return': 'warn',
+		'no-iterator': 'error',
+		'no-lonely-if': 'error',
+		'no-loop-func': 'error',
+		'no-promise-executor-return': 'error',
+		'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+		'no-proto': 'error',
+		'no-return-assign': 'error',
+		'no-sequences': 'error',
+		'no-unmodified-loop-condition': 'error',
+		'no-useless-assignment': 'error',
 		'object-shorthand': 'warn',
+		'prefer-const': 'warn',
+		'prefer-promise-reject-errors': 'error',
+		// eslint-plugin-import
 		'import/no-cycle': 'error',
 		'import/no-extraneous-dependencies': [
 			'error',
@@ -67,10 +97,14 @@ const RULES = {
 				},
 			},
 		],
+		// eslint-plugin-n
 		'n/prefer-node-protocol': 'warn',
 	},
 	js: {
-		'prefer-destructuring': 'warn',
+		// Only JS
+		'no-duplicate-imports': 'error',
+		// Conflicts with typescript
+		'consistent-return': 'warn',
 		'no-shadow': 'error',
 		'no-unused-vars': [
 			'warn',
@@ -83,18 +117,19 @@ const RULES = {
 				varsIgnorePattern: '^_',
 			},
 		],
+		'prefer-destructuring': 'warn',
 	},
 	ts: {
+		// typescript-eslint
 		'@typescript-eslint/consistent-type-definitions': 'off',
 		'@typescript-eslint/switch-exhaustiveness-check': ['warn'],
 		'@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
 		'@typescript-eslint/no-non-null-assertion': 'warn',
-		// Rules that conflicts with default js
-		'prefer-destructuring': 'off',
-		'@typescript-eslint/prefer-destructuring': [
-			'warn',
-			{ VariableDeclarator: { object: true } },
-		],
+		// Rules that does not work on ts
+		'no-duplicate-imports': 'off',
+		// Rules that conflicts with default eslint
+		'consistent-return': 'off',
+		'@typescript-eslint/consistent-return': 'warn',
 		'no-shadow': 'off',
 		'@typescript-eslint/no-shadow': 'error',
 		'no-unused-vars': 'off',
@@ -108,6 +143,11 @@ const RULES = {
 				destructuredArrayIgnorePattern: '^_',
 				varsIgnorePattern: '^_',
 			},
+		],
+		'prefer-destructuring': 'off',
+		'@typescript-eslint/prefer-destructuring': [
+			'warn',
+			{ VariableDeclarator: { object: true } },
 		],
 	},
 } satisfies Record<string, EslintConfig['rules']>;
