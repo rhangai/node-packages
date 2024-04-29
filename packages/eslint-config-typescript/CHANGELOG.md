@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.0.0
+
+### Major Changes
+
+- Major release v1
+
 ## 0.13.1
 
 ### Patch Changes
