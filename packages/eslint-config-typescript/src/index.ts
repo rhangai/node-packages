@@ -120,7 +120,7 @@ const RULES = {
 	},
 } satisfies Record<string, EslintConfig['rules']>;
 
-type ConfigOptions = {
+export type ConfigOptions = {
 	priorityPackages?: string[];
 };
 
