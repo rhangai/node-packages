@@ -41,7 +41,7 @@ export function intParse(param: unknown): number {
 export function intParseOr(param: unknown, defaultValue: number): number;
 export function intParseOr(param: unknown, defaultValue: null): number | null;
 export function intParseOr(param: unknown, defaultValue: number | null): number | null {
-	const { success, value, error } = intSafeParse(param);
+	const { success, value } = intSafeParse(param);
 	if (!success) return defaultValue;
 	return value;
 }

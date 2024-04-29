@@ -38,13 +38,10 @@ export type DateParseOptions = {
  *
  * Return a result with the date and the status
  */
-export function dateSafeParse(
-	param: unknown,
-	{ inputFormat }: DateParseOptions = {},
-): Result<DateType> {
+export function dateSafeParse(param: unknown, options: DateParseOptions = {}): Result<DateType> {
 	let date: DateType | undefined;
 	if (typeof param === 'string') {
-		const format = inputFormat ?? 'YYYY-MM-DD';
+		const format = options.inputFormat ?? 'YYYY-MM-DD';
 		date = dayjs(param, format, true);
 		if (date.format(format) !== param) {
 			return {
@@ -60,7 +57,7 @@ export function dateSafeParse(
 	if (!date || !date.isValid()) {
 		return {
 			success: false,
-			error: `Invalid date. Expected ${inputFormat}. Given ${param}`,
+			error: `Invalid date. Given ${param}`,
 		};
 	}
 	return {
@@ -76,6 +73,17 @@ export function dateSafeParse(
 export function dateParse(param: unknown, options: DateParseOptions = {}): DateType {
 	const { success, value, error } = dateSafeParse(param, options);
 	if (!success) throw new Error(error ?? `Invalid date: ${param}`);
+	return value;
+}
+
+/**
+ * Parses a Date or returns the default value
+ */
+export function dateParseOr(param: unknown, defaultValue: DateType): DateType;
+export function dateParseOr(param: unknown, defaultValue: null): DateType | null;
+export function dateParseOr(param: unknown, defaultValue: DateType | null): DateType | null {
+	const { success, value } = dateSafeParse(param);
+	if (!success) return defaultValue;
 	return value;
 }
 

@@ -57,3 +57,16 @@ export function decimalParse(param: unknown): Decimal {
 	if (!success) throw new Error(error ?? `Invalid decimal: ${param}`);
 	return value;
 }
+
+/**
+ * Parses a decimal or return an specific value
+ */
+export function decimalParseOr(param: unknown, defaultValue: number): Decimal;
+export function decimalParseOr(param: unknown, defaultValue: null): Decimal | null;
+export function decimalParseOr(param: unknown, defaultValue: number | null): Decimal | null {
+	const { success, value } = decimalSafeParse(param);
+	if (!success) {
+		return defaultValue == null ? null : new Decimal(defaultValue);
+	}
+	return value;
+}
