@@ -1,5 +1,6 @@
 {
   "packageManager": "yarn@4.1.1",
+  "type": "module",
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
     "@nestjs/common": "^10.3.8",

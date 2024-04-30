@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 // @ts-expect-error ESLint padrão não tem tipos
 import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
 // @ts-expect-error eslint-plugin-import não tem tipos
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginN from 'eslint-plugin-n';
-import type { EslintConfig } from './types';
+import tseslint from 'typescript-eslint';
+import type { EslintConfig, EslintConfigRules } from './types';
 
 // Extensions for files
 const JS_EXTENSIONS = ['.js', '.jsx', '.mjs', '.cjs'];
@@ -53,18 +55,8 @@ const RULES = {
 		'prefer-promise-reject-errors': 'error',
 		// eslint-plugin-import
 		'import/no-cycle': 'error',
-		'import/no-extraneous-dependencies': [
-			'error',
-			{
-				devDependencies: [
-					'eslint.config.*',
-					'**/*.test.*',
-					'**/*.spec.*',
-					'**/spec/**/*',
-					'**/test/**/*',
-				],
-			},
-		],
+	},
+	node: {
 		// eslint-plugin-n
 		'n/prefer-node-protocol': 'warn',
 	},
@@ -86,13 +78,33 @@ const RULES = {
 			},
 		],
 		'prefer-destructuring': 'warn',
+		'require-await': 'warn',
 	},
 	ts: {
 		// typescript-eslint
 		'@typescript-eslint/consistent-type-definitions': 'off',
-		'@typescript-eslint/switch-exhaustiveness-check': ['warn'],
 		'@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+		'@typescript-eslint/no-invalid-void-type': [
+			'warn',
+			{
+				allowInGenericTypeArguments: true,
+				allowAsThisParameter: true,
+			},
+		],
 		'@typescript-eslint/no-non-null-assertion': 'warn',
+		'@typescript-eslint/prefer-string-starts-ends-with': [
+			'warn',
+			{
+				allowSingleElementEquality: 'always',
+			},
+		],
+		'@typescript-eslint/restrict-template-expressions': [
+			'warn',
+			{
+				allowNumber: true,
+			},
+		],
+		'@typescript-eslint/switch-exhaustiveness-check': ['warn'],
 		// Rules that does not work on ts
 		'no-duplicate-imports': 'off',
 		// Rules that conflicts with default eslint
@@ -117,32 +129,94 @@ const RULES = {
 			'warn',
 			{ VariableDeclarator: { object: true } },
 		],
+		'require-await': 'off',
+		'@typescript-eslint/require-await': 'warn',
 	},
-} satisfies Record<string, EslintConfig['rules']>;
+	cjs: {
+		'@typescript-eslint/no-var-requires': 'off',
+	},
+} satisfies Record<string, EslintConfigRules>;
 
 export type ConfigOptions = {
+	meta?: { dirname?: string; url?: string };
+	monorepoPackageJson?: boolean;
+	internalPackagesRegex?: string;
+	parserOptions?: Record<string, unknown>;
 	priorityPackages?: string[];
 };
 
 type Config = {
+	/**
+	 *
+	 * @param options
+	 * @returns
+	 */
 	ts: (options?: ConfigOptions) => EslintConfig[];
+	tsWeb: (options?: ConfigOptions) => EslintConfig[];
+};
+const config: Config = {
+	ts: (options) =>
+		createRules({
+			options: options ?? null,
+			extraConfig: {
+				name: '@rhangai/esling-config-typescript/ts-node',
+				plugins: {
+					n: eslintPluginN,
+				},
+				rules: RULES.node,
+			},
+		}),
+	tsWeb: (options) =>
+		createRules({
+			options: options ?? null,
+		}),
+};
+export default config;
+
+type CreateRulesParam = {
+	options: ConfigOptions | null;
+	extraConfig?: EslintConfig;
 };
 
-const eslintConfigRecommended: EslintConfig = eslint.configs.recommended;
-const config: Config = {
-	ts: (options) => [
-		eslintConfigRecommended,
+/**
+ * Create the rules
+ * @param param0
+ * @returns
+ */
+function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[] {
+	const rootDir = resolveTsconfigDir(options);
+	return [
+		eslint.configs.recommended,
 		...tseslint.configs.strictTypeChecked,
 		...tseslint.configs.stylisticTypeChecked,
 		{
 			name: '@rhangai/esling-config-typescript/ts',
 			plugins: {
-				n: eslintPluginN,
 				import: eslintPluginImport,
+			},
+			languageOptions: {
+				parserOptions: {
+					project: true,
+					tsconfigRootDir: rootDir,
+					...options?.parserOptions,
+				},
 			},
 			rules: {
 				...RULES.base,
 				...RULES.ts,
+				'import/no-extraneous-dependencies': [
+					'error',
+					{
+						packageDir: options?.monorepoPackageJson ? rootDir : undefined,
+						devDependencies: [
+							'eslint.config.*',
+							'**/*.test.*',
+							'**/*.spec.*',
+							'**/spec/**/*',
+							'**/test/**/*',
+						],
+					},
+				],
 				'import/order': ['error', importOrderOptions(options?.priorityPackages ?? [])],
 			},
 			settings: {
@@ -156,8 +230,10 @@ const config: Config = {
 						extensions: EXTENSIONS,
 					},
 				},
+				'import/internal-regex': options?.internalPackagesRegex,
 			},
 		},
+		extraConfig,
 		{
 			...tseslint.configs.disableTypeChecked,
 			name: '@rhangai/esling-config-typescript/ts-js',
@@ -167,13 +243,47 @@ const config: Config = {
 				...RULES.js,
 			},
 		},
-	],
-};
-
-export default config;
+		{
+			...tseslint.configs.disableTypeChecked,
+			name: '@rhangai/esling-config-typescript/ts-cjs',
+			files: [`**/*.cjs`],
+			rules: {
+				...RULES.cjs,
+			},
+			languageOptions: {
+				globals: {
+					module: true,
+					require: true,
+					__dirname: true,
+					__filename: true,
+				},
+			},
+		},
+	].filter(Boolean) as EslintConfig[];
+}
 
 /**
- *
+ * Get the path from the import meta
+ */
+function resolveTsconfigDir(options: ConfigOptions | null): string | undefined {
+	if (!options) {
+		return undefined;
+	}
+	const { meta } = options;
+	if (!meta) {
+		return undefined;
+	}
+	if (meta.dirname) {
+		return meta.dirname;
+	}
+	if (meta.url) {
+		return dirname(fileURLToPath(meta.url));
+	}
+	return undefined;
+}
+
+/**
+ * Create the import/order rule options
  */
 function importOrderOptions(packages: string[]) {
 	const pathGroups = packages.map((packageName) => ({
