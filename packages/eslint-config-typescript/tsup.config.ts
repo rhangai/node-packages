@@ -4,5 +4,5 @@ export default defineConfig({
 	entry: {
 		index: 'src/index.ts',
 	},
-	external: ['eslint', 'typescript-eslint', '@eslint/js'],
+	cjsInterop: true,
 });

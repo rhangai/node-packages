@@ -1,14 +1,11 @@
 import config from '@rhangai/eslint-config-typescript';
 
 export default [
-	...config.ts(),
 	{
 		ignores: ['**/dist/**/*'],
-		languageOptions: {
-			parserOptions: {
-				project: true,
-				tsconfigRootDir: import.meta.dirname,
-			},
-		},
 	},
+	...config.ts({
+		meta: import.meta,
+		devFiles: ['**/tsup.config.ts'],
+	}),
 ];

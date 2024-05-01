@@ -5,4 +5,5 @@ export default defineConfig({
 		index: 'src/index.ts',
 		node: 'src/node/index.ts',
 	},
+	cjsInterop: true,
 });

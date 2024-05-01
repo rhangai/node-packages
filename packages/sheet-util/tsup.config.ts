@@ -5,4 +5,5 @@ export default defineConfig({
 		index: 'src/index.ts',
 		writer: 'src/writer/index.ts',
 	},
+	cjsInterop: true,
 });

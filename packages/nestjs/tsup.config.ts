@@ -7,4 +7,5 @@ export default defineConfig({
 		graphql: 'src/graphql/index.ts',
 		typeorm: 'src/typeorm/index.ts',
 	},
+	cjsInterop: true,
 });

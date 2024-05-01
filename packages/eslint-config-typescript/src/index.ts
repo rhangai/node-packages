@@ -137,12 +137,42 @@ const RULES = {
 	},
 } satisfies Record<string, EslintConfigRules>;
 
+export type {
+	/**
+	 * Config type
+	 */
+	EslintConfig,
+	/**
+	 * A rules type
+	 */
+	EslintConfigRules,
+};
+
 export type ConfigOptions = {
+	/**
+	 * Must be import.meta to resolve the files
+	 */
 	meta?: { dirname?: string; url?: string };
+	/**
+	 * True if in a monorepo package and all dependencies are on the root package.json
+	 */
 	monorepoPackageJson?: boolean;
+	/**
+	 * Internal packages regex
+	 */
 	internalPackagesRegex?: string;
+	/**
+	 * Extra parser options to be merged
+	 */
 	parserOptions?: Record<string, unknown>;
+	/**
+	 * Packages that must be imported first
+	 */
 	priorityPackages?: string[];
+	/**
+	 * Files for dev
+	 */
+	devFiles?: string[];
 };
 
 type Config = {
@@ -180,11 +210,11 @@ type CreateRulesParam = {
 
 /**
  * Create the rules
- * @param param0
  * @returns
  */
 function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[] {
-	const rootDir = resolveTsconfigDir(options);
+	const rootDir = resolveRootDir(options);
+	const devFiles: string[] = options?.devFiles ?? [];
 	return [
 		eslint.configs.recommended,
 		...tseslint.configs.strictTypeChecked,
@@ -214,6 +244,7 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 							'**/*.spec.*',
 							'**/spec/**/*',
 							'**/test/**/*',
+							...devFiles,
 						],
 					},
 				],
@@ -265,7 +296,7 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 /**
  * Get the path from the import meta
  */
-function resolveTsconfigDir(options: ConfigOptions | null): string | undefined {
+function resolveRootDir(options: ConfigOptions | null): string | undefined {
 	if (!options) {
 		return undefined;
 	}
