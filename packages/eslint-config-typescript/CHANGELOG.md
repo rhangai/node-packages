@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.0.2
+
+### Patch Changes
+
+- Improved interop with cjs
+
 ## 1.0.1
 
 ### Patch Changes
