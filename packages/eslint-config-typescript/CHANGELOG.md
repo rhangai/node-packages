@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.1.1
+
+### Patch Changes
+
+- Fixed rules
+
 ## 1.1.0
 
 ### Minor Changes
