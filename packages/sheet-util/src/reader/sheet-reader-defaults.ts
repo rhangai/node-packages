@@ -1,7 +1,7 @@
 import type { ISheetReaderLogger } from './core/sheet-reader-types';
 
 const SHEET_READER_CONSOLE_LOGGER: ISheetReaderLogger = {
-	error(err: any) {
+	error(err: unknown) {
 		// eslint-disable-next-line no-console
 		console.error(err);
 	},

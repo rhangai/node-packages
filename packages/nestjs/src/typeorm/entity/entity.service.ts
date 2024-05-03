@@ -3,9 +3,9 @@ import { EntityManager } from 'typeorm';
 import { EntityRepositoryBase } from './entity-repository-base';
 import type { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
 
-type RepositoryLikeConstructor<T extends EntityRepositoryBase> = {
-	new (entityManager: EntityManager): T;
-};
+type RepositoryLikeConstructor<T extends EntityRepositoryBase> = new (
+	entityManager: EntityManager,
+) => T;
 
 const REPOSITORY_STORAGE = Symbol('repositories');
 
@@ -19,7 +19,9 @@ export class EntityService {
 	 * @returns The entity manager
 	 */
 	entityManager(context: EntityServiceContext | null | undefined): EntityManager {
-		if (!context?.entityManager) return this.entityManagerInstance;
+		if (!context?.entityManager) {
+			return this.entityManagerInstance;
+		}
 		return context.entityManager;
 	}
 
@@ -49,8 +51,9 @@ export class EntityService {
 		const entityManager = this.entityManager(context);
 
 		// Get the repository storage
-		let storage: Map<any, EntityRepositoryBase>;
+		let storage: Map<unknown, EntityRepositoryBase>;
 		if (REPOSITORY_STORAGE in entityManager) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 			storage = (entityManager as any)[REPOSITORY_STORAGE];
 		} else {
 			storage = new Map();

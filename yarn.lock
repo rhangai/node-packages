@@ -898,8 +898,9 @@ __metadata:
     typescript: "npm:*"
   peerDependencies:
     "@nestjs/common": ^10
+    "@nestjs/core": ^10
     "@nestjs/graphql": ">=10"
-    "@rhangai/core": ^0.0.1
+    "@rhangai/core": ^1.0.0
     graphql: ">=15"
     typeorm: ">=0.2"
   peerDependenciesMeta:
@@ -922,7 +923,7 @@ __metadata:
     typescript: "npm:*"
     xlsx: "npm:^0.17.0"
   peerDependencies:
-    "@rhangai/core": ^0.0.1
+    "@rhangai/core": ^1.0.0
   languageName: unknown
   linkType: soft
 

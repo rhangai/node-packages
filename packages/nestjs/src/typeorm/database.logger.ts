@@ -16,19 +16,19 @@ export class DatabaseLogger implements Logger {
 		}
 	}
 
-	logQuery(query: string, parameters?: any[] | undefined) {
+	logQuery(query: string, parameters?: unknown[] | undefined) {
 		if (this.isLogEnabled('debug')) {
 			const formattedQuery = this.formatQuery(query, parameters);
 			this.internalLogger.debug(formattedQuery);
 		}
 	}
 
-	logQueryError(error: string, query: string, parameters?: any[] | undefined) {
+	logQueryError(error: string, query: string, parameters?: unknown[] | undefined) {
 		const info = [this.formatQuery(query, parameters), this.formatError(error)].flat();
 		this.internalLogger.error(`Erro rodando a query:\n${info.filter(Boolean).join('\n')}`);
 	}
 
-	logQuerySlow(time: number, query: string, parameters?: any[] | undefined) {
+	logQuerySlow(time: number, query: string, parameters?: unknown[] | undefined) {
 		const formattedQuery = this.formatQuery(query, parameters);
 		this.internalLogger.warn(`${formattedQuery} - A query demorou ${time}ms`);
 	}
@@ -41,7 +41,7 @@ export class DatabaseLogger implements Logger {
 		this.internalLogger.debug({ message });
 	}
 
-	log(level: 'log' | 'info' | 'warn', message: any) {
+	log(level: 'log' | 'info' | 'warn', message: unknown) {
 		switch (level) {
 			case 'log': {
 				this.internalLogger.log(message);
@@ -63,32 +63,35 @@ export class DatabaseLogger implements Logger {
 
 	private isLogEnabled(level: LogLevel): boolean {
 		if ('isLevelEnabled' in NestLogger) {
-			return (NestLogger as any).isLevelEnabled(level);
+			return NestLogger.isLevelEnabled(level);
 		} else if ('isLogLevelEnabled' in this.internalLogger) {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 			return (this.internalLogger as any).isLogLevelEnabled(level);
 		}
 		return false;
 	}
 
-	private formatQuery(query: string, parameters?: any) {
+	private formatQuery(query: string, parameters?: unknown) {
 		if (parameters == null || (Array.isArray(parameters) && parameters.length <= 0)) {
 			return query;
 		}
 		return `${query} -- ${JSON.stringify(parameters)}`;
 	}
 
-	private formatError(error: any): string[] | string | null {
+	private formatError(error: unknown): string[] | string | null {
 		if (typeof error === 'string') {
 			return error;
-		} else if (error == null) {
+		} else if (error == null || typeof error !== 'object') {
 			return null;
 		}
 
 		const errors: string[] = [];
-		if (error.message) {
+		if ('message' in error && error.message) {
+			// eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
 			errors.push(`Error: ${error.message}`);
 		}
-		if (error.hint) {
+		if ('hint' in error && error.hint) {
+			// eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions
 			errors.push(`  ${error.hint}`);
 		}
 		return errors;

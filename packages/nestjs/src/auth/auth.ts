@@ -1,5 +1,9 @@
-import type { ArgumentsHost, ExecutionContext } from '@nestjs/common';
-import { createParamDecorator, UnauthorizedException } from '@nestjs/common';
+import {
+	type ArgumentsHost,
+	createParamDecorator,
+	type ExecutionContext,
+	UnauthorizedException,
+} from '@nestjs/common';
 import { authStorageGet, authStorageSet } from './auth-storage';
 
 /// The decorar type
@@ -64,14 +68,18 @@ export function createAuthDefinition<TAuthData>(
 	const getStorageDefault = (argumentsHost: ArgumentsHost): AuthStorageResult | null => {
 		const type = argumentsHost.getType();
 		if (type === 'http') {
-			const request = argumentsHost.getArgByIndex(0);
+			const request: unknown = argumentsHost.getArgByIndex(0);
 			return {
 				request,
 			};
 		} else if ((type as string) === 'graphql') {
-			if (!graphql) return null;
+			if (!graphql) {
+				return null;
+			}
 			const [request, context] = graphql(argumentsHost);
-			if (!request || !context) return null;
+			if (!request || !context) {
+				return null;
+			}
 			return {
 				request,
 				key: context,
@@ -86,7 +94,9 @@ export function createAuthDefinition<TAuthData>(
 	// Get the auth data
 	function getData(argumentsHost: ArgumentsHost): { data: TAuthData } | null {
 		const storage = getStorage(argumentsHost);
-		if (!storage) throw new Error(`Invalid storage`);
+		if (!storage) {
+			throw new Error(`Invalid storage`);
+		}
 		const authData = authStorageGet<TAuthData>(storage.request, storage.key);
 		return authData;
 	}
@@ -100,9 +110,11 @@ export function createAuthDefinition<TAuthData>(
 		  Create the decorator
 		 */
 		createDecorator<TData>(getter: (data: TData, authdata: TAuthData) => unknown) {
-			return createParamDecorator<TData>((data, ctx) => {
+			return createParamDecorator<TData, ArgumentsHost>((data, ctx) => {
 				const authData = getData(ctx);
-				if (!authData) throw new UnauthorizedException();
+				if (!authData) {
+					throw new UnauthorizedException();
+				}
 				return getter(data, authData.data);
 			});
 		},
@@ -115,7 +127,9 @@ export function createAuthDefinition<TAuthData>(
 			dataFn: () => TAuthData | null | Promise<TAuthData | null>,
 		): Promise<AuthenticateResult<TAuthData>> {
 			const storage = getStorage(ctx);
-			if (!storage) return [null];
+			if (!storage) {
+				return [null];
+			}
 			const authData = await dataFn();
 			authStorageSet(storage.request, storage.key, authData);
 			return [true, authData];

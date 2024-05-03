@@ -1,7 +1,7 @@
 import {
-	Catch,
 	type ArgumentsHost,
 	BadRequestException,
+	Catch,
 	HttpException,
 	Logger,
 } from '@nestjs/common';
@@ -52,7 +52,9 @@ export class ExceptionFilter extends BaseExceptionFilter {
 }
 
 /// Check if i
-function isHttpException(x: any): x is ToHttpException {
-	if (x && typeof x === 'object' && 'toHttp' in x && typeof x.toHttp === 'function') return true;
+function isHttpException(x: unknown): x is ToHttpException {
+	if (x && typeof x === 'object' && 'toHttp' in x && typeof x.toHttp === 'function') {
+		return true;
+	}
 	return false;
 }

@@ -74,7 +74,9 @@ export class PublicHttpAggregateError extends Error implements ToHttpException {
 
 	/// Build the full message from the error
 	private static buildErrorMessage(msg: string, errors: string[]): string {
-		if (errors.length <= 0) return msg;
+		if (errors.length <= 0) {
+			return msg;
+		}
 		const errorsMapped = errors.map((err) => `  - ${err}`);
 		return `${msg}\n\n${errorsMapped.join('\n')}`;
 	}
@@ -85,9 +87,15 @@ export class PublicHttpAggregateError extends Error implements ToHttpException {
 	 * @returns A string with the public message or null
 	 */
 	private static getSubErrorPublicMessage(error: unknown) {
-		if (error == null) return null;
-		if (typeof error === 'string') return error;
-		if (typeof error !== 'object') return null;
+		if (error == null) {
+			return null;
+		}
+		if (typeof error === 'string') {
+			return error;
+		}
+		if (typeof error !== 'object') {
+			return null;
+		}
 		if ('getPublicErrorMessage' in error) {
 			return (error as PublicHttpError).getPublicErrorMessage();
 		}

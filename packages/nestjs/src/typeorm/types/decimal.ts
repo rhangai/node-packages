@@ -1,4 +1,4 @@
-import { decimalParse, Decimal } from '@rhangai/core';
+import { Decimal, decimalParse } from '@rhangai/core';
 import { Column, type ColumnOptions } from 'typeorm';
 import { isFindOperator } from './util.internal';
 
@@ -19,16 +19,23 @@ export function DecimalColumn(
 		type: 'decimal',
 		transformer: {
 			from(v: string | null): Decimal | null {
-				if (v == null || !v) return null;
-				if (typeof v !== 'string') return null;
+				if (v == null || !v) {
+					return null;
+				}
+				if (typeof v !== 'string') {
+					return null;
+				}
 				return new Decimal(v, 10);
 			},
-			to(v: any): string | null | undefined {
-				if (v == null || !v) return undefined;
-				if (isFindOperator(v)) {
-					return v;
+			to(param: unknown) {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (param == null || !param) {
+					return undefined;
 				}
-				const decimal = decimalParse(v);
+				if (isFindOperator(param)) {
+					return param;
+				}
+				const decimal = decimalParse(param);
 				decimalAssertRange(decimal, precision, !!negative);
 				return decimal.toFixed(scale);
 			},
@@ -44,11 +51,14 @@ function decimalAssertRange(decimal: Decimal, precision: number, negative: boole
 		decimalMax = new Decimal(decimalStr, 10);
 		DECIMAL_MAX_RANGE[precision] = decimalMax;
 	}
-	if (decimal.gte(decimalMax)) throw new Error(`Decimal maior que o máximo permitido.`);
+	if (decimal.gte(decimalMax)) {
+		throw new Error(`Decimal maior que o máximo permitido.`);
+	}
 
 	if (negative) {
-		if (decimal.lte(decimalMax.negated()))
+		if (decimal.lte(decimalMax.negated())) {
 			throw new Error(`Decimal menor que o mínimo permitido.`);
+		}
 	} else if (decimal.lt(0)) {
 		throw new Error(`Decimal menor que 0 não permitido`);
 	}

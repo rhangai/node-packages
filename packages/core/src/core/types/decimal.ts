@@ -1,5 +1,5 @@
-import type { Result } from '../result';
 import { BigNumber } from 'bignumber.js';
+import type { Result } from '../result';
 
 /// Decimal type
 export type Decimal = BigNumber;
@@ -20,8 +20,12 @@ export type DecimalInput = string | BigNumber | number;
  * Check if is a decimal input type
  */
 export function decimalIsInput(v: unknown): v is DecimalInput {
-	if (typeof v === 'string') return true;
-	if (typeof v === 'number') return true;
+	if (typeof v === 'string') {
+		return true;
+	}
+	if (typeof v === 'number') {
+		return true;
+	}
 	return Decimal.isBigNumber(v);
 }
 
@@ -37,9 +41,10 @@ export function decimalSafeParse(param: unknown): Result<Decimal> {
 	} else if (Decimal.isBigNumber(param)) {
 		decimal = param;
 	}
-	if (!decimal || !decimal.isFinite()) {
+	if (!decimal?.isFinite()) {
 		return {
 			success: false,
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 			error: `Invalid decimal: ${param}`,
 		};
 	}
@@ -54,7 +59,10 @@ export function decimalSafeParse(param: unknown): Result<Decimal> {
  */
 export function decimalParse(param: unknown): Decimal {
 	const { success, value, error } = decimalSafeParse(param);
-	if (!success) throw new Error(error ?? `Invalid decimal: ${param}`);
+	if (!success) {
+		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+		throw new Error(error ?? `Invalid decimal: ${param}`);
+	}
 	return value;
 }
 

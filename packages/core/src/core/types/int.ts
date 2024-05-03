@@ -16,6 +16,7 @@ export function intSafeParse(param: unknown): Result<number> {
 	if (value == null || !Number.isFinite(value)) {
 		return {
 			success: false,
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 			error: `Invalid Int. ${param}`,
 		};
 	}
@@ -31,7 +32,10 @@ export function intSafeParse(param: unknown): Result<number> {
  */
 export function intParse(param: unknown): number {
 	const { success, value, error } = intSafeParse(param);
-	if (!success) throw new Error(error ?? `Invalid Int: ${param}`);
+	if (!success) {
+		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+		throw new Error(error ?? `Invalid Int: ${param}`);
+	}
 	return value;
 }
 
@@ -42,6 +46,8 @@ export function intParseOr(param: unknown, defaultValue: number): number;
 export function intParseOr(param: unknown, defaultValue: null): number | null;
 export function intParseOr(param: unknown, defaultValue: number | null): number | null {
 	const { success, value } = intSafeParse(param);
-	if (!success) return defaultValue;
+	if (!success) {
+		return defaultValue;
+	}
 	return value;
 }

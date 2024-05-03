@@ -1,4 +1,4 @@
-import { inspect } from 'util';
+import { inspect } from 'node:util';
 import type { ArgumentsHost } from '@nestjs/common';
 
 /**
@@ -14,7 +14,7 @@ export function exceptionFilterContext(host: ArgumentsHost): Record<string, unkn
 		const http = host.switchToHttp();
 		exceptionContext['http:request'] = prettyRequest(http.getRequest());
 	} else if (type === 'graphql') {
-		const info = host.getArgByIndex(3);
+		const info: Record<string, unknown> | undefined = host.getArgByIndex(3);
 		exceptionContext.graphql = {
 			fieldName: info?.fieldName,
 			returnType: info?.returnType,
@@ -29,8 +29,10 @@ export function exceptionFilterContext(host: ArgumentsHost): Record<string, unkn
 	return exceptionContext;
 }
 
-function prettyRequest(request: any) {
-	if (request == null) return null;
+function prettyRequest(request: Record<string, unknown> | null | undefined) {
+	if (request == null) {
+		return null;
+	}
 	return {
 		url: request.url,
 		params: inspect(request.params),

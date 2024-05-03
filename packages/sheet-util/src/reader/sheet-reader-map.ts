@@ -30,7 +30,9 @@ export async function sheetReaderMap<T, HeaderMap extends SheetReaderHeaderMapBa
 		...options,
 		async callback(item, param) {
 			const value = await options.map(item.data, item, param);
-			if (value != null) result.push(value);
+			if (value != null) {
+				result.push(value);
+			}
 		},
 	});
 	if (result.length <= 0) {

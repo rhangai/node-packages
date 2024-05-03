@@ -11,11 +11,13 @@ type StoreMap = Map<unknown, unknown>;
  * @param authdata
  */
 export function authStorageGet<TAuthData = unknown>(
-	storage: any,
-	keyParam: unknown
+	storage: unknown,
+	keyParam: unknown,
 ): { data: TAuthData } | null {
 	const store = getStore(storage);
-	if (!store) return null;
+	if (!store) {
+		return null;
+	}
 	const key = keyParam || AUTH_STORAGE_DEFAULT_KEY;
 	return {
 		data: store.get(key) as TAuthData,
@@ -27,7 +29,7 @@ export function authStorageGet<TAuthData = unknown>(
  * @param authExecutionContext
  * @param authdata
  */
-export function authStorageSet(storage: any, keyParam: unknown, data: unknown) {
+export function authStorageSet(storage: unknown, keyParam: unknown, data: unknown) {
 	let store = getStore(storage);
 	if (!store) {
 		store = new Map();
@@ -41,7 +43,10 @@ export function authStorageSet(storage: any, keyParam: unknown, data: unknown) {
 }
 
 // Pega o store
-function getStore(storage: any): StoreMap | undefined | null {
-	if (storage == null) return null;
-	return storage[AUTH_STORAGE];
+function getStore(storage: unknown): StoreMap | undefined | null {
+	if (storage == null) {
+		return null;
+	}
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+	return (storage as any)[AUTH_STORAGE];
 }

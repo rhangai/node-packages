@@ -8,12 +8,19 @@ export function DateColumn(options?: ColumnOptions) {
 		type: 'date',
 		transformer: {
 			from(v: string | null): DateType | null {
-				if (v == null || !v) return null;
-				if (typeof v !== 'string') return null;
+				if (v == null || !v) {
+					return null;
+				}
+				if (typeof v !== 'string') {
+					return null;
+				}
 				return dateParse(v, { inputFormat: 'YYYY-MM-DD' });
 			},
-			to(param: any): string | null | undefined {
-				if (param == null || !param) return undefined;
+			to(param: unknown) {
+				// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+				if (param == null || !param) {
+					return undefined;
+				}
 				if (isFindOperator(param)) {
 					return param;
 				}

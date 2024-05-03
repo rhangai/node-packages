@@ -1,45 +1,47 @@
 import type { PipeTransform } from '@nestjs/common';
-import { dateParse, DateType, Decimal, decimalParse } from '@rhangai/core';
+import { dateParse, DateType, Decimal, decimalParse, intParse, intParseOr } from '@rhangai/core';
 
-export const DatePipe: PipeTransform<any, DateType> = {
+export const DatePipe: PipeTransform<unknown, DateType> = {
 	transform(input) {
 		return dateParse(input, { inputFormat: 'YYYY-MM-DD' });
 	},
 };
 
-export const DatePipeOptional: PipeTransform<any, DateType | null> = {
+export const DatePipeOptional: PipeTransform<unknown, DateType | null> = {
 	transform(input) {
-		if (input == null || input === '') return null;
+		if (input == null || input === '') {
+			return null;
+		}
 		return dateParse(input, { inputFormat: 'YYYY-MM-DD' });
 	},
 };
 
-export const DecimalPipe: PipeTransform<any, Decimal> = {
+export const DecimalPipe: PipeTransform<unknown, Decimal> = {
 	transform(input) {
 		return decimalParse(input);
 	},
 };
 
-export const DecimalPipeOptional: PipeTransform<any, Decimal | null> = {
+export const DecimalPipeOptional: PipeTransform<unknown, Decimal | null> = {
 	transform(input) {
-		if (input == null || input === '') return null;
+		if (input == null || input === '') {
+			return null;
+		}
 		return decimalParse(input);
 	},
 };
 
-export const IntPipe: PipeTransform<any, number> = {
+export const IntPipe: PipeTransform<unknown, number> = {
 	transform(input) {
-		const value = parseInt(input, 10);
-		if (!Number.isFinite(value)) throw new Error(`${input} is not a number`);
-		return value;
+		return intParse(input);
 	},
 };
 
-export const IntPipeOptional: PipeTransform<any, number | null> = {
+export const IntPipeOptional: PipeTransform<unknown, number | null> = {
 	transform(input) {
-		if (input == null || input === '') return null;
-		const value = parseInt(input, 10);
-		if (!Number.isFinite(value)) return null;
-		return value;
+		if (input == null || input === '') {
+			return null;
+		}
+		return intParseOr(input, null);
 	},
 };

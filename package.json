@@ -19,6 +19,7 @@
     "packages/*"
   ],
   "scripts": {
+    "prepare-release": "yarn build:all && changeset",
     "build:all": "yarn workspaces foreach -Ap run clean && yarn workspaces foreach -At run build"
   }
 }

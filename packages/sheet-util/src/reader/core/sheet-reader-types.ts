@@ -1,7 +1,7 @@
 import type { FileInputType } from '@rhangai/core/node';
 
 export interface ISheetReaderLogger {
-	error(err: any): any;
+	error(err: unknown): unknown;
 }
 
 export type SheetReaderHeaderItem = {

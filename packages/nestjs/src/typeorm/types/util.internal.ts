@@ -1,4 +1,4 @@
-export function isFindOperator(param: any): boolean {
+export function isFindOperator(param: unknown): boolean {
 	if (param && typeof param === 'object' && 'getSql' in param) {
 		return true;
 	}

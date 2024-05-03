@@ -53,6 +53,13 @@ const RULES = {
 		'object-shorthand': 'warn',
 		'prefer-const': 'warn',
 		'prefer-promise-reject-errors': 'error',
+		'sort-imports': [
+			'warn',
+			{
+				ignoreCase: true,
+				ignoreDeclarationSort: true,
+			},
+		],
 		// eslint-plugin-import
 		'import/no-cycle': 'error',
 	},
@@ -82,6 +89,10 @@ const RULES = {
 	},
 	ts: {
 		// typescript-eslint
+		'@typescript-eslint/prefer-nullish-coalescing': [
+			'warn',
+			{ ignorePrimitives: { string: true } },
+		],
 		'@typescript-eslint/consistent-type-definitions': 'off',
 		'@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
 		'@typescript-eslint/no-invalid-void-type': [
@@ -105,8 +116,6 @@ const RULES = {
 			},
 		],
 		'@typescript-eslint/switch-exhaustiveness-check': ['warn'],
-		// Rules that does not work on ts
-		'no-duplicate-imports': 'off',
 		// Rules that conflicts with default eslint
 		'consistent-return': 'off',
 		'@typescript-eslint/consistent-return': 'warn',
@@ -131,6 +140,15 @@ const RULES = {
 		],
 		'require-await': 'off',
 		'@typescript-eslint/require-await': 'warn',
+		// Rules that does not work on ts
+		'no-duplicate-imports': 'off',
+		'import/no-duplicates': [
+			'error',
+			{
+				considerQueryString: true,
+				'prefer-inline': true,
+			},
+		],
 	},
 	cjs: {
 		'@typescript-eslint/no-var-requires': 'off',

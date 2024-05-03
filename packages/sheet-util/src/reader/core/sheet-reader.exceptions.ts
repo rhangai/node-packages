@@ -8,7 +8,7 @@ export class SheetReaderException extends Error {
 			[
 				errorMessage,
 				formatErrors('Messages', errorMessageList, (m) => m),
-				formatErrors('Errors', errorList, (e) => `${e.stack || e.toString()}`),
+				formatErrors('Errors', errorList, (e) => e.stack || e.toString()),
 			].join('\n'),
 		);
 	}
@@ -37,11 +37,15 @@ export class SheetReaderException extends Error {
 }
 
 function formatErrors<T>(prefix: string, items: T[], formatter: (item: T) => string) {
-	if (items.length <= 0) return null;
+	if (items.length <= 0) {
+		return null;
+	}
 	const errorMessages = items
 		.map(formatter)
 		.map((item) => item.split('\n').join('\n    '))
 		.filter(Boolean);
-	if (errorMessages.length <= 0) return null;
+	if (errorMessages.length <= 0) {
+		return null;
+	}
 	return `${prefix}\n  - ${errorMessages.join('\n  - ')}`;
 }

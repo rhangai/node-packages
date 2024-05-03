@@ -20,9 +20,15 @@ export type DateTypeInput = string | Date | DateType;
  * Check if the date is an input type for date
  */
 export function dateIsInput(v: unknown): v is DateTypeInput {
-	if (!v) return false;
-	if (typeof v === 'string') return true;
-	if (v instanceof Date) return true;
+	if (!v) {
+		return false;
+	}
+	if (typeof v === 'string') {
+		return true;
+	}
+	if (v instanceof Date) {
+		return true;
+	}
 	return dayjs.isDayjs(v);
 }
 
@@ -54,9 +60,10 @@ export function dateSafeParse(param: unknown, options: DateParseOptions = {}): R
 	} else if (dayjs.isDayjs(param)) {
 		date = param;
 	}
-	if (!date || !date.isValid()) {
+	if (!date?.isValid()) {
 		return {
 			success: false,
+			// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 			error: `Invalid date. Given ${param}`,
 		};
 	}
@@ -72,7 +79,10 @@ export function dateSafeParse(param: unknown, options: DateParseOptions = {}): R
  */
 export function dateParse(param: unknown, options: DateParseOptions = {}): DateType {
 	const { success, value, error } = dateSafeParse(param, options);
-	if (!success) throw new Error(error ?? `Invalid date: ${param}`);
+	if (!success) {
+		// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+		throw new Error(error ?? `Invalid date: ${param}`);
+	}
 	return value;
 }
 
@@ -83,7 +93,9 @@ export function dateParseOr(param: unknown, defaultValue: DateType): DateType;
 export function dateParseOr(param: unknown, defaultValue: null): DateType | null;
 export function dateParseOr(param: unknown, defaultValue: DateType | null): DateType | null {
 	const { success, value } = dateSafeParse(param);
-	if (!success) return defaultValue;
+	if (!success) {
+		return defaultValue;
+	}
 	return value;
 }
 

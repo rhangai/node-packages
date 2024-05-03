@@ -1,12 +1,12 @@
-import { writeFile } from 'fs';
-import { resolve } from 'path';
+import { writeFile } from 'node:fs';
+import { resolve } from 'node:path';
 import type { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { type GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 
 export type GraphqlTypesGeneratorOptions = {
 	baseDir: string;
-	scripts: { [filename: string]: GqlModuleOptions };
+	scripts: Record<string, GqlModuleOptions>;
 };
 
 /**
@@ -37,7 +37,7 @@ export class GraphqlTypesGenerator {
 	async generate(options: GqlModuleOptions) {
 		const app = await this.getApp();
 		const typesLoader = app.get(GraphQLTypesLoader);
-		return typesLoader.mergeTypesByPaths(options.typePaths!);
+		return typesLoader.mergeTypesByPaths(options.typePaths ?? []);
 	}
 
 	async write(filename: string, options: GqlModuleOptions) {
