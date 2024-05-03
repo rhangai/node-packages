@@ -142,8 +142,9 @@ const RULES = {
 		'@typescript-eslint/require-await': 'warn',
 		// Rules that does not work on ts
 		'no-duplicate-imports': 'off',
+		'import/consistent-type-specifier-style': ['warn', 'prefer-inline'],
 		'import/no-duplicates': [
-			'error',
+			'warn',
 			{
 				considerQueryString: true,
 				'prefer-inline': true,
