@@ -262,10 +262,11 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 	const devFiles: string[] = options?.devFiles ?? [];
 	const { restrictExtraConfig, restrictRules } = importRestrictRules(options);
 
-	return [
-		{
-			ignores: options?.ignores,
-		},
+	const ignores = options?.ignores;
+	const globals = options?.globals;
+
+	const eslintConfigs: (EslintConfig | null)[] = [
+		ignores ? { ignores } : null,
 		eslint.configs.recommended,
 		...tseslint.configs.strictTypeChecked,
 		...tseslint.configs.stylisticTypeChecked,
@@ -280,7 +281,7 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 					tsconfigRootDir: rootDir,
 					...options?.parserOptions,
 				},
-				globals: options?.globals,
+				...(globals ? { globals } : {}),
 			},
 			rules: {
 				...RULES.base,
@@ -343,7 +344,8 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 				},
 			},
 		},
-	].filter(Boolean) as EslintConfig[];
+	];
+	return eslintConfigs.filter(Boolean) as EslintConfig[];
 }
 
 /**
