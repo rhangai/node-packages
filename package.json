@@ -9,6 +9,7 @@
     "@rhangai/eslint-config-typescript": "workspace:^",
     "@types/node": "^20",
     "eslint": "^9.1.1",
+    "globals": "^15.1.0",
     "graphql": "^16.8.1",
     "prettier": "^3.2.5",
     "tsup": "^8.0.2",

@@ -900,7 +900,7 @@ __metadata:
     "@nestjs/common": ^10
     "@nestjs/core": ^10
     "@nestjs/graphql": ">=10"
-    "@rhangai/core": ^1.0.0
+    "@rhangai/core": ^1.0.1
     graphql: ">=15"
     typeorm: ">=0.2"
   peerDependenciesMeta:
@@ -921,9 +921,9 @@ __metadata:
     dayjs: "npm:^1.10.5"
     tsup: "npm:*"
     typescript: "npm:*"
-    xlsx: "npm:^0.17.0"
+    xlsx: "npm:^0.18.5"
   peerDependencies:
-    "@rhangai/core": ^1.0.0
+    "@rhangai/core": ^1.0.1
   languageName: unknown
   linkType: soft
 
@@ -1249,18 +1249,6 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: 10c0/3ff155f8812e4a746fee8ecff1f227d527c4c45655bb1fad6347c3cb58e46190598217551b1500f18542d2bbe5c87120cb6927f5a074a59166fbdd9468f0a299
-  languageName: node
-  linkType: hard
-
-"adler-32@npm:~1.2.0":
-  version: 1.2.0
-  resolution: "adler-32@npm:1.2.0"
-  dependencies:
-    exit-on-epipe: "npm:~1.0.1"
-    printj: "npm:~1.1.0"
-  bin:
-    adler32: ./bin/adler32.njs
-  checksum: 10c0/1c2af9c21d2b22d0e576531f09de178950f2afd84fdfc84204e15e30bbf80d9645a896ae48b2d1389ce677c90e628ce7496d2d23da101582443ebc9fd5cd0c10
   languageName: node
   linkType: hard
 
@@ -1656,7 +1644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cfb@npm:^1.1.4":
+"cfb@npm:~1.2.1":
   version: 1.2.2
   resolution: "cfb@npm:1.2.2"
   dependencies:
@@ -1850,7 +1838,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crc-32@npm:~1.2.0":
+"crc-32@npm:~1.2.0, crc-32@npm:~1.2.1":
   version: 1.2.2
   resolution: "crc-32@npm:1.2.2"
   bin:
@@ -2599,13 +2587,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exit-on-epipe@npm:~1.0.1":
-  version: 1.0.1
-  resolution: "exit-on-epipe@npm:1.0.1"
-  checksum: 10c0/f10a5fbf1abb6294b06220f99d84bb918286700e8aec3d364963767f1f0530b7e5abf29d8f0ef2672458e794f746f73254d397b1596acc745bdce81586b183c0
-  languageName: node
-  linkType: hard
-
 "exponential-backoff@npm:^3.1.1":
   version: 3.1.1
   resolution: "exponential-backoff@npm:3.1.1"
@@ -2948,6 +2929,13 @@ __metadata:
   version: 15.0.0
   resolution: "globals@npm:15.0.0"
   checksum: 10c0/b93e356a7bd4562d73a9defa95a0ff5e8a0b7726a4e2af16bd8ad019e14cd21d85e0a27b46e7e270d34e25df0bc0f9473ca21b47266c406c0e40973956085777
+  languageName: node
+  linkType: hard
+
+"globals@npm:^15.1.0":
+  version: 15.1.0
+  resolution: "globals@npm:15.1.0"
+  checksum: 10c0/ae9cd15057dc6a21d6dbafe9f47b66bd063c6d3c9215fa1e8294bd130d89f188c48370a11a9525a5a33bd8689fc4fdfd3f474d930692d7abb7459cd982503336
   languageName: node
   linkType: hard
 
@@ -4451,15 +4439,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"printj@npm:~1.1.0":
-  version: 1.1.2
-  resolution: "printj@npm:1.1.2"
-  bin:
-    printj: ./bin/printj.njs
-  checksum: 10c0/511ebf3a1eb3269d91ac709083039c32dbee05ad71918ac20fb960df03d24cf072b09ec22a3cb0897f31c48233f10312596e3f4e43dfc6269e6977b0679a68ec
-  languageName: node
-  linkType: hard
-
 "proc-log@npm:^3.0.0":
   version: 3.0.0
   resolution: "proc-log@npm:3.0.0"
@@ -4734,6 +4713,7 @@ __metadata:
     "@rhangai/eslint-config-typescript": "workspace:^"
     "@types/node": "npm:^20"
     eslint: "npm:^9.1.1"
+    globals: "npm:^15.1.0"
     graphql: "npm:^16.8.1"
     prettier: "npm:^3.2.5"
     tsup: "npm:^8.0.2"
@@ -5911,20 +5891,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xlsx@npm:^0.17.0":
-  version: 0.17.5
-  resolution: "xlsx@npm:0.17.5"
+"xlsx@npm:^0.18.5":
+  version: 0.18.5
+  resolution: "xlsx@npm:0.18.5"
   dependencies:
-    adler-32: "npm:~1.2.0"
-    cfb: "npm:^1.1.4"
+    adler-32: "npm:~1.3.0"
+    cfb: "npm:~1.2.1"
     codepage: "npm:~1.15.0"
-    crc-32: "npm:~1.2.0"
+    crc-32: "npm:~1.2.1"
     ssf: "npm:~0.11.2"
     wmf: "npm:~1.0.1"
     word: "npm:~0.3.0"
   bin:
     xlsx: bin/xlsx.njs
-  checksum: 10c0/c7eb20361ac42f6e8146d6ed6a8bf1bdecfaeeb9a10dac3f5743e10abbd486df69ee9ec16701288cdd0095034ca6c9ae4db83a69fe40f74398a13d92df7edcdb
+  checksum: 10c0/787cfa77034a3e86fdcde21572f1011c8976f87823a5e0ee5057f13b2f6e48f17a1710732a91b8ae15d7794945c7cba8a3ca904ea7150e028260b0ab8e1158c8
   languageName: node
   linkType: hard
 
