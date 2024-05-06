@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "dayjs": "^1.10.5",
-    "xlsx": "^0.17.0"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@rhangai/core": "workspace:^",
@@ -31,7 +31,7 @@
     "typescript": "*"
   },
   "peerDependencies": {
-    "@rhangai/core": "^1.0.1"
+    "@rhangai/core": "^1.1.0"
   },
   "scripts": {
     "clean": "rm -rf dist",

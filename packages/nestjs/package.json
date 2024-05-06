@@ -49,7 +49,7 @@
     "@nestjs/common": "^10",
     "@nestjs/core": "^10",
     "@nestjs/graphql": ">=10",
-    "@rhangai/core": "^1.0.1",
+    "@rhangai/core": "^1.1.0",
     "graphql": ">=15",
     "typeorm": ">=0.2"
   },
