@@ -7,7 +7,7 @@ import eslint from '@eslint/js';
 import eslintPluginImport from 'eslint-plugin-import';
 import eslintPluginN from 'eslint-plugin-n';
 import tseslint from 'typescript-eslint';
-import type { EslintConfig, EslintConfigRules } from './types';
+import { type EslintConfig, type EslintConfigRules } from './types';
 
 // Extensions for files
 const JS_EXTENSIONS = ['.js', '.jsx', '.mjs', '.cjs'];
@@ -167,6 +167,11 @@ export type {
 	EslintConfigRules,
 };
 
+export type ConfigOptionsRestriction = {
+	files: string | string[] | null;
+	patterns: Record<string, string | string[]>;
+};
+
 export type ConfigOptions = {
 	/**
 	 * Must be import.meta to resolve the files
@@ -192,15 +197,36 @@ export type ConfigOptions = {
 	 * Files for dev
 	 */
 	devFiles?: string[];
+	/**
+	 * Files for common js rules
+	 */
+	cjsFiles?: string[];
+	/**
+	 * Restrict import rules
+	 */
+	restrict?: ConfigOptionsRestriction[];
+	/**
+	 * Global variables
+	 */
+	globals?: Record<string, 'writable' | 'readonly' | 'off'>;
+	/**
+	 * Ignores linting the files
+	 */
+	ignores?: string[];
 };
 
 type Config = {
 	/**
-	 *
+	 * General rules for typescript (node)
 	 * @param options
 	 * @returns
 	 */
 	ts: (options?: ConfigOptions) => EslintConfig[];
+	/**
+	 * General rules for typescript for web
+	 * @param options
+	 * @returns
+	 */
 	tsWeb: (options?: ConfigOptions) => EslintConfig[];
 };
 const config: Config = {
@@ -234,7 +260,12 @@ type CreateRulesParam = {
 function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[] {
 	const rootDir = resolveRootDir(options);
 	const devFiles: string[] = options?.devFiles ?? [];
+	const { restrictExtraConfig, restrictRules } = importRestrictRules(options);
+
 	return [
+		{
+			ignores: options?.ignores,
+		},
 		eslint.configs.recommended,
 		...tseslint.configs.strictTypeChecked,
 		...tseslint.configs.stylisticTypeChecked,
@@ -249,10 +280,12 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 					tsconfigRootDir: rootDir,
 					...options?.parserOptions,
 				},
+				globals: options?.globals,
 			},
 			rules: {
 				...RULES.base,
 				...RULES.ts,
+				...restrictRules,
 				'import/no-extraneous-dependencies': [
 					'error',
 					{
@@ -283,6 +316,7 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 				'import/internal-regex': options?.internalPackagesRegex,
 			},
 		},
+		...restrictExtraConfig,
 		extraConfig,
 		{
 			...tseslint.configs.disableTypeChecked,
@@ -296,16 +330,16 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 		{
 			...tseslint.configs.disableTypeChecked,
 			name: '@rhangai/esling-config-typescript/ts-cjs',
-			files: [`**/*.cjs`],
+			files: [`**/*.cjs`, ...(options?.cjsFiles ?? [])],
 			rules: {
 				...RULES.cjs,
 			},
 			languageOptions: {
 				globals: {
-					module: true,
-					require: true,
-					__dirname: true,
-					__filename: true,
+					module: 'readonly',
+					require: 'readonly',
+					__dirname: 'readonly',
+					__filename: 'readonly',
 				},
 			},
 		},
@@ -358,4 +392,70 @@ function importOrderOptions(packages: string[]) {
 			caseInsensitive: true,
 		},
 	};
+}
+
+type RestrictRulePattern = {
+	group: string[];
+	message: string;
+};
+
+/**
+ * Create the restrict rules for the import
+ */
+function importRestrictRules(options: ConfigOptions | null) {
+	const restrictExtraConfig: EslintConfig[] = [];
+	const restrictRules: EslintConfigRules = {};
+
+	const restrict = options?.restrict;
+	if (!restrict) {
+		return {
+			restrictRules,
+			restrictExtraConfig,
+		};
+	}
+
+	const restrictRulePatterns: RestrictRulePattern[] = [];
+	for (const restriction of restrict) {
+		const patterns = restrictionPatternMap(restriction);
+		if (patterns.length <= 0) {
+			continue;
+		}
+		if (!restriction.files || restriction.files.length <= 0) {
+			restrictRulePatterns.push(...patterns);
+		} else {
+			restrictExtraConfig.push({
+				files: Array.isArray(restriction.files) ? restriction.files : [restriction.files],
+				rules: {
+					'no-restricted-imports': ['error', { patterns }],
+				},
+			});
+		}
+	}
+	restrictRules['no-restricted-imports'] = ['error', { patterns: restrictRulePatterns }];
+
+	return {
+		restrictRules,
+		restrictExtraConfig,
+	};
+}
+
+function restrictionPatternMap(restriction: ConfigOptionsRestriction): RestrictRulePattern[] {
+	const patterns: RestrictRulePattern[] = [];
+	for (const [name, group] of Object.entries(restriction.patterns)) {
+		if (Array.isArray(group)) {
+			if (group.length <= 0) {
+				continue;
+			}
+			patterns.push({
+				group,
+				message: `NÃO pode importar de "${name}"`,
+			});
+		} else if (group) {
+			patterns.push({
+				group: [group],
+				message: `NÃO pode importar de "${name}"`,
+			});
+		}
+	}
+	return patterns;
 }
