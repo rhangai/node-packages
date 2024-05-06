@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.2.0
+
+### Minor Changes
+
+- Configuration with restrict, globals and ignores
+
 ## 1.1.1
 
 ### Patch Changes
