@@ -1,30 +1,14 @@
-import config from '@rhangai/eslint-config-typescript';
 import globals from 'globals';
+import config from '@rhangai/eslint-config-typescript';
 
 export default [
-	{
-		ignores: ['**/dist/**/*'],
-	},
-	{
-		languageOptions: {
-			globals: {
-				...globals.node,
-			},
-		},
-	},
 	...config.ts({
+		ignores: ['**/dist/**/*'],
 		meta: import.meta,
-		devFiles: ['**/tsup.config.ts'],
-	}),
-	{
-		rules: {
-			'sort-imports': [
-				'warn',
-				{
-					ignoreCase: true,
-					ignoreDeclarationSort: true,
-				},
-			],
+		devFiles: ['**/tsup.config.ts', 'eslint.config.js'],
+		globals: {
+			...globals.node,
 		},
-	},
+		internalPackagesRegex: '^@rhangai',
+	}),
 ];
