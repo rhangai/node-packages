@@ -45,7 +45,7 @@ export function resultError(
 	return {
 		success: false,
 		error,
-		errors: errorsFilter(errors),
+		errors: errorsListFilter(errors),
 		errorCode,
 	};
 }
@@ -68,27 +68,28 @@ export function resultErrorMerge(
 	return {
 		success: false,
 		error: errorA.error ?? errorB.error,
-		errors: errorsConcat(errorA.errors, errorB.errors),
+		errors: errorsListConcat(errorA.errors, errorB.errors),
 		errorCode: errorA.errorCode ?? errorB.errorCode,
 	};
 }
 
-function errorsConcat(
-	errorsA: Array<string | null | undefined> | null | undefined,
-	errorsB: Array<string | null | undefined> | null | undefined,
+// Concat two error list
+function errorsListConcat(
+	errorsAParam: Array<string | null | undefined> | null | undefined,
+	errorsBParam: Array<string | null | undefined> | null | undefined,
 ): string[] | undefined {
-	const errorsAFiltered = errorsFilter(errorsA);
-	const errorsBFiltered = errorsFilter(errorsB);
-	if (!errorsAFiltered) {
-		return errorsBFiltered;
+	const errorsA = errorsListFilter(errorsAParam);
+	const errorsB = errorsListFilter(errorsBParam);
+	if (!errorsA) {
+		return errorsB;
 	}
-	if (!errorsBFiltered) {
-		return errorsAFiltered;
+	if (!errorsB) {
+		return errorsA;
 	}
-	return errorsAFiltered.concat(errorsBFiltered);
+	return errorsA.concat(errorsB);
 }
 
-function errorsFilter(
+function errorsListFilter(
 	errors: Array<string | null | undefined> | null | undefined,
 ): string[] | undefined {
 	if (errors == null) {
