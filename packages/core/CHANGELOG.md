@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.2.0
+
+### Minor Changes
+
+- Improved core Result type and utilities
+
 ## 1.1.0
 
 ### Minor Changes
