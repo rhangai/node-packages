@@ -22,6 +22,8 @@
   "scripts": {
     "prepare-release": "yarn build:all && changeset",
     "build:all": "yarn workspaces foreach -Ap run clean && yarn workspaces foreach -At run build",
-    "lint": "(eslint --fix packages || true) && prettier --log-level error -w packages/"
+    "lint": "(yarn lint:eslint || true) && yarn lint:prettier",
+    "lint:eslint": "eslint --fix packages",
+    "lint:prettier": "prettier --log-level error -w packages"
   }
 }
