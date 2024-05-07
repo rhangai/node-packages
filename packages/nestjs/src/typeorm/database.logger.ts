@@ -1,6 +1,6 @@
 import { type LogLevel, Logger as NestLogger } from '@nestjs/common';
+import { type Logger } from 'typeorm';
 import { unreachableIgnore } from '@rhangai/core';
-import type { Logger } from 'typeorm';
 
 /**
  *

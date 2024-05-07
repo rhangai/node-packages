@@ -6,7 +6,7 @@ import {
 	Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import type { ToHttpException } from './http.exception';
+import { type ToHttpException } from './http.exception';
 
 /**
  * Basic extended exception filter

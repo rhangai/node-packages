@@ -1,5 +1,5 @@
 import { inspect } from 'node:util';
-import type { ArgumentsHost } from '@nestjs/common';
+import { type ArgumentsHost } from '@nestjs/common';
 
 /**
  * Get an exception filter context from an ArgumentsHost

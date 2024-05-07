@@ -1,5 +1,5 @@
-import { Decimal, decimalParse } from '@rhangai/core';
 import { Column, type ColumnOptions } from 'typeorm';
+import { Decimal, decimalParse } from '@rhangai/core';
 import { isFindOperator } from './util.internal';
 
 export type DecimalColumnOptions = Omit<ColumnOptions, 'precision' | 'scale'> & {

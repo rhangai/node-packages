@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { EntityRepositoryBase } from './entity-repository-base';
-import type { EntityServiceContext, EntityServiceTransactionContext } from './entity.context';
+import { type EntityServiceContext, type EntityServiceTransactionContext } from './entity.context';
 
 type RepositoryLikeConstructor<T extends EntityRepositoryBase> = new (
 	entityManager: EntityManager,

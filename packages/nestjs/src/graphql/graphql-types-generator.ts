@@ -1,6 +1,6 @@
 import { writeFile } from 'node:fs';
 import { resolve } from 'node:path';
-import type { INestApplicationContext } from '@nestjs/common';
+import { type INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { type GqlModuleOptions, GraphQLModule, GraphQLTypesLoader } from '@nestjs/graphql';
 

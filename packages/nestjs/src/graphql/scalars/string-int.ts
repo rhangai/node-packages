@@ -1,5 +1,5 @@
-import { intParse } from '@rhangai/core';
 import { GraphQLScalarType, Kind } from 'graphql';
+import { intParse } from '@rhangai/core';
 
 export const StringIntScalar = new GraphQLScalarType({
 	name: 'StringInt',
