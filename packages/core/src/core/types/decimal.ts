@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js';
-import type { Result } from '../result';
+import { type Result } from '../result';
 
 /// Decimal type
 export type Decimal = BigNumber;

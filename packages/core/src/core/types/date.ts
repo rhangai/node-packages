@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import type { Result } from '../result';
+import { type Result } from '../result';
 
 /// Date type
 export type DateType = dayjs.Dayjs;

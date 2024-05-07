@@ -1,5 +1,3 @@
-import { errorMessage } from './error';
-
 /**
  * Result success type
  */
@@ -40,14 +38,14 @@ export type Result<TValue> = ResultSuccess<TValue> | ResultError;
  * Create a result error
  */
 export function resultError(
-	errorParam: unknown,
+	error: string | null,
 	errorCode?: string | null,
-	errors?: unknown[],
+	errors?: Array<string | null | undefined>,
 ): ResultError {
 	return {
 		success: false,
-		error: errorMessage(errorParam),
-		errors: errors?.map((e) => errorMessage(e)).filter(Boolean) as string[] | undefined,
+		error,
+		errors: errors?.filter(Boolean) as string[] | undefined,
 		errorCode,
 	};
 }
