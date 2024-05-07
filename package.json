@@ -20,8 +20,8 @@
     "packages/*"
   ],
   "scripts": {
-    "prepare-release": "yarn build:all && changeset",
-    "build:all": "yarn workspaces foreach -Ap run clean && yarn workspaces foreach -At run build",
+    "prepare-release": "yarn build && changeset",
+    "build": "yarn workspaces foreach -Ap run clean && yarn workspaces foreach -At run build",
     "lint": "(yarn lint:eslint || true) && yarn lint:prettier",
     "lint:eslint": "eslint --fix packages",
     "lint:prettier": "prettier --log-level error -w packages"
