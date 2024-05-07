@@ -51,29 +51,46 @@ export function resultError(
 }
 
 /**
- * Create a result error concatenating
+ * Merge two errors
  */
-export function resultErrorConcat(
-	error: ResultError,
-	errors?: Array<string | null | undefined>,
+export function resultErrorMerge(
+	errorA: ResultError | null | undefined,
+	errorB: ResultError | null | undefined,
 ): ResultError {
-	const errorsFiltered = errorsFilter(errors);
-	if (!errorsFiltered) {
-		return error;
-	}
-	let { errors: newErrors } = error;
-	if (!newErrors || newErrors.length <= 0) {
-		newErrors = errorsFiltered;
-	} else {
-		newErrors = newErrors.concat(errorsFiltered);
+	if (!errorA) {
+		if (!errorB) {
+			return { success: false };
+		}
+		return errorB;
+	} else if (!errorB) {
+		return errorA;
 	}
 	return {
-		...error,
-		errors: newErrors,
+		success: false,
+		error: errorA.error ?? errorB.error,
+		errors: errorsConcat(errorA.errors, errorB.errors),
+		errorCode: errorA.errorCode ?? errorB.errorCode,
 	};
 }
 
-function errorsFilter(errors: Array<string | null | undefined> | null | undefined) {
+function errorsConcat(
+	errorsA: Array<string | null | undefined> | null | undefined,
+	errorsB: Array<string | null | undefined> | null | undefined,
+): string[] | undefined {
+	const errorsAFiltered = errorsFilter(errorsA);
+	const errorsBFiltered = errorsFilter(errorsB);
+	if (!errorsAFiltered) {
+		return errorsBFiltered;
+	}
+	if (!errorsBFiltered) {
+		return errorsAFiltered;
+	}
+	return errorsAFiltered.concat(errorsBFiltered);
+}
+
+function errorsFilter(
+	errors: Array<string | null | undefined> | null | undefined,
+): string[] | undefined {
 	if (errors == null) {
 		return undefined;
 	}
