@@ -89,6 +89,7 @@ const RULES = {
 	},
 	ts: {
 		// typescript-eslint
+		'@typescript-eslint/array-type': ['warn', { default: 'array-simple' }],
 		'@typescript-eslint/prefer-nullish-coalescing': [
 			'warn',
 			{ ignorePrimitives: { string: true } },
@@ -265,7 +266,7 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 	const ignores = options?.ignores;
 	const globals = options?.globals;
 
-	const eslintConfigs: (EslintConfig | null)[] = [
+	const eslintConfigs: Array<EslintConfig | null> = [
 		ignores ? { ignores } : null,
 		eslint.configs.recommended,
 		...tseslint.configs.strictTypeChecked,

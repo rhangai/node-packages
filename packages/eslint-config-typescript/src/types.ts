@@ -1,5 +1,5 @@
-import type { Config as ConfigFile } from 'typescript-eslint';
+import { type Config as ConfigFile } from 'typescript-eslint';
 
-type ExtractConfig<T> = T extends (infer U)[] ? U : never;
+type ExtractConfig<T> = T extends Array<infer U> ? U : never;
 export type EslintConfig = ExtractConfig<ConfigFile>;
 export type EslintConfigRules = NonNullable<EslintConfig['rules']>;

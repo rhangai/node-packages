@@ -4,52 +4,52 @@
 
 ### Patch Changes
 
-- Fixed eslint configuration
+-   Fixed eslint configuration
 
 ## 1.2.0
 
 ### Minor Changes
 
-- Configuration with restrict, globals and ignores
+-   Configuration with restrict, globals and ignores
 
 ## 1.1.1
 
 ### Patch Changes
 
-- Fixed rules
+-   Fixed rules
 
 ## 1.1.0
 
 ### Minor Changes
 
-- Updated lint rules
+-   Updated lint rules
 
 ## 1.0.2
 
 ### Patch Changes
 
-- Improved interop with cjs
+-   Improved interop with cjs
 
 ## 1.0.1
 
 ### Patch Changes
 
-- Improved rules
+-   Improved rules
 
 ## 1.0.0
 
 ### Major Changes
 
-- Major release v1
+-   Major release v1
 
 ## 0.13.1
 
 ### Patch Changes
 
-- New documentation
+-   New documentation
 
 ## 0.13.0
 
 ### Minor Changes
 
-- New Eslint 9 config
+-   New Eslint 9 config
