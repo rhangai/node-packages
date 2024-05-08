@@ -96,6 +96,13 @@ const RULES = {
 		],
 		'@typescript-eslint/consistent-type-definitions': 'off',
 		'@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+		'@typescript-eslint/no-inferrable-types': [
+			'warn',
+			{
+				ignoreParameters: true,
+				ignoreProperties: true,
+			},
+		],
 		'@typescript-eslint/no-invalid-void-type': [
 			'warn',
 			{
