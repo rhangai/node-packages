@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.3.2
+
+### Patch Changes
+
+- Fixed prefer-nullish-coaliscing rules
+
 ## 1.3.1
 
 ### Patch Changes
