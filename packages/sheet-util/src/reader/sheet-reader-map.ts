@@ -1,7 +1,7 @@
-import type {
-	SheetReaderData,
-	SheetReaderHeaderMapBase,
-	SheetReaderOptions,
+import {
+	type SheetReaderData,
+	type SheetReaderHeaderMapBase,
+	type SheetReaderOptions,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
 import {

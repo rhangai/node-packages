@@ -1,13 +1,13 @@
-import { fileInputDispatch, streamToBuffer } from '@rhangai/core/node';
 import dayjs from 'dayjs';
 import XLSX, { type CellObject } from 'xlsx';
-import type {
-	SheetReaderData,
-	SheetReaderHeaderItem,
-	SheetReaderHeaderItemInput,
-	SheetReaderHeaderMapBase,
-	SheetReaderOptions,
-	SheetReaderValues,
+import { fileInputDispatch, streamToBuffer } from '@rhangai/core/node';
+import {
+	type SheetReaderData,
+	type SheetReaderHeaderItem,
+	type SheetReaderHeaderItemInput,
+	type SheetReaderHeaderMapBase,
+	type SheetReaderOptions,
+	type SheetReaderValues,
 } from './core/sheet-reader-types';
 import { SheetReaderException } from './core/sheet-reader.exceptions';
 import { sheetReaderGetDefaultLogger } from './sheet-reader-defaults';
@@ -92,12 +92,12 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 		}
 	} else {
 		initialRow = 1;
-		const headerCells: {
+		const headerCells: Array<{
 			cell: XLSX.CellObject;
 			column: number;
 			text: string;
 			normalizedText: string;
-		}[] = [];
+		}> = [];
 		for (let colNum = range.s.c; colNum <= range.e.c; ++colNum) {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const cell: CellObject | undefined =
@@ -202,6 +202,7 @@ function* sheetReaderCreateRowIterator<HeaderMap extends SheetReaderHeaderMapBas
 /**
  * Lê cada item de uma planilha
  * @param options
+ * @deprecated Usar o sheetRead
  */
 export async function sheetReaderForEach<HeaderMap extends SheetReaderHeaderMapBase>(
 	options: SheetReaderForEachOptions<HeaderMap>,
