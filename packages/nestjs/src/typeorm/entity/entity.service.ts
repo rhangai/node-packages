@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { EntityRepositoryBase } from './entity-repository-base';
 import { type EntityServiceContext, type EntityServiceTransactionContext } from './entity.context';
@@ -11,7 +11,7 @@ const REPOSITORY_STORAGE = Symbol('repositories');
 
 @Injectable()
 export class EntityService {
-	constructor(private readonly entityManagerInstance: EntityManager) {}
+	constructor(@Inject(EntityManager) private readonly entityManagerInstance: EntityManager) {}
 
 	/**
 	 * Get the entity manager from the given context
