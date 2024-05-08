@@ -181,7 +181,8 @@ export type {
 
 export type ConfigOptionsRestriction = {
 	files: string | string[] | null;
-	patterns: Record<string, string | string[]>;
+	patterns?: Record<string, string | string[]>;
+	paths?: Record<string, string>;
 };
 
 export type ConfigOptions = {
@@ -412,6 +413,10 @@ type RestrictRulePattern = {
 	group: string[];
 	message: string;
 };
+type RestrictRulePath = {
+	name: string;
+	message: string;
+};
 
 /**
  * Create the restrict rules for the import
@@ -429,31 +434,59 @@ function importRestrictRules(options: ConfigOptions | null) {
 	}
 
 	const restrictRulePatterns: RestrictRulePattern[] = [];
+	const restrictRulePaths: RestrictRulePath[] = [];
 	for (const restriction of restrict) {
 		const patterns = restrictionPatternMap(restriction);
-		if (patterns.length <= 0) {
+		const paths = restrictionPathMap(restriction);
+
+		if (!restriction.files || restriction.files.length <= 0) {
+			if (patterns) {
+				restrictRulePatterns.push(...patterns);
+			}
+			if (paths) {
+				restrictRulePaths.push(...paths);
+			}
 			continue;
 		}
-		if (!restriction.files || restriction.files.length <= 0) {
-			restrictRulePatterns.push(...patterns);
-		} else {
-			restrictExtraConfig.push({
-				files: Array.isArray(restriction.files) ? restriction.files : [restriction.files],
-				rules: {
-					'no-restricted-imports': ['error', { patterns }],
-				},
-			});
+		if (!patterns && !paths) {
+			continue;
 		}
-	}
-	restrictRules['no-restricted-imports'] = ['error', { patterns: restrictRulePatterns }];
 
+		const ruleConfig: Record<string, unknown> = {};
+		if (patterns) {
+			ruleConfig.patterns = patterns;
+		}
+		if (paths) {
+			ruleConfig.paths = paths;
+		}
+		restrictExtraConfig.push({
+			files: Array.isArray(restriction.files) ? restriction.files : [restriction.files],
+			rules: {
+				'no-restricted-imports': ['error', ruleConfig],
+			},
+		});
+	}
+	if (restrictRulePatterns.length > 0 || restrictRulePaths.length > 0) {
+		restrictRules['no-restricted-imports'] = [
+			'error',
+			{
+				patterns: restrictRulePatterns,
+				paths: restrictRulePaths,
+			},
+		];
+	}
 	return {
 		restrictRules,
 		restrictExtraConfig,
 	};
 }
 
-function restrictionPatternMap(restriction: ConfigOptionsRestriction): RestrictRulePattern[] {
+function restrictionPatternMap(
+	restriction: ConfigOptionsRestriction,
+): RestrictRulePattern[] | null {
+	if (!restriction.patterns) {
+		return null;
+	}
 	const patterns: RestrictRulePattern[] = [];
 	for (const [name, group] of Object.entries(restriction.patterns)) {
 		if (Array.isArray(group)) {
@@ -471,5 +504,25 @@ function restrictionPatternMap(restriction: ConfigOptionsRestriction): RestrictR
 			});
 		}
 	}
+	if (patterns.length <= 0) {
+		return null;
+	}
 	return patterns;
+}
+
+function restrictionPathMap(restriction: ConfigOptionsRestriction): RestrictRulePath[] | null {
+	if (!restriction.paths) {
+		return null;
+	}
+	const paths: RestrictRulePath[] = [];
+	for (const [name, message] of Object.entries(restriction.paths)) {
+		paths.push({
+			name,
+			message: message || `NÃO pode importar de "${name}"`,
+		});
+	}
+	if (paths.length <= 0) {
+		return null;
+	}
+	return paths;
 }
