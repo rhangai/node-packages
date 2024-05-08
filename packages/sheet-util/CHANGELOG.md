@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 1.1.0
+
+### Minor Changes
+
+- New SheetUtil utilities to read
+
 ## 1.0.1
 
 ### Patch Changes
