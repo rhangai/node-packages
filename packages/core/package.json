@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "bignumber.js": "^9.1.2",
-    "dayjs": "^1.11.10"
+    "dayjs": "^1.11.11"
   },
   "devDependencies": {
     "tsup": "*",
