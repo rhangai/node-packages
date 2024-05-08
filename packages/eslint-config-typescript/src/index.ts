@@ -92,7 +92,11 @@ const RULES = {
 		'@typescript-eslint/array-type': ['warn', { default: 'array-simple' }],
 		'@typescript-eslint/prefer-nullish-coalescing': [
 			'warn',
-			{ ignorePrimitives: { string: true } },
+			{
+				ignoreConditionalTests: true,
+				ignoreMixedLogicalExpressions: true,
+				ignorePrimitives: { string: true, boolean: true },
+			},
 		],
 		'@typescript-eslint/consistent-type-definitions': 'off',
 		'@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
