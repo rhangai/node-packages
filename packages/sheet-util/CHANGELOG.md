@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 1.1.1
+
+### Patch Changes
+
+- Fixed reading types
+
 ## 1.1.0
 
 ### Minor Changes
