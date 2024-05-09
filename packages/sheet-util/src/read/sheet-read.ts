@@ -18,11 +18,21 @@ type SheetReadColumn =
 
 export type SheetReadColumnsBase = Record<string, SheetReadColumn>;
 
+type Data<Columns extends SheetReadColumnsBase> = Record<keyof Columns, string>;
+
 export type SheetReadItem<Columns extends SheetReadColumnsBase> = SheetReadRawItem & {
 	/**
 	 * The data of the row read
 	 */
-	data: Record<keyof Columns, string>;
+	data: Data<Columns>;
+	/**
+	 * The header item
+	 */
+	header: Data<Columns>;
+	/**
+	 * The header raw data
+	 */
+	headerRawData: string[];
 };
 
 export type SheetReadOptions<Columns extends SheetReadColumnsBase> = SheetReadRawInputOptions & {
@@ -42,8 +52,6 @@ export type SheetReadOptions<Columns extends SheetReadColumnsBase> = SheetReadRa
 	callback(this: void, item: SheetReadItem<Columns>): void | Promise<void>;
 };
 
-type ItemData<Columns extends SheetReadColumnsBase> = Record<keyof Columns, string>;
-
 type ColumnInfo<Columns extends SheetReadColumnsBase> = {
 	index: number;
 	column: string;
@@ -58,7 +66,8 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 	options: SheetReadOptions<Columns>,
 ): Promise<Result<void>> {
 	type HeaderState = {
-		header: ItemData<Columns>;
+		header: Data<Columns>;
+		headerRawData: string[];
 		columns: Array<ColumnInfo<Columns>>;
 	};
 	let headerState: HeaderState | null = null;
@@ -84,7 +93,7 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 				});
 			}
 		}
-		const header = createItemFromRawData(columns, rawData);
+		const header = createFromRawData(columns, rawData);
 		if (options.headerValidate !== false) {
 			let errors: string[] | null;
 			if (typeof options.headerValidate === 'function') {
@@ -98,6 +107,7 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 		}
 		headerState = {
 			header,
+			headerRawData: rawData,
 			columns,
 		};
 		return { success: true };
@@ -118,7 +128,9 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 			rowsRead += 1;
 			return options.callback({
 				...item,
-				data: createItemFromRawData(headerState.columns, item.rawData),
+				data: createFromRawData(headerState.columns, item.rawData),
+				header: headerState.header,
+				headerRawData: headerState.headerRawData,
 			});
 		},
 	});
@@ -131,16 +143,16 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 	return { success: true };
 }
 
-/// Create the item
-function createItemFromRawData<Columns extends SheetReadColumnsBase>(
+/// Create the data
+function createFromRawData<Columns extends SheetReadColumnsBase>(
 	columns: Array<ColumnInfo<Columns>>,
 	rawData: string[],
-): ItemData<Columns> {
-	const data: Partial<ItemData<Columns>> = {};
+): Data<Columns> {
+	const data: Partial<Data<Columns>> = {};
 	for (const info of columns) {
 		data[info.key] = rawData[info.index] ?? '';
 	}
-	return data as ItemData<Columns>;
+	return data as Data<Columns>;
 }
 
 function headerValidateDefault<Columns extends SheetReadColumnsBase>(
