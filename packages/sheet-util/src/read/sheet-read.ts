@@ -33,11 +33,22 @@ export type SheetReadOptions<Columns extends SheetReadColumnsBase> = SheetReadRa
 	/**
 	 * Validate the header texts
 	 */
-	headerValidateText?: boolean;
+	headerValidate?:
+		| boolean
+		| ((this: void, header: Record<keyof Columns, string>) => string[] | null);
 	/**
 	 * Callback to be invoked on every row of the sheet
 	 */
 	callback(this: void, item: SheetReadItem<Columns>): void | Promise<void>;
+};
+
+type ItemData<Columns extends SheetReadColumnsBase> = Record<keyof Columns, string>;
+
+type ColumnInfo<Columns extends SheetReadColumnsBase> = {
+	index: number;
+	column: string;
+	key: keyof Columns;
+	text: string;
 };
 
 /**
@@ -46,23 +57,18 @@ export type SheetReadOptions<Columns extends SheetReadColumnsBase> = SheetReadRa
 export async function sheetRead<Columns extends SheetReadColumnsBase>(
 	options: SheetReadOptions<Columns>,
 ): Promise<Result<void>> {
-	type ItemData = SheetReadItem<Columns>['data'];
-
-	type ColumnInfo = {
-		index: number;
-		column: string;
-		key: keyof ItemData;
-		text: string;
+	type HeaderState = {
+		header: ItemData<Columns>;
+		columns: Array<ColumnInfo<Columns>>;
 	};
-
-	let columnsInfos: ColumnInfo[] | null = null;
+	let headerState: HeaderState | null = null;
 
 	function headerParse(rawData: string[]): Result<void> {
-		columnsInfos = [];
+		const columns: Array<ColumnInfo<Columns>> = [];
 		for (const [columnKey, column] of Object.entries(options.columns)) {
 			if (typeof column === 'object') {
 				const index = decodeCol(column.column);
-				columnsInfos.push({
+				columns.push({
 					index,
 					column: XLSX.utils.encode_col(index),
 					key: columnKey,
@@ -70,7 +76,7 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 				});
 			} else {
 				const index = decodeCol(column);
-				columnsInfos.push({
+				columns.push({
 					index,
 					column: XLSX.utils.encode_col(index),
 					key: columnKey,
@@ -78,27 +84,22 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 				});
 			}
 		}
-
-		const errors: string[] = [];
-		if (options.headerValidateText !== false) {
-			for (const info of columnsInfos) {
-				if (!rawData[info.index]) {
-					errors.push(`Cabeçalho esperado ${info.text} na coluna ${info.column}`);
-					continue;
-				}
-				const expectedNormalizedText = normalizeText(info.text);
-				const cellText = rawData[info.index] ?? '';
-				const cellNormalizedText = normalizeText(cellText);
-				if (expectedNormalizedText !== cellNormalizedText) {
-					errors.push(
-						`Cabeçalho esperado ${info.text} na coluna ${info.column}. Encontrado ${cellText}`,
-					);
-				}
+		const header = createItemFromRawData(columns, rawData);
+		if (options.headerValidate !== false) {
+			let errors: string[] | null;
+			if (typeof options.headerValidate === 'function') {
+				errors = options.headerValidate(header);
+			} else {
+				errors = headerValidateDefault(columns, rawData);
+			}
+			if (errors && errors.length > 0) {
+				return resultError('Erro ao ler cabeçalho', 'WORKSHEET_READ_COLUMN', errors);
 			}
 		}
-		if (errors.length > 0) {
-			return resultError('Erro ao ler cabeçalho', 'WORKSHEET_READ_COLUMN', errors);
-		}
+		headerState = {
+			header,
+			columns,
+		};
 		return { success: true };
 	}
 
@@ -106,7 +107,7 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 	const result = await sheetReadRaw({
 		...options,
 		callback(item) {
-			if (!columnsInfos) {
+			if (!headerState) {
 				const headerResult = headerParse(item.rawData);
 				if (!headerResult.success) {
 					item.bail(headerResult);
@@ -114,14 +115,10 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 				return;
 			}
 
-			const data: Partial<ItemData> = {};
-			for (const info of columnsInfos) {
-				data[info.key] = item.rawData[info.index] ?? '';
-			}
 			rowsRead += 1;
 			return options.callback({
 				...item,
-				data: data as ItemData,
+				data: createItemFromRawData(headerState.columns, item.rawData),
 			});
 		},
 	});
@@ -132,6 +129,40 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 		return resultError(`Nenhum item foi processado. Planilha vazia`, `WORKSHEET_EMPTY`);
 	}
 	return { success: true };
+}
+
+/// Create the item
+function createItemFromRawData<Columns extends SheetReadColumnsBase>(
+	columns: Array<ColumnInfo<Columns>>,
+	rawData: string[],
+): ItemData<Columns> {
+	const data: Partial<ItemData<Columns>> = {};
+	for (const info of columns) {
+		data[info.key] = rawData[info.index] ?? '';
+	}
+	return data as ItemData<Columns>;
+}
+
+function headerValidateDefault<Columns extends SheetReadColumnsBase>(
+	columnsInfos: Array<ColumnInfo<Columns>>,
+	rawData: string[],
+): string[] {
+	const errors: string[] = [];
+	for (const info of columnsInfos) {
+		const cellText = rawData[info.index];
+		if (!cellText) {
+			errors.push(`Cabeçalho esperado ${info.text} na coluna ${info.column}.`);
+			continue;
+		}
+		const expectedNormalizedText = normalizeText(info.text);
+		const cellNormalizedText = normalizeText(cellText);
+		if (expectedNormalizedText !== cellNormalizedText) {
+			errors.push(
+				`Cabeçalho esperado ${info.text} na coluna ${info.column}. Encontrado ${cellText}.`,
+			);
+		}
+	}
+	return errors;
 }
 
 function decodeCol(column: string | number): number {

@@ -80,8 +80,10 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		return resultError(null, 'WORKSHEET_INVALID');
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const rangeRef = worksheet['!ref']!;
+	const rangeRef = worksheet['!ref'];
+	if (!rangeRef) {
+		return resultError(null, 'WORKSHEET_INVALID');
+	}
 	const range = XLSX.utils.decode_range(rangeRef);
 	const cb = options.callback;
 
