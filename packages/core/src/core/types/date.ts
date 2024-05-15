@@ -42,18 +42,30 @@ export type DateParseOptions = {
 /**
  * Safely parses a date
  *
- * Return a result with the date and the status
+ * Return a result with the date and the status.
+ * Input format of ISO allows for ISO 8601 string.
  */
 export function dateSafeParse(param: unknown, options: DateParseOptions = {}): Result<DateType> {
 	let date: DateType | undefined;
 	if (typeof param === 'string') {
 		const format = options.inputFormat ?? 'YYYY-MM-DD';
-		date = dayjs(param, format, true);
-		if (date.format(format) !== param) {
-			return {
-				success: false,
-				error: `Invalid date format. Expected ${format}. Given ${param}`,
-			};
+		const paramStr = param.trim();
+		if (format === 'ISO') {
+			date = dayjs(paramStr);
+			if (date.toISOString() !== paramStr) {
+				return {
+					success: false,
+					error: `Invalid date format. Expected ISO 8601. Given ${paramStr}`,
+				};
+			}
+		} else {
+			date = dayjs(paramStr, format, true);
+			if (date.format(format) !== paramStr) {
+				return {
+					success: false,
+					error: `Invalid date format. Expected ${format}. Given ${paramStr}`,
+				};
+			}
 		}
 	} else if (param instanceof Date) {
 		date = dayjs(param);
