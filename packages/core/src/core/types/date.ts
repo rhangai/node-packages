@@ -50,22 +50,19 @@ export function dateSafeParse(param: unknown, options: DateParseOptions = {}): R
 	if (typeof param === 'string') {
 		const format = options.inputFormat ?? 'YYYY-MM-DD';
 		const paramStr = param.trim();
-		if (format === 'ISO') {
+		if (paramStr[10] === 'T') {
 			date = dayjs(paramStr);
-			if (date.toISOString() !== paramStr) {
-				return {
-					success: false,
-					error: `Invalid date format. Expected ISO 8601. Given ${paramStr}`,
-				};
-			}
 		} else {
-			date = dayjs(paramStr, format, true);
-			if (date.format(format) !== paramStr) {
-				return {
-					success: false,
-					error: `Invalid date format. Expected ${format}. Given ${paramStr}`,
-				};
+			const parsedDate = dayjs(paramStr, format, true);
+			if (parsedDate.format(format) === paramStr) {
+				date = parsedDate;
 			}
+		}
+		if (!date?.isValid()) {
+			return {
+				success: false,
+				error: `Invalid date format. Expected ${format}. Given ${paramStr}`,
+			};
 		}
 	} else if (param instanceof Date) {
 		date = dayjs(param);
