@@ -43,7 +43,6 @@ export type DateParseOptions = {
  * Safely parses a date
  *
  * Return a result with the date and the status.
- * Input format of ISO allows for ISO 8601 string.
  */
 export function dateSafeParse(param: unknown, options: DateParseOptions = {}): Result<DateType> {
 	let date: DateType | undefined;
