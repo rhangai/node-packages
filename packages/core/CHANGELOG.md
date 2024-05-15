@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.2.2
+
+### Patch Changes
+
+- Fixed dateSafeParse
+
 ## 1.2.1
 
 ### Patch Changes
