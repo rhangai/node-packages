@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.2.3
+
+### Patch Changes
+
+- Improved ISO parsing
+
 ## 1.2.2
 
 ### Patch Changes
