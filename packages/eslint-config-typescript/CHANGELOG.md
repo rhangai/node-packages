@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.3.4
+
+### Patch Changes
+
+- Fixed rule when typescript was not loaded
+
 ## 1.3.3
 
 ### Patch Changes
