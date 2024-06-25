@@ -115,6 +115,8 @@ const RULES = {
 			},
 		],
 		'@typescript-eslint/no-non-null-assertion': 'warn',
+		// BUG: This rules sometimes removes types that convert to any when the ts plugin fails
+		'@typescript-eslint/no-unnecessary-type-arguments': 'off',
 		'@typescript-eslint/prefer-string-starts-ends-with': [
 			'warn',
 			{
@@ -128,6 +130,7 @@ const RULES = {
 			},
 		],
 		'@typescript-eslint/switch-exhaustiveness-check': ['warn'],
+		'@typescript-eslint/unified-signatures': 'off',
 		// Rules that conflicts with default eslint
 		'consistent-return': 'off',
 		'@typescript-eslint/consistent-return': 'warn',
