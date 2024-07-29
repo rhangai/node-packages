@@ -313,6 +313,7 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 							'**/*.spec.*',
 							'**/spec/**/*',
 							'**/test/**/*',
+							'**/__tests__/**/*',
 							...devFiles,
 						],
 					},
