@@ -1,5 +1,16 @@
 # @rhangai/nestjs
 
+## 2.0.0
+
+### Minor Changes
+
+- Improved date parsing and serialization
+
+### Patch Changes
+
+- Updated dependencies
+  - @rhangai/core@1.3.0
+
 ## 1.0.2
 
 ### Patch Changes
