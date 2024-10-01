@@ -1,19 +1,25 @@
 import { GraphQLScalarType, Kind } from 'graphql';
-import { dateParse } from '@rhangai/core';
+import { dateParse, type DateType } from '@rhangai/core';
 
 type CreateDateScalarOptions = {
 	name: string;
 	description?: string;
 	format: string;
+	serialize?: (date: DateType) => string;
 };
 
-export function createDateScalar({ name, description, format }: CreateDateScalarOptions) {
+export function createDateScalar({
+	name,
+	description,
+	format,
+	serialize,
+}: CreateDateScalarOptions) {
 	return new GraphQLScalarType({
 		name,
 		description: description || `${name} type`,
 		serialize(param: unknown) {
 			const value = dateParse(param, { inputFormat: format });
-			return value.format(format);
+			return serialize ? serialize(value) : value.format(format);
 		},
 		parseValue(value) {
 			if (!value) {
@@ -39,6 +45,12 @@ export function createDateScalar({ name, description, format }: CreateDateScalar
 export const DateTimeScalar = createDateScalar({
 	name: 'DateTime',
 	format: 'YYYY-MM-DD HH:mm:ss',
+	serialize(date: DateType & { utc?(): DateType }) {
+		if (date.utc) {
+			return date.utc().toISOString();
+		}
+		return date.toISOString();
+	},
 });
 
 export const DateScalar = createDateScalar({
