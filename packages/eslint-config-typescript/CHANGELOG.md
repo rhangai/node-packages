@@ -1,5 +1,11 @@
 # @rhangai/eslint-config-typescript
 
+## 1.4.0
+
+### Minor Changes
+
+- Upgraded typescript-eslint
+
 ## 1.3.6
 
 ### Patch Changes
