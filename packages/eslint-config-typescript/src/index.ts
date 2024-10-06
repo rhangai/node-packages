@@ -167,7 +167,7 @@ const RULES = {
 		],
 	},
 	cjs: {
-		'@typescript-eslint/no-var-requires': 'off',
+		'@typescript-eslint/no-require-imports': 'off',
 	},
 } satisfies Record<string, EslintConfigRules>;
 
