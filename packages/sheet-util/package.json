@@ -37,7 +37,7 @@
     "typescript": "*"
   },
   "peerDependencies": {
-    "@rhangai/core": "^1.2.3"
+    "@rhangai/core": "^1.4.0"
   },
   "scripts": {
     "clean": "rm -rf dist",
