@@ -35,6 +35,33 @@ export type ResultError = {
 export type Result<TValue> = ResultSuccess<TValue> | ResultError;
 
 /**
+ * Invoke a callback and then return its value as a result
+ */
+export function resultTry<T>(fn: () => T): Result<T> {
+	try {
+		return resultSuccess(fn());
+	} catch (err) {
+		return resultErrorUnknown(err);
+	}
+}
+/**
+ * Invoke a callback and then return its value as a result. (Async version)
+ */
+export function resultTryAsync<T>(fn: () => Promise<T> | T): Promise<Result<T>> {
+	return Promise.resolve().then(fn).then(resultSuccess, resultErrorUnknown);
+}
+
+/**
+ * Create a result success value
+ */
+export function resultSuccess<T>(value: T): ResultSuccess<T> {
+	return {
+		success: true,
+		value,
+	} as ResultSuccess<T>;
+}
+
+/**
  * Create a result error
  */
 export function resultError(
@@ -47,6 +74,16 @@ export function resultError(
 		error,
 		errors: errorsListFilter(errors),
 		errorCode,
+	};
+}
+
+/**
+ * Create a result error from an unkown object
+ */
+export function resultErrorUnknown(error: unknown, defaultMessage?: string): ResultError {
+	return {
+		success: false,
+		error: error instanceof Error ? error.message : defaultMessage ?? 'Error',
 	};
 }
 
