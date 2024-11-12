@@ -6,7 +6,7 @@ import {
 	Logger,
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
-import { type ToHttpException } from './http.exception';
+import { type IToHttpException } from '@rhangai/core';
 
 /**
  * Basic extended exception filter
@@ -52,7 +52,7 @@ export class ExceptionFilter extends BaseExceptionFilter {
 }
 
 /// Check if i
-function isHttpException(x: unknown): x is ToHttpException {
+function isHttpException(x: unknown): x is IToHttpException {
 	if (x && typeof x === 'object' && 'toHttp' in x && typeof x.toHttp === 'function') {
 		return true;
 	}

@@ -1,17 +1,9 @@
-/**
- * Error to be throw as an http generic error
- */
-export interface ToHttpException {
-	/**
-	 * Convert the error to an http response
-	 */
-	toHttp(): Record<string, unknown> & { message: string };
-}
+import { type IPublicMessageException, type IToHttpException } from '@rhangai/core';
 
 /**
  * A public error
  */
-export class PublicHttpError extends Error implements ToHttpException {
+export class PublicHttpError extends Error implements IToHttpException, IPublicMessageException {
 	/**
 	 * Error message
 	 */
@@ -45,7 +37,10 @@ export class PublicHttpError extends Error implements ToHttpException {
  *
  * Allow multiple errors to be thrown together
  */
-export class PublicHttpAggregateError extends Error implements ToHttpException {
+export class PublicHttpAggregateError
+	extends Error
+	implements IToHttpException, IPublicMessageException
+{
 	/// The original error message
 	private readonly originalMessage: string;
 
