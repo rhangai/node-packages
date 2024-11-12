@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 2.0.0
+
+### Major Changes
+
+- Improved interfaces and removed old functions
+
 ## 1.1.1
 
 ### Patch Changes
