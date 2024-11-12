@@ -1,4 +1,24 @@
 /**
+ * Error to be throw as an http generic error
+ */
+export interface IToHttpException {
+	/**
+	 * Convert the error to an http response
+	 */
+	toHttp(): Record<string, unknown> & { message: string };
+}
+
+/**
+ * Has a public message
+ */
+export interface IPublicMessageException {
+	/**
+	 * Get a public error message
+	 */
+	getPublicErrorMessage(): string;
+}
+
+/**
  * Get an error message
  */
 export function errorPublicMessage(errorParam: unknown): string | undefined {
