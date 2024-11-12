@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.5.0
+
+### Minor Changes
+
+- Improved typings
+
 ## 1.4.0
 
 ### Minor Changes

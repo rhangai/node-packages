@@ -1,5 +1,13 @@
 # @rhangai/sheet-util
 
+## 2.0.1
+
+### Patch Changes
+
+- Improved typings
+- Updated dependencies
+  - @rhangai/core@1.5.0
+
 ## 2.0.0
 
 ### Major Changes

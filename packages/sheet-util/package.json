@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/sheet-util",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Sheet reader/writer",
   "publishConfig": {
     "access": "public"
@@ -37,7 +37,7 @@
     "typescript": "*"
   },
   "peerDependencies": {
-    "@rhangai/core": "^1.4.0"
+    "@rhangai/core": "^1.5.0"
   },
   "scripts": {
     "clean": "rm -rf dist",
