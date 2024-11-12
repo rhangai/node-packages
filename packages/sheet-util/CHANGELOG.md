@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 2.0.2
+
+### Patch Changes
+
+- Improved npmignore
+
 ## 2.0.1
 
 ### Patch Changes
