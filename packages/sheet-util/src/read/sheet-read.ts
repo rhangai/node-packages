@@ -2,6 +2,7 @@ import XLSX from 'xlsx';
 import { type Result, resultError } from '@rhangai/core';
 import { type Column } from '../util/column';
 import { normalizeText } from '../util/normalize-text';
+import { SheetReaderError } from './sheet-read-error';
 import {
 	sheetReadRaw,
 	type SheetReadRawInputOptions,
@@ -77,7 +78,7 @@ interface ColumnDetails<Columns extends SheetReadColumnsBase> {
 /**
  * Read the sheet and returns a simple result type
  */
-export async function sheetRead<Columns extends SheetReadColumnsBase>(
+export async function sheetReadSafe<Columns extends SheetReadColumnsBase>(
 	options: SheetReadOptions<Columns>,
 ): Promise<Result<void>> {
 	type HeaderState = {
@@ -156,6 +157,22 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 		return resultError(`Nenhum item foi processado. Planilha vazia`, `WORKSHEET_EMPTY`);
 	}
 	return { success: true };
+}
+
+/**
+ * Read the sheet and returns a simple result type
+ */
+export async function sheetRead<Columns extends SheetReadColumnsBase>(
+	options: SheetReadOptions<Columns>,
+): Promise<void> {
+	const result = await sheetReadSafe(options);
+	if (!result.success) {
+		throw new SheetReaderError(
+			result.errorCode ?? 'WORKSHEET_INVALID',
+			result.error ?? 'Erro ao ler a planilha',
+			result.errors,
+		);
+	}
 }
 
 /// Create the data
