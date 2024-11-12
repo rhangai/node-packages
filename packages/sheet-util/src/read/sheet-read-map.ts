@@ -6,18 +6,13 @@ import {
 	type SheetReadOptions,
 } from './sheet-read';
 
-// Base options are the sheetRead options without the callback
-type BaseOptions<Columns extends SheetReadColumnsBase> = Omit<
-	SheetReadOptions<Columns>,
-	'callback'
->;
-
-export type SheetReadMapOptions<T, Columns extends SheetReadColumnsBase> = BaseOptions<Columns> & {
+export interface SheetReadMapOptions<T, Columns extends SheetReadColumnsBase>
+	extends Omit<SheetReadOptions<Columns>, 'callback'> {
 	/**
 	 * Map every row of the sheet
 	 */
-	map(this: void, item: SheetReadItem<Columns>): T | null | Promise<T | null>;
-};
+	map: (item: SheetReadItem<Columns>) => T | null | Promise<T | null>;
+}
 
 /**
  * Read the sheet and map its rows

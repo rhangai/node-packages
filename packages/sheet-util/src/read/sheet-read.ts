@@ -9,6 +9,7 @@ import {
 } from './sheet-read-raw';
 
 type SheetReadColumnBase = number | Column;
+
 type SheetReadColumn =
 	| SheetReadColumnBase
 	| {
@@ -20,7 +21,7 @@ export type SheetReadColumnsBase = Record<string, SheetReadColumn>;
 
 type Data<Columns extends SheetReadColumnsBase> = Record<keyof Columns, string>;
 
-export type SheetReadItem<Columns extends SheetReadColumnsBase> = SheetReadRawItem & {
+export interface SheetReadItem<Columns extends SheetReadColumnsBase> extends SheetReadRawItem {
 	/**
 	 * The data of the row read
 	 */
@@ -33,9 +34,10 @@ export type SheetReadItem<Columns extends SheetReadColumnsBase> = SheetReadRawIt
 	 * The header raw data
 	 */
 	headerRawData: string[];
-};
+}
 
-export type SheetReadOptions<Columns extends SheetReadColumnsBase> = SheetReadRawInputOptions & {
+export interface SheetReadOptions<Columns extends SheetReadColumnsBase>
+	extends SheetReadRawInputOptions {
 	/**
 	 * Columns definitions to read
 	 */
@@ -43,24 +45,37 @@ export type SheetReadOptions<Columns extends SheetReadColumnsBase> = SheetReadRa
 	/**
 	 * Validate the header texts
 	 */
-	headerValidate?:
-		| boolean
-		| ((this: void, header: Record<keyof Columns, string>) => string[] | null);
+	headerValidate?: boolean | ((header: Record<keyof Columns, string>) => string[] | null);
 	/**
 	 * Callback to be invoked on every row of the sheet
 	 */
-	callback(this: void, item: SheetReadItem<Columns>): void | Promise<void>;
-};
-
-type ColumnInfo<Columns extends SheetReadColumnsBase> = {
-	index: number;
-	column: string;
-	key: keyof Columns;
-	text: string;
-};
+	callback: (item: SheetReadItem<Columns>) => void | Promise<void>;
+}
 
 /**
- * Read the sheet, row by row, using raw data
+ * Column details after reading from the sheet
+ */
+interface ColumnDetails<Columns extends SheetReadColumnsBase> {
+	/**
+	 * Index of the column
+	 */
+	index: number;
+	/**
+	 * The name of the column
+	 */
+	column: Column;
+	/**
+	 * The key
+	 */
+	key: keyof Columns;
+	/**
+	 * Contents of the cell text
+	 */
+	text: string;
+}
+
+/**
+ * Read the sheet and returns a simple result type
  */
 export async function sheetRead<Columns extends SheetReadColumnsBase>(
 	options: SheetReadOptions<Columns>,
@@ -68,18 +83,18 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 	type HeaderState = {
 		header: Data<Columns>;
 		headerRawData: string[];
-		columns: Array<ColumnInfo<Columns>>;
+		columns: Array<ColumnDetails<Columns>>;
 	};
 	let headerState: HeaderState | null = null;
 
 	function headerParse(rawData: string[]): Result<void> {
-		const columns: Array<ColumnInfo<Columns>> = [];
+		const columns: Array<ColumnDetails<Columns>> = [];
 		for (const [columnKey, column] of Object.entries(options.columns)) {
 			if (typeof column === 'object') {
 				const index = decodeCol(column.column);
 				columns.push({
 					index,
-					column: XLSX.utils.encode_col(index),
+					column: XLSX.utils.encode_col(index) as Column,
 					key: columnKey,
 					text: column.text ?? columnKey,
 				});
@@ -87,7 +102,7 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 				const index = decodeCol(column);
 				columns.push({
 					index,
-					column: XLSX.utils.encode_col(index),
+					column: XLSX.utils.encode_col(index) as Column,
 					key: columnKey,
 					text: columnKey,
 				});
@@ -145,7 +160,7 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 
 /// Create the data
 function createFromRawData<Columns extends SheetReadColumnsBase>(
-	columns: Array<ColumnInfo<Columns>>,
+	columns: Array<ColumnDetails<Columns>>,
 	rawData: string[],
 ): Data<Columns> {
 	const data: Partial<Data<Columns>> = {};
@@ -155,8 +170,9 @@ function createFromRawData<Columns extends SheetReadColumnsBase>(
 	return data as Data<Columns>;
 }
 
+/// Validates the header and returning an array of erros
 function headerValidateDefault<Columns extends SheetReadColumnsBase>(
-	columnsInfos: Array<ColumnInfo<Columns>>,
+	columnsInfos: Array<ColumnDetails<Columns>>,
 	rawData: string[],
 ): string[] {
 	const errors: string[] = [];

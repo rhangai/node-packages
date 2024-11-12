@@ -9,9 +9,7 @@ import {
 import { fileInputDispatch, type FileInputType, streamToBuffer } from '@rhangai/core/node';
 import { cellParse } from '../util/cell-parse';
 
-export type SheetReadRawInputOptions = Omit<SheetReadRawOptions, 'callback'>;
-
-export type SheetReadRawOptions = {
+export interface SheetReadRawInputOptions {
 	/**
 	 * The input to read
 	 */
@@ -24,13 +22,16 @@ export type SheetReadRawOptions = {
 	 * Bail on the first error
 	 */
 	bailOnError?: boolean;
+}
+
+export interface SheetReadRawOptions extends SheetReadRawInputOptions {
 	/**
 	 * Callback to be invoked on every row of the sheet
 	 */
 	callback(this: void, item: SheetReadRawItem): void | Promise<void>;
-};
+}
 
-export type SheetReadRawItem = {
+export interface SheetReadRawItem {
 	/**
 	 * The index of the row being read
 	 */
@@ -51,7 +52,7 @@ export type SheetReadRawItem = {
 	 * Add a new error to the list of errors
 	 */
 	addError(this: void, err: string): void;
-};
+}
 
 /**
  * Read the sheet, row by row, using raw data
