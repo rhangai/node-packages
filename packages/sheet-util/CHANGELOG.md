@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 2.0.3
+
+### Patch Changes
+
+- Fixed number parsing
+
 ## 2.0.2
 
 ### Patch Changes
