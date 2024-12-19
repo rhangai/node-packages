@@ -1,4 +1,4 @@
-import { type CellObject } from 'xlsx';
+import { type CellObject, type NumberFormat } from 'xlsx';
 
 export type CellParsed = {
 	text: string;
@@ -24,7 +24,7 @@ export function cellParse(cell: CellObject | undefined): CellParsed {
 			text: dateFormat(cell.v),
 			value: cell.v,
 		};
-	} else if (cell.t === 'n' && !cell.z) {
+	} else if (cell.t === 'n' && isRawNumberFmt(cell.z)) {
 		// Number type without formatted type
 		return {
 			text: `${cell.v}`,
@@ -35,6 +35,19 @@ export function cellParse(cell: CellObject | undefined): CellParsed {
 		text: (cell.w ?? `${cell.v}`).trim(),
 		value: cell.v,
 	};
+}
+
+// Verifica se o número sendo formatado é puro
+function isRawNumberFmt(fmt: NumberFormat | null | undefined) {
+	if (!fmt) {
+		return true;
+	}
+	if (typeof fmt === 'string') {
+		if (fmt === '@' || fmt.toLowerCase() === 'general') {
+			return true;
+		}
+	}
+	return false;
 }
 
 function dateFormat(date: Date) {
