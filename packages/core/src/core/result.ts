@@ -1,3 +1,5 @@
+import { ErrorCode } from './error';
+
 /**
  * Result success type
  */
@@ -8,6 +10,7 @@ export type ResultSuccess<TValue> = TValue extends void
 			value?: undefined;
 			error?: undefined;
 			errors?: undefined;
+			errorValue?: undefined;
 			errorCode?: undefined;
 		}
 	: {
@@ -15,6 +18,7 @@ export type ResultSuccess<TValue> = TValue extends void
 			value: TValue;
 			error?: undefined;
 			errors?: undefined;
+			errorValue?: undefined;
 			errorCode?: undefined;
 		};
 
@@ -26,6 +30,7 @@ export type ResultError = {
 	value?: undefined;
 	error?: string | null;
 	errors?: string[];
+	errorValue?: unknown;
 	errorCode?: string | null;
 };
 
@@ -81,9 +86,34 @@ export function resultError(
  * Create a result error from an unkown object
  */
 export function resultErrorUnknown(error: unknown, defaultMessage?: string): ResultError {
+	if (error == null) {
+		return {
+			success: false,
+			error: defaultMessage ?? 'Error',
+		};
+	} else if (typeof error === 'string') {
+		return {
+			success: false,
+			error: error || (defaultMessage ?? 'Error'),
+		};
+	} else if (error instanceof ErrorCode) {
+		return {
+			success: false,
+			error: error.message,
+			errorCode: error.errorCode,
+			errorValue: error.errorValue,
+		};
+	} else if (error instanceof Error) {
+		return {
+			success: false,
+			error: error.message,
+			errorValue: error,
+		};
+	}
 	return {
 		success: false,
-		error: error instanceof Error ? error.message : defaultMessage ?? 'Error',
+		error: defaultMessage ?? 'Error',
+		errorValue: error,
 	};
 }
 
@@ -107,6 +137,7 @@ export function resultErrorMerge(
 		error: errorA.error ?? errorB.error,
 		errors: errorsListConcat(errorA.errors, errorB.errors),
 		errorCode: errorA.errorCode ?? errorB.errorCode,
+		errorValue: errorsValueConcat(errorA.errorValue, errorB.errorValue),
 	};
 }
 
@@ -124,6 +155,19 @@ function errorsListConcat(
 		return errorsA;
 	}
 	return errorsA.concat(errorsB);
+}
+
+// Concat two error values
+function errorsValueConcat(errorValueAParam: unknown, errorValueBParam: unknown): unknown {
+	if (errorValueAParam == null) {
+		return errorValueBParam;
+	} else if (errorValueBParam == null) {
+		return errorValueAParam;
+	}
+	if (Array.isArray(errorValueAParam)) {
+		return errorValueAParam.concat(errorValueBParam);
+	}
+	return [errorValueAParam].concat(errorValueBParam);
 }
 
 function errorsListFilter(

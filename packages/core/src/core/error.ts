@@ -19,6 +19,19 @@ export interface IPublicMessageException {
 }
 
 /**
+ * A simple error with an attached error code
+ */
+export class ErrorCode extends Error {
+	constructor(
+		public readonly errorCode: string,
+		message: string,
+		public readonly errorValue?: unknown,
+	) {
+		super(message);
+	}
+}
+
+/**
  * Get an error message
  */
 export function errorPublicMessage(errorParam: unknown): string | undefined {
