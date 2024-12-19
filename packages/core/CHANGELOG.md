@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.6.0
+
+### Minor Changes
+
+- Improved error handling
+
 ## 1.5.0
 
 ### Minor Changes
