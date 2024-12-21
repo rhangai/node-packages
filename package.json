@@ -1,5 +1,5 @@
 {
-  "packageManager": "yarn@4.1.1",
+  "packageManager": "pnpm@9.15.1",
   "type": "module",
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
@@ -16,13 +16,10 @@
     "typeorm": "^0.3.20",
     "typescript": "^5.4.5"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "prepare-release": "yarn build && changeset",
-    "build": "yarn workspaces foreach -Ap run clean && yarn workspaces foreach -At run build",
-    "lint": "(yarn lint:eslint || true) && yarn lint:prettier",
+    "prepare-release": "pnpm run build && changeset",
+    "build": "pnpm -r run clean && pnpm -r run build",
+    "lint": "(pnpm run lint:eslint || true) && pnpm run lint:prettier",
     "lint:eslint": "eslint --fix packages",
     "lint:prettier": "prettier --log-level error -w packages"
   }
