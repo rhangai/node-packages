@@ -13,7 +13,7 @@ export function createDateScalar({
 	description,
 	format,
 	serialize,
-}: CreateDateScalarOptions) {
+}: CreateDateScalarOptions): GraphQLScalarType<DateType | null, string> {
 	return new GraphQLScalarType({
 		name,
 		description: description || `${name} type`,
@@ -42,7 +42,7 @@ export function createDateScalar({
 	});
 }
 
-export const DateTimeScalar = createDateScalar({
+export const DateTimeScalar: GraphQLScalarType<DateType | null, string> = createDateScalar({
 	name: 'DateTime',
 	format: 'YYYY-MM-DD HH:mm:ss',
 	serialize(date: DateType & { utc?(): DateType }) {
@@ -53,12 +53,12 @@ export const DateTimeScalar = createDateScalar({
 	},
 });
 
-export const DateScalar = createDateScalar({
+export const DateScalar: GraphQLScalarType<DateType | null, string> = createDateScalar({
 	name: 'Date',
 	format: 'YYYY-MM-DD',
 });
 
-export const TimeScalar = createDateScalar({
+export const TimeScalar: GraphQLScalarType<DateType | null, string> = createDateScalar({
 	name: 'Time',
 	format: 'HH:mm:ss',
 });

@@ -18,3 +18,7 @@ packages/*/coverage
 
 # Builds
 package.tgz
+
+# Dados do NX
+.nx/cache
+.nx/workspace-data

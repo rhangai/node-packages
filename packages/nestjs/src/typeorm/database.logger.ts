@@ -16,19 +16,19 @@ export class DatabaseLogger implements Logger {
 		}
 	}
 
-	logQuery(query: string, parameters?: unknown[] | undefined) {
+	logQuery(query: string, parameters?: unknown[]) {
 		if (this.isLogEnabled('debug')) {
 			const formattedQuery = this.formatQuery(query, parameters);
 			this.internalLogger.debug(formattedQuery);
 		}
 	}
 
-	logQueryError(error: string, query: string, parameters?: unknown[] | undefined) {
+	logQueryError(error: string, query: string, parameters?: unknown[]) {
 		const info = [this.formatQuery(query, parameters), this.formatError(error)].flat();
 		this.internalLogger.error(`Erro rodando a query:\n${info.filter(Boolean).join('\n')}`);
 	}
 
-	logQuerySlow(time: number, query: string, parameters?: unknown[] | undefined) {
+	logQuerySlow(time: number, query: string, parameters?: unknown[]) {
 		const formattedQuery = this.formatQuery(query, parameters);
 		this.internalLogger.warn(`${formattedQuery} - A query demorou ${time}ms`);
 	}
