@@ -9,7 +9,8 @@
     "globals": "^15.1.0",
     "nx": "20.3.0",
     "prettier": "^3.2.5",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "vitest": "^2.1.8"
   },
   "scripts": {
     "prepare-release": "pnpm run build && changeset",

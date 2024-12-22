@@ -3,7 +3,6 @@ import { ErrorCode } from './error';
 /**
  * Result success type
  */
-
 export type ResultSuccess<TValue> = TValue extends void
 	? {
 			success: true;

@@ -107,13 +107,7 @@ const RULES = {
 				ignoreProperties: true,
 			},
 		],
-		'@typescript-eslint/no-invalid-void-type': [
-			'warn',
-			{
-				allowInGenericTypeArguments: true,
-				allowAsThisParameter: true,
-			},
-		],
+		'@typescript-eslint/no-invalid-void-type': 'off',
 		'@typescript-eslint/no-non-null-assertion': 'warn',
 		// BUG: This rules sometimes removes types that convert to any when the ts plugin fails
 		'@typescript-eslint/no-unnecessary-type-arguments': 'off',
