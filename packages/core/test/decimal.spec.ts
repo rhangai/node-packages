@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest';
 import { decimalIsValue, decimalParse } from '../src/core/types/decimal';
 
 describe('Decimal', () => {

@@ -44,7 +44,11 @@ export class GraphqlTypesGenerator {
 		const schema = await this.generate(options);
 		await new Promise<void>((promiseResolve, reject) => {
 			writeFile(filename, schema, (err) => {
-				err ? reject(err) : promiseResolve();
+				if (err) {
+					reject(err);
+				} else {
+					promiseResolve();
+				}
 			});
 		});
 	}

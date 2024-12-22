@@ -33,8 +33,9 @@
     "dayjs": "^1.11.11"
   },
   "devDependencies": {
-    "tsup": "*",
-    "typescript": "*"
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "scripts": {
     "clean": "rm -rf dist",

@@ -5,7 +5,7 @@ export default [
 	...config.ts({
 		ignores: ['**/dist/**/*'],
 		meta: import.meta,
-		devFiles: ['**/tsup.config.ts', 'eslint.config.js'],
+		devFiles: ['**/tsup.config.ts', 'eslint.config.js', '**/*.spec.ts'],
 		globals: {
 			...globals.node,
 		},

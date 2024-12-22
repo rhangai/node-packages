@@ -10,6 +10,7 @@ type StoreMap = Map<unknown, unknown>;
  * @param authExecutionContext
  * @param authdata
  */
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function authStorageGet<TAuthData = unknown>(
 	storage: unknown,
 	keyParam: unknown,

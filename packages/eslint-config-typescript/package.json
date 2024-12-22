@@ -30,10 +30,10 @@
     "typescript-eslint": "^8.8.0"
   },
   "devDependencies": {
-    "eslint": "*",
-    "tsup": "*",
-    "typeorm": "*",
-    "typescript": "*"
+    "eslint": "catalog:",
+    "tsup": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "eslint": ">=9"

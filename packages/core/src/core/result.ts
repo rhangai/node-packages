@@ -3,7 +3,7 @@ import { ErrorCode } from './error';
 /**
  * Result success type
  */
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+
 export type ResultSuccess<TValue> = TValue extends void
 	? {
 			success: true;

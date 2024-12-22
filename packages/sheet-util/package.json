@@ -33,11 +33,11 @@
   },
   "devDependencies": {
     "@rhangai/core": "workspace:^",
-    "tsup": "*",
-    "typescript": "*"
+    "tsup": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
-    "@rhangai/core": "^1.5.0"
+    "@rhangai/core": "workspace:^"
   },
   "scripts": {
     "clean": "rm -rf dist",
