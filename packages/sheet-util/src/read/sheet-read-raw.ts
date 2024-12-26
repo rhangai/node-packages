@@ -28,7 +28,7 @@ export interface SheetReadRawOptions extends SheetReadRawInputOptions {
 	/**
 	 * Callback to be invoked on every row of the sheet
 	 */
-	callback(this: void, item: SheetReadRawItem): void | Promise<void>;
+	callback: (item: SheetReadRawItem) => void | Promise<void>;
 }
 
 export interface SheetReadRawItem {
@@ -47,11 +47,11 @@ export interface SheetReadRawItem {
 	/**
 	 * Bail on the data, aborting the operation
 	 */
-	bail(this: void, err: ResultError | string[] | string | null): void;
+	bail: (err?: ResultError | string[] | string | null) => void;
 	/**
 	 * Add a new error to the list of errors
 	 */
-	addError(this: void, err: string): void;
+	addError: (err: string) => void;
 }
 
 /**
@@ -105,7 +105,7 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		error: null as ResultError | null,
 		errors: [] as Array<string | undefined>,
 	};
-	const bail = (error: ResultError | string[] | string | null) => {
+	const bail = (error: ResultError | string[] | string | null | undefined) => {
 		if (error != null) {
 			if (typeof error === 'object' && 'success' in error) {
 				state.error = error;

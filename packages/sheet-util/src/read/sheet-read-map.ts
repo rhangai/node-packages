@@ -1,25 +1,20 @@
 import { type Result, resultError } from '@rhangai/core';
-import {
-	type SheetReadColumnsBase,
-	type SheetReadItem,
-	type SheetReadOptions,
-	sheetReadSafe,
-} from './sheet-read';
+import { type SheetReadItem, type SheetReadOptions, sheetReadSafe } from './sheet-read';
 import { SheetReaderError } from './sheet-read-error';
 
-export interface SheetReadMapOptions<T, Columns extends SheetReadColumnsBase>
-	extends Omit<SheetReadOptions<Columns>, 'callback'> {
+export interface SheetReadMapOptions<T, TKeys extends string>
+	extends Omit<SheetReadOptions<TKeys>, 'callback'> {
 	/**
 	 * Map every row of the sheet
 	 */
-	map: (item: SheetReadItem<Columns>) => T | null | Promise<T | null>;
+	map: (item: SheetReadItem<TKeys>) => T | null | Promise<T | null>;
 }
 
 /**
  * Read the sheet and map its rows. Safe version returing a result
  */
-export async function sheetReadMapSafe<T, Columns extends SheetReadColumnsBase>(
-	options: SheetReadMapOptions<T, Columns>,
+export async function sheetReadMapSafe<T, TKeys extends string>(
+	options: SheetReadMapOptions<T, TKeys>,
 ): Promise<Result<T[]>> {
 	const items: T[] = [];
 	const result = await sheetReadSafe({
@@ -43,8 +38,8 @@ export async function sheetReadMapSafe<T, Columns extends SheetReadColumnsBase>(
 /**
  * Read the sheet and map its rows
  */
-export async function sheetReadMap<T, Columns extends SheetReadColumnsBase>(
-	options: SheetReadMapOptions<T, Columns>,
+export async function sheetReadMap<T, TKeys extends string>(
+	options: SheetReadMapOptions<T, TKeys>,
 ): Promise<T[]> {
 	const result = await sheetReadMapSafe(options);
 	if (!result.success) {

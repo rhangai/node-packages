@@ -11,52 +11,47 @@ import {
 
 type SheetReadColumnBase = number | Column;
 
-type SheetReadColumn =
+export type SheetReadColumn =
 	| SheetReadColumnBase
 	| {
 			column: SheetReadColumnBase;
 			text?: string;
 	  };
 
-export type SheetReadColumnsBase = Record<string, SheetReadColumn>;
-
-type Data<Columns extends SheetReadColumnsBase> = Record<keyof Columns, string>;
-
-export interface SheetReadItem<Columns extends SheetReadColumnsBase> extends SheetReadRawItem {
+export interface SheetReadItem<TKeys extends string> extends SheetReadRawItem {
 	/**
 	 * The data of the row read
 	 */
-	data: Data<Columns>;
+	data: Record<TKeys, string>;
 	/**
 	 * The header item
 	 */
-	header: Data<Columns>;
+	header: Record<TKeys, string>;
 	/**
 	 * The header raw data
 	 */
 	headerRawData: string[];
 }
 
-export interface SheetReadOptions<Columns extends SheetReadColumnsBase>
-	extends SheetReadRawInputOptions {
+export interface SheetReadOptions<TKeys extends string> extends SheetReadRawInputOptions {
 	/**
 	 * Columns definitions to read
 	 */
-	columns: Columns;
+	columns: Record<TKeys, SheetReadColumn>;
 	/**
 	 * Validate the header texts
 	 */
-	headerValidate?: boolean | ((header: Record<keyof Columns, string>) => string[] | null);
+	headerValidate?: boolean | ((header: Record<TKeys, string>) => string[] | null);
 	/**
 	 * Callback to be invoked on every row of the sheet
 	 */
-	callback: (item: SheetReadItem<Columns>) => void | Promise<void>;
+	callback: (item: SheetReadItem<TKeys>) => void | Promise<void>;
 }
 
 /**
  * Column details after reading from the sheet
  */
-interface ColumnDetails<Columns extends SheetReadColumnsBase> {
+interface ColumnDetails<TKeys extends string> {
 	/**
 	 * Index of the column
 	 */
@@ -68,7 +63,7 @@ interface ColumnDetails<Columns extends SheetReadColumnsBase> {
 	/**
 	 * The key
 	 */
-	key: keyof Columns;
+	key: TKeys;
 	/**
 	 * Contents of the cell text
 	 */
@@ -78,25 +73,25 @@ interface ColumnDetails<Columns extends SheetReadColumnsBase> {
 /**
  * Read the sheet and returns a simple result type
  */
-export async function sheetReadSafe<Columns extends SheetReadColumnsBase>(
-	options: SheetReadOptions<Columns>,
+export async function sheetReadSafe<TKeys extends string>(
+	options: SheetReadOptions<TKeys>,
 ): Promise<Result<void>> {
 	type HeaderState = {
-		header: Data<Columns>;
+		header: Record<TKeys, string>;
 		headerRawData: string[];
-		columns: Array<ColumnDetails<Columns>>;
+		columns: Array<ColumnDetails<TKeys>>;
 	};
 	let headerState: HeaderState | null = null;
 
 	function headerParse(rawData: string[]): Result<void> {
-		const columns: Array<ColumnDetails<Columns>> = [];
-		for (const [columnKey, column] of Object.entries(options.columns)) {
+		const columns: Array<ColumnDetails<TKeys>> = [];
+		for (const [columnKey, column] of Object.entries<SheetReadColumn>(options.columns)) {
 			if (typeof column === 'object') {
 				const index = decodeCol(column.column);
 				columns.push({
 					index,
 					column: XLSX.utils.encode_col(index) as Column,
-					key: columnKey,
+					key: columnKey as TKeys,
 					text: column.text ?? columnKey,
 				});
 			} else {
@@ -104,7 +99,7 @@ export async function sheetReadSafe<Columns extends SheetReadColumnsBase>(
 				columns.push({
 					index,
 					column: XLSX.utils.encode_col(index) as Column,
-					key: columnKey,
+					key: columnKey as TKeys,
 					text: columnKey,
 				});
 			}
@@ -162,8 +157,8 @@ export async function sheetReadSafe<Columns extends SheetReadColumnsBase>(
 /**
  * Read the sheet and returns a simple result type
  */
-export async function sheetRead<Columns extends SheetReadColumnsBase>(
-	options: SheetReadOptions<Columns>,
+export async function sheetRead<TKeys extends string>(
+	options: SheetReadOptions<TKeys>,
 ): Promise<void> {
 	const result = await sheetReadSafe(options);
 	if (!result.success) {
@@ -176,20 +171,20 @@ export async function sheetRead<Columns extends SheetReadColumnsBase>(
 }
 
 /// Create the data
-function createFromRawData<Columns extends SheetReadColumnsBase>(
-	columns: Array<ColumnDetails<Columns>>,
+function createFromRawData<TKeys extends string>(
+	columns: Array<ColumnDetails<TKeys>>,
 	rawData: string[],
-): Data<Columns> {
-	const data: Partial<Data<Columns>> = {};
+): Record<TKeys, string> {
+	const data: Partial<Record<TKeys, string>> = {};
 	for (const info of columns) {
 		data[info.key] = rawData[info.index] ?? '';
 	}
-	return data as Data<Columns>;
+	return data as Record<TKeys, string>;
 }
 
 /// Validates the header and returning an array of erros
-function headerValidateDefault<Columns extends SheetReadColumnsBase>(
-	columnsInfos: Array<ColumnDetails<Columns>>,
+function headerValidateDefault<TKeys extends string>(
+	columnsInfos: Array<ColumnDetails<TKeys>>,
 	rawData: string[],
 ): string[] {
 	const errors: string[] = [];
