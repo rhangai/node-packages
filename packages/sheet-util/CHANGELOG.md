@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 2.0.5
+
+### Patch Changes
+
+-   Fixed a bug where dates were being incorrectly parsed
+
 ## 2.0.4
 
 ### Patch Changes
