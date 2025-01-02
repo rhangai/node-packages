@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { type IToHttpException } from '@rhangai/core';
+import { inspect } from 'node:util';
 
 /**
  * Basic extended exception filter
@@ -22,6 +23,7 @@ export class ExceptionFilter extends BaseExceptionFilter {
 	 * @returns
 	 */
 	catch(exceptionParam: unknown, host: ArgumentsHost) {
+		this.logException(exceptionParam);
 		let exception = exceptionParam;
 		if (isHttpException(exception)) {
 			const httpBody = exception.toHttp();
@@ -31,8 +33,6 @@ export class ExceptionFilter extends BaseExceptionFilter {
 			super.catch(exception, host);
 			return;
 		}
-
-		this.logException(exception);
 		if (exception instanceof HttpException) {
 			throw exception;
 		} else {
@@ -43,10 +43,8 @@ export class ExceptionFilter extends BaseExceptionFilter {
 	private logException(exception: unknown) {
 		if (!exception) {
 			this.logger.error('Error');
-		} else if (this.isExceptionObject(exception)) {
-			this.logger.error(exception.message, exception.stack);
 		} else {
-			this.logger.error(exception);
+			this.logger.error(inspect(exception));
 		}
 	}
 }
