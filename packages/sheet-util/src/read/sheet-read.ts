@@ -39,9 +39,17 @@ export interface SheetReadOptions<TKeys extends string> extends SheetReadRawInpu
 	 */
 	columns: Record<TKeys, SheetReadColumn>;
 	/**
+	 * Sheet without header. The first row is read as data and there will be no validation
+	 */
+	noHeader?: boolean;
+	/**
 	 * Validate the header texts
 	 */
 	headerValidate?: boolean | ((header: Record<TKeys, string>) => string[] | null);
+	/**
+	 * Does not return an error when there is no data
+	 */
+	allowNoData?: boolean;
 	/**
 	 * Callback to be invoked on every row of the sheet
 	 */
@@ -82,8 +90,10 @@ export async function sheetReadSafe<TKeys extends string>(
 		columns: Array<ColumnDetails<TKeys>>;
 	};
 	let headerState: HeaderState | null = null;
-
-	function headerParse(rawData: string[]): Result<void> {
+	function headerParse(
+		rawData: string[],
+		headerValidate: SheetReadOptions<TKeys>['headerValidate'],
+	): Result<void> {
 		const columns: Array<ColumnDetails<TKeys>> = [];
 		for (const [columnKey, column] of Object.entries<SheetReadColumn>(options.columns)) {
 			if (typeof column === 'object') {
@@ -105,10 +115,10 @@ export async function sheetReadSafe<TKeys extends string>(
 			}
 		}
 		const header = createFromRawData(columns, rawData);
-		if (options.headerValidate !== false) {
+		if (headerValidate !== false) {
 			let errors: string[] | null;
-			if (typeof options.headerValidate === 'function') {
-				errors = options.headerValidate(header);
+			if (typeof headerValidate === 'function') {
+				errors = headerValidate(header);
 			} else {
 				errors = headerValidateDefault(columns, rawData);
 			}
@@ -124,12 +134,20 @@ export async function sheetReadSafe<TKeys extends string>(
 		return { success: true };
 	}
 
+	// There is no header
+	if (options.noHeader) {
+		const result = headerParse([], false);
+		if (!result.success) {
+			return result;
+		}
+	}
+
 	let rowsRead = 0;
 	const result = await sheetReadRaw({
 		...options,
 		callback(item) {
 			if (!headerState) {
-				const headerResult = headerParse(item.rawData);
+				const headerResult = headerParse(item.rawData, options.headerValidate);
 				if (!headerResult.success) {
 					item.bail(headerResult);
 				}
@@ -148,7 +166,7 @@ export async function sheetReadSafe<TKeys extends string>(
 	if (!result.success) {
 		return result;
 	}
-	if (rowsRead <= 0) {
+	if (rowsRead <= 0 && !options.allowNoData) {
 		return resultError(`Nenhum item foi processado. Planilha vazia`, `WORKSHEET_EMPTY`);
 	}
 	return { success: true };
