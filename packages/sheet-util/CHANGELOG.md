@@ -1,5 +1,17 @@
 # @rhangai/sheet-util
 
+## 2.1.0
+
+### Minor Changes
+
+-   Added more parse options
+-   Improved error handling
+
+### Patch Changes
+
+-   Updated dependencies
+    -   @rhangai/core@1.6.1
+
 ## 2.0.5
 
 ### Patch Changes
