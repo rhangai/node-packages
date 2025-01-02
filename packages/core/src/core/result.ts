@@ -79,7 +79,7 @@ export function resultError(
 		error,
 		errors: errorsListFilter(errors),
 		errorCode,
-		errorValue,
+		errorValue: errorsValueNormalize(errorValue),
 	};
 }
 
@@ -102,7 +102,7 @@ export function resultErrorUnknown(error: unknown, defaultMessage?: string): Res
 			success: false,
 			error: error.message,
 			errorCode: error.errorCode,
-			errorValue: error.errorValue,
+			errorValue: errorsValueNormalize(error.errorValue),
 		};
 	} else if (error instanceof Error) {
 		return {
@@ -114,7 +114,7 @@ export function resultErrorUnknown(error: unknown, defaultMessage?: string): Res
 	return {
 		success: false,
 		error: defaultMessage ?? 'Error',
-		errorValue: error,
+		errorValue: errorsValueNormalize(error),
 	};
 }
 
@@ -171,6 +171,7 @@ function errorsValueConcat(errorValueAParam: unknown, errorValueBParam: unknown)
 	return errorsValueNormalize([errorValueAParam].concat(errorValueBParam));
 }
 
+/// Normalize the error value
 function errorsValueNormalize(errorValue: unknown): unknown {
 	if (errorValue == null) {
 		return undefined;
