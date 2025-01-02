@@ -9,16 +9,12 @@ export class SheetReaderError extends Error implements IPublicMessageException, 
 		errorCode: string | undefined | null,
 		errorMessage: string | undefined | null,
 		errorMessageList: string[] | undefined | null,
-		errorList: Error[] = [],
+		errorValue?: unknown,
 	) {
 		const list = errorMessageList ?? [];
-		super(
-			[
-				errorMessage,
-				formatErrors('Messages', list, (m) => m),
-				formatErrors('Errors', errorList, (e) => e.stack || e.toString()),
-			].join('\n'),
-		);
+		super([errorMessage, formatErrors('Messages', list, (m) => m)].join('\n'), {
+			cause: errorValue,
+		});
 		this.errorCode = errorCode ?? 'WORKSHEET_INVALID';
 		this.errorMessage = errorMessage ?? 'Erro ao ler a planilha';
 		this.errorMessageList = list;

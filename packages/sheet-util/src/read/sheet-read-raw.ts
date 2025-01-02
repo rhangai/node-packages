@@ -77,8 +77,8 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 			return resultError(null, 'WORKSHEET_INVALID');
 		}
 		worksheet = sheet;
-	} catch (_err: unknown) {
-		return resultError(null, 'WORKSHEET_INVALID');
+	} catch (err: unknown) {
+		return resultError(null, 'WORKSHEET_INVALID', null, err);
 	}
 
 	const rangeRef = worksheet['!ref'];
@@ -104,6 +104,7 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		running: true,
 		error: null as ResultError | null,
 		errors: [] as Array<string | undefined>,
+		errorValues: [] as Array<unknown>,
 	};
 	const bail = (error: ResultError | string[] | string | null | undefined) => {
 		if (error != null) {
@@ -124,6 +125,7 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 	};
 	const addError = (error: unknown) => {
 		state.errors.push(errorPublicMessageWithPrefix(error, `Erro na linha ${r + 1}`));
+		state.errorValues.push(error);
 		state.hasErrors = true;
 		if (options.bailOnError) {
 			state.running = false;
@@ -165,7 +167,12 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		}
 	}
 	if (state.hasErrors) {
-		const sheetError = resultError('Erro na planilha', 'WORKSHEET_ERROR', state.errors);
+		const sheetError = resultError(
+			'Erro na planilha',
+			'WORKSHEET_ERROR',
+			state.errors,
+			state.errorValues,
+		);
 		return resultErrorMerge(state.error, sheetError);
 	}
 	return { success: true };

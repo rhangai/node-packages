@@ -184,6 +184,7 @@ export async function sheetRead<TKeys extends string>(
 			result.errorCode ?? 'WORKSHEET_INVALID',
 			result.error ?? 'Erro ao ler a planilha',
 			result.errors,
+			result.errorValue,
 		);
 	}
 }

@@ -43,7 +43,12 @@ export async function sheetReadMap<T, TKeys extends string>(
 ): Promise<T[]> {
 	const result = await sheetReadMapSafe(options);
 	if (!result.success) {
-		throw new SheetReaderError(result.errorCode, result.error, result.errors);
+		throw new SheetReaderError(
+			result.errorCode,
+			result.error,
+			result.errors,
+			result.errorValue,
+		);
 	}
 	return result.value;
 }
