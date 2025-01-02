@@ -71,13 +71,15 @@ export function resultSuccess<T>(value: T): ResultSuccess<T> {
 export function resultError(
 	error: string | null,
 	errorCode?: string | null,
-	errors?: Array<string | null | undefined>,
+	errors?: Array<string | null | undefined> | null,
+	errorValue?: unknown,
 ): ResultError {
 	return {
 		success: false,
 		error,
 		errors: errorsListFilter(errors),
 		errorCode,
+		errorValue,
 	};
 }
 
@@ -159,14 +161,29 @@ function errorsListConcat(
 // Concat two error values
 function errorsValueConcat(errorValueAParam: unknown, errorValueBParam: unknown): unknown {
 	if (errorValueAParam == null) {
-		return errorValueBParam;
+		return errorsValueNormalize(errorValueBParam);
 	} else if (errorValueBParam == null) {
-		return errorValueAParam;
+		return errorsValueNormalize(errorValueAParam);
 	}
 	if (Array.isArray(errorValueAParam)) {
-		return errorValueAParam.concat(errorValueBParam);
+		return errorsValueNormalize(errorValueAParam.concat(errorValueBParam));
 	}
-	return [errorValueAParam].concat(errorValueBParam);
+	return errorsValueNormalize([errorValueAParam].concat(errorValueBParam));
+}
+
+function errorsValueNormalize(errorValue: unknown): unknown {
+	if (errorValue == null) {
+		return undefined;
+	}
+	if (Array.isArray(errorValue)) {
+		if (errorValue.length <= 0) {
+			return undefined;
+		} else if (errorValue.length === 1) {
+			return errorValue[0];
+		}
+		return errorValue;
+	}
+	return errorValue;
 }
 
 function errorsListFilter(
