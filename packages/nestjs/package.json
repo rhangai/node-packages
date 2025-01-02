@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/nestjs",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Nest utilities",
   "publishConfig": {
     "access": "public"
