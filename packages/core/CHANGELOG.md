@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.6.3
+
+### Patch Changes
+
+-   Corrigido mensagem de erro publica
+
 ## 1.6.2
 
 ### Patch Changes
