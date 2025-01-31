@@ -41,9 +41,9 @@ export function errorPublicMessage(errorParam: unknown): string | undefined {
 	} else if (typeof errorParam === 'string') {
 		message = errorParam;
 	} else if (typeof errorParam === 'object') {
-		const maybeError = errorParam as { getPublicMessage?: () => unknown };
-		if (typeof maybeError.getPublicMessage === 'function') {
-			const publicMessage = maybeError.getPublicMessage();
+		const maybeError = errorParam as { getPublicErrorMessage?: () => unknown };
+		if (typeof maybeError.getPublicErrorMessage === 'function') {
+			const publicMessage = maybeError.getPublicErrorMessage();
 			if (typeof publicMessage === 'string') {
 				message = publicMessage;
 			}
