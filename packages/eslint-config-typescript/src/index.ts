@@ -196,6 +196,10 @@ export type ConfigOptions = {
 	 */
 	internalPackagesRegex?: string;
 	/**
+	 * Local packages (Comes after the internal packages)
+	 */
+	localPackages?: string[];
+	/**
 	 * Extra parser options to be merged
 	 */
 	parserOptions?: Record<string, unknown>;
@@ -312,7 +316,10 @@ function createRules({ options, extraConfig }: CreateRulesParam): EslintConfig[]
 						],
 					},
 				],
-				'import/order': ['error', importOrderOptions(options?.priorityPackages ?? [])],
+				'import/order': [
+					'error',
+					importOrderOptions(options?.priorityPackages, options?.localPackages),
+				],
 			},
 			settings: {
 				'import/extensions': EXTENSIONS,
@@ -382,12 +389,29 @@ function resolveRootDir(options: ConfigOptions | null): string | undefined {
 /**
  * Create the import/order rule options
  */
-function importOrderOptions(packages: string[]) {
-	const pathGroups = packages.map((packageName) => ({
-		pattern: packageName,
-		group: 'external',
-		position: 'before',
-	}));
+function importOrderOptions(
+	packages: string[] | null | undefined,
+	localPackages: string[] | null | undefined,
+) {
+	const pathGroups = [];
+	if (packages) {
+		for (const packageName of packages) {
+			pathGroups.push({
+				pattern: packageName,
+				group: 'external',
+				position: 'before',
+			});
+		}
+	}
+	if (localPackages) {
+		for (const packageName of localPackages) {
+			pathGroups.push({
+				pattern: packageName,
+				group: 'internal',
+				position: 'after',
+			});
+		}
+	}
 	return {
 		groups: [
 			//
