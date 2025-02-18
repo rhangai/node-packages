@@ -1,5 +1,11 @@
 # @rhangai/core
 
+## 1.7.0
+
+### Minor Changes
+
+-   Added new UnreachableError class
+
 ## 1.6.3
 
 ### Patch Changes
