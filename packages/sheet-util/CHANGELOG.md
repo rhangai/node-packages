@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 3.0.0
+
+### Major Changes
+
+-   Removed major dependencies and refactored interfaces for safe methods
+
 ## 2.1.0
 
 ### Minor Changes
