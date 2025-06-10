@@ -25,7 +25,8 @@ export function streamToBuffer(stream: Readable): Promise<Buffer> {
 			reject(err);
 		});
 		stream.on('end', () => {
-			resolve(Buffer.concat(buffers));
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			resolve(Buffer.concat(buffers as any[]));
 		});
 	});
 }
