@@ -6,14 +6,15 @@ import {
 	type ResultError,
 	resultErrorMerge,
 } from '@rhangai/core';
-import { fileInputDispatch, type FileInputType, streamToBuffer } from '@rhangai/core/node';
+import { type SheetReadInput } from '../input';
 import { cellParse } from '../util/cell-parse';
+import { streamToBuffer } from '../util/stream-to-buffer';
 
 export interface SheetReadRawInputOptions {
 	/**
 	 * The input to read
 	 */
-	input: FileInputType;
+	input: SheetReadInput;
 	/**
 	 * The sheet to read
 	 */
@@ -58,19 +59,11 @@ export interface SheetReadRawItem {
  * Read the sheet, row by row, using raw data
  */
 export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result<void>> {
-	const workbookOptions: ParsingOptions = {
-		cellNF: true,
-		cellDates: true,
-	};
 	let worksheet: WorkSheet;
 	try {
-		const workbook = await fileInputDispatch(options.input, {
-			buffer: (buffer) => XLSX.read(buffer, workbookOptions),
-			stream: async (stream) => {
-				const buffer = await streamToBuffer(stream);
-				return XLSX.read(buffer, workbookOptions);
-			},
-			path: (filePath) => XLSX.readFile(filePath, workbookOptions),
+		const workbook = await readWorkbook(options.input, {
+			cellNF: true,
+			cellDates: true,
 		});
 		const sheet = getSheet(workbook, options.sheet ?? null);
 		if (!sheet) {
@@ -104,7 +97,7 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		running: true,
 		error: null as ResultError | null,
 		errors: [] as Array<string | undefined>,
-		errorValues: [] as Array<unknown>,
+		errorValues: [] as unknown[],
 	};
 	const bail = (error: ResultError | string[] | string | null | undefined) => {
 		if (error != null) {
@@ -176,6 +169,21 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		return resultErrorMerge(state.error, sheetError);
 	}
 	return { success: true };
+}
+
+/**
+ * Lê um workbook
+ */
+async function readWorkbook(input: SheetReadInput, options: ParsingOptions): Promise<WorkBook> {
+	if ('buffer' in input) {
+		return XLSX.read(input.buffer, options);
+	} else if ('stream' in input) {
+		const buffer = await streamToBuffer(input.stream);
+		return XLSX.read(buffer, options);
+	} else if ('filename' in input) {
+		return XLSX.readFile(input.filename, options);
+	}
+	throw new Error(`Arquivo inválido`);
 }
 
 /// Get the main sheet
