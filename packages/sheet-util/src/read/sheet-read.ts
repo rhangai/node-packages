@@ -1,8 +1,8 @@
 import XLSX from 'xlsx';
-import { type Result, resultError } from '@rhangai/core';
+import { type SheetResult } from '../result';
 import { type Column } from '../util/column';
 import { normalizeText } from '../util/normalize-text';
-import { SheetReaderError } from './sheet-read-error';
+import { SheetReadError, SheetReadErrorCode } from './sheet-read-error';
 import {
 	sheetReadRaw,
 	type SheetReadRawInputOptions,
@@ -83,7 +83,7 @@ interface ColumnDetails<TKeys extends string> {
  */
 export async function sheetReadSafe<TKeys extends string>(
 	options: SheetReadOptions<TKeys>,
-): Promise<Result<void>> {
+): Promise<SheetResult<null>> {
 	type HeaderState = {
 		header: Record<TKeys, string>;
 		headerRawData: string[];
@@ -93,7 +93,7 @@ export async function sheetReadSafe<TKeys extends string>(
 	function headerParse(
 		rawData: string[],
 		headerValidate: SheetReadOptions<TKeys>['headerValidate'],
-	): Result<void> {
+	): SheetReadError | null {
 		const columns: Array<ColumnDetails<TKeys>> = [];
 		for (const [columnKey, column] of Object.entries<SheetReadColumn>(options.columns)) {
 			if (typeof column === 'object') {
@@ -123,7 +123,10 @@ export async function sheetReadSafe<TKeys extends string>(
 				errors = headerValidateDefault(columns, rawData);
 			}
 			if (errors && errors.length > 0) {
-				return resultError('Erro ao ler cabeçalho', 'WORKSHEET_READ_COLUMN', errors);
+				return new SheetReadError(
+					SheetReadErrorCode.WORKSHEET_READ_COLUMN,
+					'Erro ao ler cabeçalho',
+				);
 			}
 		}
 		headerState = {
@@ -131,14 +134,17 @@ export async function sheetReadSafe<TKeys extends string>(
 			headerRawData: rawData,
 			columns,
 		};
-		return { success: true };
+		return null;
 	}
 
 	// There is no header
 	if (options.noHeader) {
-		const result = headerParse([], false);
-		if (!result.success) {
-			return result;
+		const error = headerParse([], false);
+		if (error) {
+			return {
+				success: false,
+				error,
+			};
 		}
 	}
 
@@ -147,9 +153,9 @@ export async function sheetReadSafe<TKeys extends string>(
 		...options,
 		callback(item) {
 			if (!headerState) {
-				const headerResult = headerParse(item.rawData, options.headerValidate);
-				if (!headerResult.success) {
-					item.bail(headerResult);
+				const error = headerParse(item.rawData, options.headerValidate);
+				if (error) {
+					item.bail(null, error);
 				}
 				return;
 			}
@@ -167,9 +173,18 @@ export async function sheetReadSafe<TKeys extends string>(
 		return result;
 	}
 	if (rowsRead <= 0 && !options.allowNoData) {
-		return resultError(`Nenhum item foi processado. Planilha vazia`, `WORKSHEET_EMPTY`);
+		return {
+			success: false,
+			error: new SheetReadError(
+				SheetReadErrorCode.WORKSHEET_EMPTY,
+				`Nenhum item foi processado. Planilha vazia`,
+			),
+		};
 	}
-	return { success: true };
+	return {
+		success: true,
+		data: null,
+	};
 }
 
 /**
@@ -180,12 +195,7 @@ export async function sheetRead<TKeys extends string>(
 ): Promise<void> {
 	const result = await sheetReadSafe(options);
 	if (!result.success) {
-		throw new SheetReaderError(
-			result.errorCode ?? 'WORKSHEET_INVALID',
-			result.error ?? 'Erro ao ler a planilha',
-			result.errors,
-			result.errorValue,
-		);
+		throw result.error;
 	}
 }
 

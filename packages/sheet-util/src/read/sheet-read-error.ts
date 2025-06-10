@@ -1,23 +1,42 @@
-import { type IPublicMessageException, type IToHttpException } from '@rhangai/core';
+export enum SheetReadErrorCode {
+	WORKSHEET_EMPTY = 'WORKSHEET_EMPTY',
+	WORKSHEET_INVALID = 'WORKSHEET_INVALID',
+	WORKSHEET_READ_COLUMN = 'WORKSHEET_READ_COLUMN',
+}
 
-export class SheetReaderError extends Error implements IPublicMessageException, IToHttpException {
-	public readonly errorCode: string;
-	public readonly errorMessage: string;
-	private readonly errorMessageList: string[];
+/**
+ * Error class
+ */
+export class SheetReadError extends Error {
+	private readonly errorCode: SheetReadErrorCode;
+	private readonly errorMessage: string;
+	private readonly errorList: string[] | undefined;
 
 	constructor(
-		errorCode: string | undefined | null,
-		errorMessage: string | undefined | null,
-		errorMessageList: string[] | undefined | null,
-		errorValue?: unknown,
+		errorCode: SheetReadErrorCode,
+		errorMessage: string,
+		errorList?: string[],
+		cause?: unknown,
 	) {
-		const list = errorMessageList ?? [];
-		super([errorMessage, formatErrors('Messages', list, (m) => m)].join('\n'), {
-			cause: errorValue,
-		});
-		this.errorCode = errorCode ?? 'WORKSHEET_INVALID';
-		this.errorMessage = errorMessage ?? 'Erro ao ler a planilha';
-		this.errorMessageList = list;
+		const message = [errorMessage, formatErrors('Messages', errorList)].join('\n');
+		super(message, { cause });
+		this.errorCode = errorCode;
+		this.errorMessage = errorMessage;
+		this.errorList = errorList && errorList.length > 0 ? errorList : undefined;
+	}
+	/**
+	 * Clones the error, merging with another error list
+	 */
+	cloneMerge(errors: string[]): SheetReadError {
+		if (errors.length <= 0) {
+			return this;
+		}
+		return new SheetReadError(
+			this.errorCode,
+			this.errorMessage,
+			this.errorList ? this.errorList.concat(errors) : errors,
+			this.cause,
+		);
 	}
 	/**
 	 * Get the public error message
@@ -26,7 +45,7 @@ export class SheetReaderError extends Error implements IPublicMessageException, 
 		return [
 			// Public error message
 			this.errorMessage,
-			formatErrors('', this.errorMessageList, (m) => m),
+			formatErrors('', this.errorList),
 		].join('\n');
 	}
 	/**
@@ -36,21 +55,23 @@ export class SheetReaderError extends Error implements IPublicMessageException, 
 	toHttp() {
 		return {
 			message: this.errorMessage,
-			errors: this.errorMessageList,
+			errors: this.errorList,
 			errorCode: this.errorCode,
 		};
 	}
 }
 
+/**
+ * Bail error class. To catch and ignore
+ */
+export class SheetReadErrorBail extends Error {}
+
 // Format errors
-function formatErrors<T>(prefix: string, items: T[], formatter: (item: T) => string) {
-	if (items.length <= 0) {
+function formatErrors(prefix: string, items: string[] | undefined) {
+	if (!items || items.length <= 0) {
 		return null;
 	}
-	const errorMessages = items
-		.map(formatter)
-		.map((item) => item.split('\n').join('\n    '))
-		.filter(Boolean);
+	const errorMessages = items.map((item) => item.split('\n').join('\n    ')).filter(Boolean);
 	if (errorMessages.length <= 0) {
 		return null;
 	}

@@ -1,6 +1,6 @@
-import { type Result, resultError } from '@rhangai/core';
+import { type SheetResult } from '../result';
 import { type SheetReadItem, type SheetReadOptions, sheetReadSafe } from './sheet-read';
-import { SheetReaderError } from './sheet-read-error';
+import { SheetReadError, SheetReadErrorCode } from './sheet-read-error';
 
 export interface SheetReadMapOptions<T, TKeys extends string>
 	extends Omit<SheetReadOptions<TKeys>, 'callback'> {
@@ -15,7 +15,7 @@ export interface SheetReadMapOptions<T, TKeys extends string>
  */
 export async function sheetReadMapSafe<T, TKeys extends string>(
 	options: SheetReadMapOptions<T, TKeys>,
-): Promise<Result<T[]>> {
+): Promise<SheetResult<T[]>> {
 	const items: T[] = [];
 	const result = await sheetReadSafe({
 		...options,
@@ -30,9 +30,12 @@ export async function sheetReadMapSafe<T, TKeys extends string>(
 		return result;
 	}
 	if (items.length <= 0) {
-		return resultError(`Nenhum item processado`, `WORKSHEET_MAP_EMPTY`);
+		return {
+			success: false,
+			error: new SheetReadError(SheetReadErrorCode.WORKSHEET_EMPTY, 'Nenhum item processado'),
+		};
 	}
-	return { success: true, value: items };
+	return { success: true, data: items };
 }
 
 /**
@@ -43,12 +46,7 @@ export async function sheetReadMap<T, TKeys extends string>(
 ): Promise<T[]> {
 	const result = await sheetReadMapSafe(options);
 	if (!result.success) {
-		throw new SheetReaderError(
-			result.errorCode,
-			result.error,
-			result.errors,
-			result.errorValue,
-		);
+		throw result.error;
 	}
-	return result.value;
+	return result.data;
 }

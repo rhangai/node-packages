@@ -1,14 +1,9 @@
 import XLSX, { type CellObject, type ParsingOptions, type WorkBook, type WorkSheet } from 'xlsx';
-import {
-	errorPublicMessageWithPrefix,
-	type Result,
-	resultError,
-	type ResultError,
-	resultErrorMerge,
-} from '@rhangai/core';
 import { type SheetReadInput } from '../input';
+import { type SheetResult, type SheetResultError } from '../result';
 import { cellParse } from '../util/cell-parse';
 import { streamToBuffer } from '../util/stream-to-buffer';
+import { SheetReadError, SheetReadErrorBail, SheetReadErrorCode } from './sheet-read-error';
 
 export interface SheetReadRawInputOptions {
 	/**
@@ -48,7 +43,7 @@ export interface SheetReadRawItem {
 	/**
 	 * Bail on the data, aborting the operation
 	 */
-	bail: (err?: ResultError | string[] | string | null) => void;
+	bail: (err?: string | null, bailError?: unknown) => never;
 	/**
 	 * Add a new error to the list of errors
 	 */
@@ -58,7 +53,7 @@ export interface SheetReadRawItem {
 /**
  * Read the sheet, row by row, using raw data
  */
-export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result<void>> {
+export async function sheetReadRaw(options: SheetReadRawOptions): Promise<SheetResult<null>> {
 	let worksheet: WorkSheet;
 	try {
 		const workbook = await readWorkbook(options.input, {
@@ -67,16 +62,16 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		});
 		const sheet = getSheet(workbook, options.sheet ?? null);
 		if (!sheet) {
-			return resultError(null, 'WORKSHEET_INVALID');
+			return errorFromCode(SheetReadErrorCode.WORKSHEET_INVALID);
 		}
 		worksheet = sheet;
 	} catch (err: unknown) {
-		return resultError(null, 'WORKSHEET_INVALID', null, err);
+		return errorFromCode(SheetReadErrorCode.WORKSHEET_INVALID, err);
 	}
 
 	const rangeRef = worksheet['!ref'];
 	if (!rangeRef) {
-		return resultError(null, 'WORKSHEET_INVALID');
+		return errorFromCode(SheetReadErrorCode.WORKSHEET_INVALID);
 	}
 	const range = XLSX.utils.decode_range(rangeRef);
 	const cb = options.callback;
@@ -87,38 +82,45 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		columns[c] = XLSX.utils.encode_col(c);
 	}
 	if (columns.length <= 0) {
-		return resultError(null, 'WORKSHEET_INVALID');
+		return errorFromCode(SheetReadErrorCode.WORKSHEET_INVALID);
 	}
 
 	//
 	let r = 0;
-	const state = {
+	interface State {
+		hasErrors: boolean;
+		running: boolean;
+		errors: string[];
+		errorValues: Error[];
+		bailError?: unknown;
+	}
+	const state: State = {
 		hasErrors: false,
 		running: true,
-		error: null as ResultError | null,
-		errors: [] as Array<string | undefined>,
-		errorValues: [] as unknown[],
+		errors: [],
+		errorValues: [],
 	};
-	const bail = (error: ResultError | string[] | string | null | undefined) => {
-		if (error != null) {
-			if (typeof error === 'object' && 'success' in error) {
-				state.error = error;
-			} else if (Array.isArray(error)) {
-				for (const err of error) {
-					if (typeof err === 'string') {
-						state.errors.unshift(err);
-					}
-				}
-			} else if (typeof error === 'string') {
-				state.errors.unshift(error);
-			}
+	const bail = (error: string | null | undefined, bailError: unknown) => {
+		if (error) {
+			state.errors.unshift(error);
 			state.hasErrors = true;
 		}
+		if (bailError != null) {
+			state.hasErrors = true;
+			state.bailError = bailError;
+		}
 		state.running = false;
+		throw new SheetReadErrorBail();
 	};
 	const addError = (error: unknown) => {
-		state.errors.push(errorPublicMessageWithPrefix(error, `Erro na linha ${r + 1}`));
-		state.errorValues.push(error);
+		if (error instanceof SheetReadErrorBail) {
+			return;
+		}
+		if (error instanceof Error) {
+			state.errorValues.push(error);
+		} else if (typeof error === 'string') {
+			state.errors.push(`Erro na linha ${r + 1}: ${error}`);
+		}
 		state.hasErrors = true;
 		if (options.bailOnError) {
 			state.running = false;
@@ -160,15 +162,44 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<Result
 		}
 	}
 	if (state.hasErrors) {
-		const sheetError = resultError(
-			'Erro na planilha',
-			'WORKSHEET_ERROR',
-			state.errors,
-			state.errorValues,
-		);
-		return resultErrorMerge(state.error, sheetError);
+		const { bailError } = state;
+		if (bailError) {
+			if (bailError instanceof SheetReadError) {
+				const error = bailError.cloneMerge(state.errors);
+				return {
+					success: false,
+					error,
+				};
+			}
+			return {
+				success: false,
+				error: bailError,
+			};
+		}
+
+		let cause: Error | undefined;
+		if (state.errorValues.length > 0) {
+			if (state.errorValues.length === 1) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				cause = state.errorValues[0]!;
+			} else {
+				cause = new AggregateError(state.errorValues);
+			}
+		}
+		return {
+			success: false,
+			error: new SheetReadError(
+				SheetReadErrorCode.WORKSHEET_INVALID,
+				'Erro na planilha',
+				state.errors,
+				cause,
+			),
+		};
 	}
-	return { success: true };
+	return {
+		success: true,
+		data: null,
+	};
 }
 
 /**
@@ -203,4 +234,12 @@ function getSheet(workbook: WorkBook, sheet: string | number | null): WorkSheet 
 		return workbook.Sheets[sheetName] ?? null;
 	}
 	return null;
+}
+
+// Result from code
+function errorFromCode(errorCode: SheetReadErrorCode, cause?: unknown): SheetResultError {
+	return {
+		success: false,
+		error: new SheetReadError(errorCode, '', undefined, cause),
+	};
 }

@@ -28,16 +28,11 @@
     "url": "git+https://github.com/rhangai/node-packages.git"
   },
   "dependencies": {
-    "dayjs": "^1.11.11",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "@rhangai/core": "workspace:^",
     "tsup": "catalog:",
     "typescript": "catalog:"
-  },
-  "peerDependencies": {
-    "@rhangai/core": "workspace:^"
   },
   "scripts": {
     "clean": "rm -rf dist",
