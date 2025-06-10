@@ -83,7 +83,7 @@ interface ColumnDetails<TKeys extends string> {
  */
 export async function sheetReadSafe<TKeys extends string>(
 	options: SheetReadOptions<TKeys>,
-): Promise<SheetResult<null>> {
+): Promise<SheetResult<void>> {
 	type HeaderState = {
 		header: Record<TKeys, string>;
 		headerRawData: string[];
@@ -181,10 +181,7 @@ export async function sheetReadSafe<TKeys extends string>(
 			),
 		};
 	}
-	return {
-		success: true,
-		data: null,
-	};
+	return { success: true };
 }
 
 /**

@@ -1,4 +1,10 @@
-export interface SheetResultSuccess<TValue> {
+interface SheetResultSuccessVoid {
+	success: true;
+	data?: undefined;
+	error?: never;
+}
+
+interface SheetResultSuccess<TValue> {
 	success: true;
 	data: TValue;
 	error?: never;
@@ -10,4 +16,6 @@ export interface SheetResultError {
 	error: unknown;
 }
 
-export type SheetResult<TValue> = SheetResultSuccess<TValue> | SheetResultError;
+export type SheetResult<TValue> = TValue extends void
+	? SheetResultSuccessVoid | SheetResultError
+	: SheetResultSuccess<TValue> | SheetResultError;

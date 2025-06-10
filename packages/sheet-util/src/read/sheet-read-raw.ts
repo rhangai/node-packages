@@ -53,7 +53,7 @@ export interface SheetReadRawItem {
 /**
  * Read the sheet, row by row, using raw data
  */
-export async function sheetReadRaw(options: SheetReadRawOptions): Promise<SheetResult<null>> {
+export async function sheetReadRaw(options: SheetReadRawOptions): Promise<SheetResult<void>> {
 	let worksheet: WorkSheet;
 	try {
 		const workbook = await readWorkbook(options.input, {
@@ -196,10 +196,7 @@ export async function sheetReadRaw(options: SheetReadRawOptions): Promise<SheetR
 			),
 		};
 	}
-	return {
-		success: true,
-		data: null,
-	};
+	return { success: true };
 }
 
 /**
