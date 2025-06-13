@@ -126,6 +126,7 @@ export async function sheetReadSafe<TKeys extends string>(
 				return new SheetReadError(
 					SheetReadErrorCode.WORKSHEET_READ_COLUMN,
 					'Erro ao ler cabeçalho',
+					errors,
 				);
 			}
 		}
