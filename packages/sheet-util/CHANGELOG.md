@@ -1,5 +1,11 @@
 # @rhangai/sheet-util
 
+## 3.0.1
+
+### Patch Changes
+
+-   Fixed error messages
+
 ## 3.0.0
 
 ### Major Changes

@@ -1,6 +1,6 @@
 {
   "name": "@rhangai/sheet-util",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Sheet reader/writer",
   "publishConfig": {
     "access": "public"
